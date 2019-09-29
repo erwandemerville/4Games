@@ -1,3 +1,6 @@
+#!/usr/bin/python3.7
+# -*-coding:Utf-8 -*
+
 # Code écrit dans le cadre du projet Algorithmique et Developpement
 # Écrit en septembre 2019 par Lucas Raulier
 

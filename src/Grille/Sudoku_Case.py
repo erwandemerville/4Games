@@ -1,10 +1,13 @@
+#!/usr/bin/python3.7
+# -*-coding:Utf-8 -*
+
 # Code écrit dans le cadre du projet Algorithmique et Developpement
 # Écrit en septembre 2019 par Lucas Raulier
 
 try:
-    import Case;
+    import Case
 except:
-    from Grille import Case;
+    from Grille import Case
 
 class Case(Case.Case):
     'Case pour le sudoku'
@@ -15,9 +18,9 @@ class Case(Case.Case):
     #
     # Instancie une Case.
     #
-    def __init__(self):
-        super().__init__();
-        self.number = 0;
+    def __init__(self, number=0):
+        super().__init__()
+        self.number = number
 
     # Fonction getNumber
     #
@@ -27,7 +30,7 @@ class Case(Case.Case):
     # Si cette fonction retourne 0, c'est que la case est vide.
     #
     def getNumber(self):
-        return self.number;
+        return self.number
 
     # Fonction setNumber
     #
@@ -38,7 +41,7 @@ class Case(Case.Case):
     # Mettre le nombre contenu dans cette Case à 0 consistera a vider la case.
     #
     def setNumber(self, number):
-        self.number = number;
+        self.number = number
 
     # Fonction estVide
     #
@@ -47,7 +50,7 @@ class Case(Case.Case):
     # Fonction retournant un booleen indiquant si cette case est considérée comme vide
     #
     def estVide(self):
-        return self.number == 0;
+        return self.number == 0
 
     # Fonction contient
     #
@@ -57,7 +60,7 @@ class Case(Case.Case):
     # Fonction retournant un booleen indiquant si cette case contient l'objet X.
     #
     def contient(self, X):
-        return self.number == X;
+        return self.number == X
 
     # Fonction draw
     #
@@ -85,7 +88,7 @@ class Case(Case.Case):
     #
     def draw(self, canvas, x, y, x2, y2, selectFill="blue", hoverFill="green", bothFill="red", textFill="white", textFont="Comic"):
         # TODO: faire la classe quand le hud sera fait
-        super().draw(canvas, x, y, x2, y2, selectFill=selectFill, hoverFill=hoverFill, bothFill=bothFill);
+        super().draw(canvas, x, y, x2, y2, selectFill=selectFill, hoverFill=hoverFill, bothFill=bothFill)
         if self.number != 0:
-            fontSize = abs(y2-y)-6;
-            canvas.create_text(x+abs(x2-x)/2, y+abs(y2-y)/2, fill=textFill, font=textFont+" "+str(int(fontSize)), text=str(self.number));
+            fontSize = abs(y2-y)-6
+            canvas.create_text(x+abs(x2-x)/2, y+abs(y2-y)/2, fill=textFill, font=textFont+" "+str(int(fontSize)), text=str(self.number))

@@ -39,7 +39,7 @@ class Application(object):
     def goToSudoku(self):
         #Méthode pour appeller le jeu du sudoku
         print("Sudoku")
-        Partie()
+        Sudoku.Partie()
 
     def goToLoto(self):
         #Méthode pour appeller le jeu du loto

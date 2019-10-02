@@ -1,4 +1,5 @@
 from tkinter import *
+import Sudoku
 
 class Application(object):
     def __init__(self):
@@ -38,6 +39,7 @@ class Application(object):
     def goToSudoku(self):
         #Méthode pour appeller le jeu du sudoku
         print("Sudoku")
+        Partie()
 
     def goToLoto(self):
         #Méthode pour appeller le jeu du loto

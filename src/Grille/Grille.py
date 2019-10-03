@@ -48,6 +48,16 @@ class Grille:
             for j in range(self.largeur * self.hauteur):
                 self.case[j].setNumber(liste_numeros[j])
 
+    def getListeNumeros(self):
+        """Fonction récupérant le numéro de chaque case pour en constituer une liste.
+        Retourne cette liste."""
+
+        listenumeros = []
+        for i in range(self.largeur * self.hauteur):
+            listenumeros.append(self.case[i].getNumber())
+
+        return listenumeros
+
     # Fonction getCase
     #
     # self : instance de la classe, ne doit pas être mis en argument.
@@ -246,15 +256,17 @@ class Grille:
         compteur = 0
         liste = []
         for i in self.case:
-            if i == 0:
-                caract = '_'
+            if i.getNumber() == 0:
+                caract = '-'
             else:
                 caract = str(i.getNumber())
             liste.append(caract)
             compteur += 1
             if compteur == 9:
                 print("{0} | {1} {2} {3} | {4} {5} {6} | {7} {8} {9} |".format(liste_lettres[lettre],
-                    liste[0], liste[1], liste[2], liste[3], liste[4], liste[5], liste[6], liste[7], liste[8]))
+                                                                               liste[0], liste[1], liste[2], liste[3],
+                                                                               liste[4], liste[5], liste[6], liste[7],
+                                                                               liste[8]))
                 liste = []
                 compteur = 0
 

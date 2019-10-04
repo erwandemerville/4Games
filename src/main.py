@@ -1,62 +1,43 @@
 from tkinter import *
+import pygame
+from pygame.locals import *
 import Sudoku
+import UiPygame as ui
+       
+pygame.init()
+frame = pygame.display.set_mode((640,480))
 
-class Application(object):
-    def __init__(self):
-        #Constructeur
-        self.frame = Tk()
-        self.frame.title("L'application de jeux")
+fond = pygame.image.load("assets/background_menu.jpg").convert()
+frame.blit(fond, (0,0))
 
-        self.canv = Canvas(self.frame,bg="black",height=300,width=300)
-        self.canv.pack(side=TOP,padx=0,pady=20)
+police = pygame.font.SysFont('Impact',25)
+b_s = ui.Bouton(frame,30,30,150,50,(180,180,180),"Sudoku",(255,255,255),police)
+b_l = ui.Bouton(frame,30,100,150,50,(180,180,180),"Loto",(255,255,255),police)
+b_bn = ui.Bouton(frame,30,160,150,50,(180,180,180),"Bataille navale",(255,255,255),police)
+b_p = ui.Bouton(frame,30,220,150,50,(180,180,180),"Poker",(255,255,255),police)
 
-        self.btn_profil = Button(self.frame,text="profil", width=60,command=self.goToProfil)
-        self.btn_profil.pack()
+b_o = ui.Bouton(frame,300,160,150,50,(180,180,180),"Options",(255,255,255),police)
+b_p = ui.Bouton(frame,300,220,150,50,(180,180,180),"Profil",(255,255,255),police)
 
-        self.btn_bn = Button(self.frame,text="bataille navale", width=60,command=self.goToBN)
-        self.btn_bn.pack()
+pygame.display.flip()
 
-        self.btn_loto = Button(self.frame,text="loto", width=60,command=self.goToLoto)
-        self.btn_loto.pack()
-
-        self.btn_poker = Button(self.frame,text="poker", width=60,command=self.goToPoker)
-        self.btn_poker.pack()
-
-        self.btn_sudoku = Button(self.frame,text="sudoku", width=60,command=self.goToSudoku)
-        self.btn_sudoku.pack()
-
-        self.btn_optn = Button(self.frame,text="options", width=60,command=self.goToOption)
-        self.btn_optn.pack()
-
-    def goToOption(self):
-        #Méthode pour afficher les options
-        print("Options")
-
-    def goToProfil(self):
-        #Méthode pour afficher le menu du profil
-        print("profil")
-
-    def goToSudoku(self):
-        #Méthode pour appeller le jeu du sudoku
-        print("Sudoku")
-        Sudoku.Partie()
-
-    def goToLoto(self):
-        #Méthode pour appeller le jeu du loto
-        print("loto")
-
-    def goToBN(self):
-        #Méthode pour appeller le jeu de la bataille navale
-        print("bataille navale")
-
-    def goToPoker(self):
-        #Méthode pour appeller le jeu du poker
-        print("poker")
-
-    def goToMain(self):
-        #Méthode pour appeller le menu principal
-        print("main")
-
-
-
-a = Application()
+fin = False
+while(not(fin)):
+    for event in pygame.event.get():
+        if(event.type == QUIT):
+            fin = True
+        if(event.type == MOUSEBUTTONDOWN):
+            if(b_s.isCursorInRange()):
+                Sudoku.Partie()
+            elif(b_l.isCursorInRange()):
+                print("Lancement du loto")
+            elif(b_bn.isCursorInRange()):
+                print("Lancement de la bataille navale")
+            elif(b_p.isCursorInRange()):
+                print("Lancement du poker")
+            elif(b_o.isCursorInRange()):
+                print("Lancement des options")
+            elif(b_p.isCursorInRange()):
+                print("Lancement du profil")
+            
+pygame.quit()

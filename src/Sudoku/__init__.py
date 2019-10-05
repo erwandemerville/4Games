@@ -15,8 +15,9 @@ from Grille import Sudoku_Case
 from Sudoku.grillesDeJeu import *
 
 liste_pos_l = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
-lettre_to_chiffre = {'A': 0, 'B': '1', 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8}
+lettre_to_chiffre = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8}
 liste_pos_c = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
 
 class Partie:
     """Classe principal du module Sudoku, permet de lancer le jeu.
@@ -27,9 +28,9 @@ class Partie:
     La grille sera alors sauvegardée dans un fichier grilleEnCours
 
     Attributs :
-    niveau = 1 (facile), 2 (intermédiaire) ou 3 (hardcore)
+    niveau = 1 (facile), 2 (intermédiaire) ou 3 (difficile)
     grille_jeu (Attribut de type Grille contenant la grille de jeu)
-    etat_partie (1 = Partie en cours, 2 = Partie gagnée, 3 = Partie pedue)
+    etat_partie (1 = Partie en cours, 0 = Partie terminée)
     """
 
     def __init__(self):
@@ -37,6 +38,7 @@ class Partie:
         Pour passer d'un affichage en lignes de commandes à un affichage graphique,
         remplacer 'cmd' dans les noms de fonctions par 'gui'"""
 
+        liste_numeros_solution, liste_num = None, None
         continuer = False
 
         # Vérifie si une grille est en cours.
@@ -44,50 +46,44 @@ class Partie:
             # Demande à l'utilisateur s'il souhaite reprendre la grille en cours
             reprendre = self.reprendre_grille_cmd()
             if reprendre:
-                liste_num = self.charger_grille()
+                grille_recup = self.charger_grille()
+                liste_num = grille_recup[0:81]
+                self.liste_numeros_init = grille_recup[81:162]
+                liste_numeros_solution = grille_recup[162:243]
                 continuer = True
 
         if not continuer:
             # Afficher le menu de choix du niveau :
             self.niveau = self.choixniveau_cmd()
-            self.liste_numeros_init = self.choixgrille_cmd()
+            L = self.choixgrille_cmd()
+            self.liste_numeros_init = L[0]
+            liste_numeros_solution = L[1]
             liste_num = self.liste_numeros_init
 
         # Chargement de la grille de jeu à partir de la liste des numéros
         self.grille_jeu = Grille(9, 9, 0, 0, 0, 0, Sudoku_Case, liste_num)
+        self.grille_jeu_solution = Grille(9, 9, 0, 0, 0, 0, Sudoku_Case, liste_numeros_solution)
 
         # L'état de la partie passe à "En cours"
         self.etat_partie = 1
 
         # ARRET EXCEPTIONNEL DU PROGRAMME (car programme non terminé)
-        #sys.exit()
+        # sys.exit()
 
         # Attente de l'action du joueur
-        partie_terminee = False  # Booléen indiquant si la partie est terminée ou non
-        while not partie_terminee:
+        self.etat_partie = 1  # Booléen indiquant si la partie est en cours ou non
+        while self.etat_partie:  # Tant que la partie est en cours
             # Affichage de la grille
             self.grille_jeu.draw_cmd()
 
             self.action_joueur_cmd()  # Attente d'une action de la part du joueur
 
-            """# On vérifie si la grille est complétée (si la fonction retourne True)
+            # On vérifie si la grille est complétée (si la fonction retourne True)
             if self.get_etatgrille():
-                # On vérifie si la grille est correcte
-                if self.verifier_grille():
-                    self.etat_partie = 2  # Partie gagnée
-                else:
-                    self.etat_partie = 3  # Partie perdue
+                print("Félicitations ! Vous avez résolu la grille !")
+                self.etat_partie = 0  # Partie passe de "en cours" à "terminée"
 
-            if self.etat_partie == 2:  # Si partie gagnée
-                partie_terminee = True
-            if self.etat_partie == 3:  # Si partie perdue
-                if self.choix_perdu() == 1:  # Si le joueur choisit d'arrêter la partie
-                    partie_terminee = True
-                if self.choix_perdu() == 2:  # Si le joueur choisit d'arrêter et afficher la solution
-                    partie_terminee = True
-                    self.afficher_solution()
-
-        self.afficher_messagefin()"""
+        self.afficher_messagefin_cmd()
 
     @staticmethod
     def choixniveau_cmd():
@@ -97,7 +93,7 @@ class Partie:
               "Choisissez un niveau de difficulté (saisir 1, 2 ou 3) :\n"
               "1 - Mode facile\n"
               "2 - Mode intermédiaire\n"
-              "3 - Mode hardcore\n")
+              "3 - Mode difficile\n")
         nb_saisi = None
 
         ok = False
@@ -128,13 +124,13 @@ class Partie:
         nb_grilles = GrillesDeJeu.get_nb_grilles(self.niveau)
         nb_saisi = None
 
-        print("Quelle grille souhaitez-vous jouer ?\n")
+        print("Quelle grille souhaitez-vous jouer ?")
         for i in range(nb_grilles):
             print("Grille n° {}".format(i + 1))
 
         ok = False
         while not ok:
-            nb_saisi = input("Veuillez saisir votre choix : ")
+            nb_saisi = input("\nVeuillez saisir votre choix : ")
 
             try:
                 nb_saisi = int(nb_saisi)
@@ -146,7 +142,9 @@ class Partie:
             else:
                 ok = True
 
-        return GrillesDeJeu.get_grille(self.niveau, nb_saisi - 1)
+        liste = [GrillesDeJeu.get_grille(self.niveau, nb_saisi - 1),
+             GrillesDeJeu.get_grille_solution(self.niveau, nb_saisi - 1)]
+        return liste
 
     def choixgrille_gui(self):
         """INTERFACE GRAPHIQUE : Récupère dans fichier .txt le nombre de grille.
@@ -167,16 +165,30 @@ class Partie:
                 return 0
             else:
 
-                self.liste_numeros_init = grille_recup[81:162]
                 return grille_recup
 
     @staticmethod
-    def reprendre_grille_cmd():
+    def effacer_sauvegarde():
+        """Fonction sauvegardant la grille afin de pouvoir la reprendre plus tard."""
+        liste_grilles = []
+
+        try:
+            with open('grilleEnCours', 'wb') as fichier:
+                mon_pickler = pickle.Pickler(fichier)
+                mon_pickler.dump(liste_grilles)
+                fichier.close()
+        except FileNotFoundError:
+            return 0
+        else:
+            return 1
+
+    def reprendre_grille_cmd(self):
         """COMMAND-LINE : Invite l'utilisateur à reprendre la grille en cours."""
         print("Une partie a été sauvegardée.\n"
               "Souhaitez-vous la reprendre ?\n"
-              "1 - Oui"
-              "2 - Non")
+              "1 - Oui\n"
+              "2 - Non (et effacer la sauvegarder)\n"
+              "3 - Non (et conserver la sauvegarde)")
 
         nb_saisi = None
 
@@ -185,16 +197,19 @@ class Partie:
             nb_saisi = input("Veuillez saisir votre choix : ")
             try:
                 nb_saisi = int(nb_saisi)
-                assert nb_saisi == 1 or nb_saisi == 2
+                assert 1 <= nb_saisi <= 3
             except ValueError:
                 print("Vous devez saisir un nombre. Veuillez recommencer :\n")
             except AssertionError:
-                print("Vous devez saisir un chiffre entre 1 et 2. Veuillez recommencer :\n")
+                print("Vous devez saisir un chiffre entre 1 et 3. Veuillez recommencer :\n")
             else:
                 ok = True
 
         if nb_saisi == 1:
             return 1
+        elif nb_saisi == 2:
+            self.effacer_sauvegarde()
+            return 0
         else:
             return 0
 
@@ -204,7 +219,7 @@ class Partie:
 
     def sauvegarder_grille(self):
         """Fonction sauvegardant la grille afin de pouvoir la reprendre plus tard."""
-        liste_grilles = self.grille_jeu.getListeNumeros() + self.liste_numeros_init
+        liste_grilles = self.grille_jeu.getListeNumeros() + self.liste_numeros_init + self.grille_jeu_solution.getListeNumeros()
 
         try:
             with open('grilleEnCours', 'wb') as fichier:
@@ -222,7 +237,40 @@ class Partie:
 
         if self.liste_numeros_init[position] != 0:
             return 0
-        else :
+        else:
+            return 1
+
+    def verifier_numero_cl(self, position, number):
+        """Cette fonction vérifie si le numéro entré n'est pas présent sur la même ligne ou colonne."""
+
+        ok = True
+        n = 0
+        i = 0
+        while i <= 80:
+            i += 9
+            if n <= position < i:
+                for j in range(n, i):
+                    if position != j:
+                        if number == self.grille_jeu.case[j].getNumber():
+                            ok = False
+            n += 9
+
+        if ok:
+            u = position
+            while not (0 <= u <= 8):
+                u -= 9
+
+            k = u
+            while k in range(u, (u+9*8)+1):
+                if position != k:
+                    if number == self.grille_jeu.case[k].getNumber():
+                        ok = False
+
+                k += 9
+
+        if not ok:
+            return 0
+        else:
             return 1
 
     def saisie_chiffre_cmd(self):
@@ -261,8 +309,12 @@ class Partie:
                     print("Le chiffre doit être compris entre 1 et 9.\n")
                 else:
                     ok2 = True
-                    self.grille_jeu.case[numero_case] = chiffre_ajouter
-                    return 1
+                    if self.verifier_numero_cl(numero_case, chiffre_ajouter):
+                        self.grille_jeu.case[numero_case].setNumber(int(chiffre_ajouter))
+                        return 1
+                    else:
+                        print("Ce chiffre est déjà présent sur cette ligne ou cette colonne.")
+                        return 0
         else:
             return 0
 
@@ -283,12 +335,12 @@ class Partie:
 
                 numero_case = lettre_to_chiffre[choixp[0]] * 9 + (int(choixp[1]) - 1)
                 if self.verifier_numero_init(numero_case):  # Si le chiffre à effacer n'est pas présent initialement
-                    self.grille_jeu.case[numero_case] = 0
+                    self.grille_jeu.case[numero_case].setNumber(0)
                     ok = True
                     return 1
                 else:
+                    print("Vous ne pouvez pas effacer un numéro présent initialement sur la grille !\n")
                     return 0
-
 
     def action_joueur_cmd(self):
         """COMMAND-LINE : Menu affichée en haut de la partie.
@@ -328,13 +380,14 @@ class Partie:
                               "1 - Sauvegarder la partie\n"
                               "2 - Réinitialiser la grille\n"
                               "3 - Changer de grille\n"
-                              "4 - Retour\n")
+                              "4 - Quitter le jeu\n"
+                              "5 - Retour\n")
 
                         nb_saisi2 = input("Veuillez saisir votre choix : ")
 
                         try:
                             nb_saisi2 = int(nb_saisi2)
-                            assert 1 <= nb_saisi2 <= 4
+                            assert 1 <= nb_saisi2 <= 5
                         except ValueError:
                             print("Vous devez saisir un chiffre. Veuillez recommencer.\n")
                         except AssertionError:
@@ -359,21 +412,45 @@ class Partie:
                                 print("La grille a bien été chargée !\n")
                                 self.grille_jeu.draw_cmd()
                                 ok2 = True
+                            elif nb_saisi2 == 4:
+                                self.etat_partie = 0  # Partie passe de "en cours" à "terminée"
+                                ok2 = True
+                                ok = True
                             else:
                                 ok2 = True
                 elif nb_saisi == 2:
                     if self.effacer_chiffre_cmd():
                         print("Effacé !\n")
-                        ok = True
-                    else:
-                        print("Vous ne pouvez pas effacer un numéro présent initialement sur la grille !\n")
+
+                    ok = True
                 else:
                     if self.saisie_chiffre_cmd():
                         print("Ajouté !\n")
-                        ok = True
-                    else:
-                        print("Vous ne pouvez pas modifier un numéro présent initialement sur la grille !\n")
 
+                    ok = True
+
+    def get_etatgrille(self):
+
+        ok = True
+        i = 0
+        while i in range(81):
+            if self.grille_jeu.case[i].getNumber() == 0:
+                ok = False
+                i = 82
+            else:
+                i += 1
+
+        if ok:
+            return 1
+        else:
+            return 0
+
+    @staticmethod
+    def afficher_messagefin_cmd():
+        print("Merci d'avoir joué au Sudoku !\n"
+              "N'hésitez pas à relancer une nouvelle partie quand vous voulez !")
+
+        input("Appuyez sur une touche pour quitter.")
 
 
 """

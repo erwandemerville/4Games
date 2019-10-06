@@ -4,6 +4,7 @@
 # Code écrit dans le cadre du projet Algorithmique et Developpement
 # Écrit en septembre 2019 par Lucas Raulier
 
+import pygame
 try:
     import Case
 except:
@@ -67,10 +68,11 @@ class Case(Case.Case):
     # ARGUMENTS OBLIGATOIRES :
     #
     # self : instance de la classe, ne doit pas être mis en argument.
+    # surface : surface sur laquelle dessiner la case, doit être la surface représentant la fenêtre entière.
     # x : coordonnée horizontale du point le plus en haut a gauche de la zone ou dessiner la case.
     # y : coordonnée verticale du point le plus en haut a gauche de la zone ou dessiner la case.
     # x2 : coordonnée horizontale du point le plus en bas a droite de la zone ou dessiner la case.
-    # y2 : coordonnée verticlae du point le plus en bas a droite de la zone ou dessiner la case.
+    # y2 : coordonnée verticale du point le plus en bas a droite de la zone ou dessiner la case.
     #
     # ARGUMENTS OPTIONELS :
     #
@@ -86,9 +88,10 @@ class Case(Case.Case):
     # Si textFill n'est pas précisé, textFill sera blanc.
     # Si textFont n'est pas précisé, textFont sera "Comic".
     #
-    def draw(self, canvas, x, y, x2, y2, selectFill="blue", hoverFill="green", bothFill="red", textFill="white", textFont="Comic"):
+    def draw(self, surface, x, y, x2, y2, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0), textFill=(255,255,255), textFont="Impact"):
         # TODO: faire la classe quand le hud sera fait
-        super().draw(canvas, x, y, x2, y2, selectFill=selectFill, hoverFill=hoverFill, bothFill=bothFill)
         if self.number != 0:
             fontSize = abs(y2-y)-6
-            canvas.create_text(x+abs(x2-x)/2, y+abs(y2-y)/2, fill=textFill, font=textFont+" "+str(int(fontSize)), text=str(self.number))
+            police = pygame.font.SysFont(textFont,int(fontSize))
+            label = police.render(str(self.number), 1, textFill)
+            surface.blit(label, (x+abs(x2-x)/3, y))

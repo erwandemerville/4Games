@@ -72,46 +72,47 @@ class Case(Case.Case):
     # ARGUMENTS OBLIGATOIRES :
     #
     # self : instance de la classe, ne doit pas être mis en argument.
+    # surface : surface sur laquelle dessiner la case, doit être la surface représentant la fenêtre entière.
     # x : coordonnée horizontale du point le plus en haut a gauche de la zone ou dessiner la case.
     # y : coordonnée verticale du point le plus en haut a gauche de la zone ou dessiner la case.
     # x2 : coordonnée horizontale du point le plus en bas a droite de la zone ou dessiner la case.
-    # y2 : coordonnée verticlae du point le plus en bas a droite de la zone ou dessiner la case.
+    # y2 : coordonnée verticale du point le plus en bas a droite de la zone ou dessiner la case.
     #
     # ARGUMENTS OPTIONELS :
     #
-    # selectFill : couleur avec laquelle remplir la case si elle est marquée comme selectionnée
-    # hoverFill : couleur avec laquelle remplir la case si elle est marquée comme hovered
-    # bothFill : couleur avec laquelle remplir la case si elle est marquée comme selectionnée et comme hovered
-    # textFill : couleur avec laquelle écrire le nombre contenu dans la case (si celui-ci est valide).
+    # selectFill : tuple représentant la couleur avec laquelle remplir la case si elle est marquée comme selectionnée
+    # hoverFill : tuple représentant la couleur avec laquelle remplir la case si elle est marquée comme hovered
+    # bothFill : tuple représentant la couleur avec laquelle remplir la case si elle est marquée comme selectionnée et comme hovered
+    # textFill : tuple représentant la couleur avec laquelle écrire le nombre contenu dans la case (si celui-ci est valide).
     # textFont : police d'écriture avec laquelle écrire le nombre contenu dans la case (si celui-ci est valide).
-    # choosenFill : couleur avec laquelle remplir la case si elle est marquée comme choisie
+    # choosenFill : tuple représentant la couleur avec laquelle remplir la case si elle est marquée comme choisie
     #
-    # Si selectFill n'est pas précisé, selectFill sera bleu.
-    # Si hoverFill n'est pas précisé, hoverFill sera vert.
-    # Si bothFill n'est pas précisé, bothFill sera rouge.
-    # Si textFill n'est pas précisé, textFill sera blanc.
-    # Si textFont n'est pas précisé, textFont sera "Comic".
-    # Si choosenFill n'est pas précisé, choosenFill sera "#757500".
+    # Si selectFill n'est pas précisé, selectFill sera (0,0,255)).
+    # Si hoverFill n'est pas précisé, hoverFill sera (0,255,0)).
+    # Si bothFill n'est pas précisé, bothFill sera (255,0,0)).
+    # Si textFill n'est pas précisé, textFill sera (0,0,0)).
+    # Si textFont n'est pas précisé, textFont sera "Impact".
+    # Si choosenFill n'est pas précisé, choosenFill sera (117,117,0).
     #
-    def draw(self, canvas, x, y, x2, y2, selectFill="blue", hoverFill="green", bothFill="red", textFill="white", textFont="Comic", choosenFill="#757500"):
+    def draw(self, surface, x, y, x2, y2, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0), textFill=(0,0,0), textFont="Impact", choosenFill=(117,117,0)):
         # TODO: faire la classe quand le hud sera fait
-        super().draw(canvas, x, y, x2, y2, selectFill=selectFill, hoverFill=hoverFill, bothFill=bothFill);
-
         if self.isSelected() and self.choosen and self.isHovered():
-            canvas.create_rectangle(x, y, x2, y2, fill="#"+str(hex(choosenFill[1:])-0x313100));
+            pygame.draw.rect(surface, (choosenFill[0]-49,choosenFill[1]-49, choosenFill[2]), (x, y), (x2, y2))
         elif self.isSelected() and self.choosen:
-            canvas.create_rectangle(x, y, x2, y2, fill="#"+str(hex(choosenFill[1:])-0x181800));
+            pygame.draw.rect(surface, (choosenFill[0]-24,choosenFill[1]-24, choosenFill[2]), (x, y), (x2, y2))
         elif self.choosen:
-            canvas.create_rectangle(x, y, x2, y2, fill=choosenFill);
+            pygame.draw.rect(surface, choosenFill, (x, y), (x2, y2))
         elif self.isSelected() and self.isHovered():
-            canvas.create_rectangle(x, y, x2, y2, fill=selectFill);
+            pygame.draw.rect(surface, bothFill, (x, y), (x2, y2))
         elif self.isSelected():
-            canvas.create_rectangle(x, y, x2, y2, fill=selectFill);
+            pygame.draw.rect(surface, selectFill, (x, y), (x2, y2))
         elif self.isHovered():
-            canvas.create_rectangle(x, y, x2, y2, fill=hoverFill);
+            pygame.draw.rect(surface, hoverFill, (x, y), (x2, y2))
 
         if self.number != 0:
             fontSize = abs(y2-y)-6;
             if self.number > 9:
                 fontSize -= 6;
-            canvas.create_text(x+abs(x2-x)/2, y+abs(y2-y)/2, fill=textFill, font=textFont+" "+str(int(fontSize)), text=str(self.number));
+            police = pygame.font.SysFont(textFont,fontSize)
+            label = police.render(str(self.number), 1, textFill)
+            surface.blit(label, (x+abs(x2-x)/3, y))

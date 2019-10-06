@@ -4,6 +4,8 @@
 # Code écrit dans le cadre du projet Algorithmique et Developpement
 # Écrit en septembre 2019 par Lucas Raulier
 
+import pygame
+from pygame.locals import *
 import math
 
 from Grille import Loto_Case
@@ -27,7 +29,7 @@ class Grille:
     # Permet d'instancier une grille simple contenant (largeur * hauteur) case qui sera
     # contenue dans le rectangle formé par les points (x1, y1) et (x2, y2).
     #
-    def __init__(self, largeur, hauteur, x1, y1, x2, y2, module, *autres_parametres):
+    def __init__(self, largeur, hauteur, x1, y1, x2, y2, module):
         self.largeur = largeur
         self.hauteur = hauteur
         self.x = x1
@@ -40,13 +42,6 @@ class Grille:
                 self.case.append(module.Case(i + 1))
             else:
                 self.case.append(module.Case())
-
-        if module == Sudoku_Case:
-            # Si le jeu lancé est le Sudoku, on remplit la liste de cases avec les numéros de la grille de jeu
-            # chargée
-            liste_numeros = autres_parametres[0]
-            for j in range(self.largeur * self.hauteur):
-                self.case[j].setNumber(liste_numeros[j])
 
     def getListeNumeros(self):
         """Fonction récupérant le numéro de chaque case pour en constituer une liste.
@@ -183,8 +178,8 @@ class Grille:
     # ARGUMENTS OBLIGATOIRES :
     #
     # self : instance de la classe, ne doit pas être mis en argument.
-    # canvas : canvas sur lequel dessiner la grille
-    # couleur : couleur avec laquelle les lignes de la grille doivent être déssinées.
+    # surface : surface sur laquelle dessiner la grille, doit être la surface représentant la fenêtre entière.
+    # couleur : tuple représentant la couleur avec laquelle les lignes de la grille doivent être déssinées.
     #
     # ARGUMENTS OPTIONELS :
     #
@@ -204,7 +199,7 @@ class Grille:
     # Si une ou plusieurs des couleurs ne sont pas précisées,
     # elles seront calculées en utilisant l'argument couleur comme base.
     #
-    def draw(self, canvas, couleur, x=-1, y=-1, x2=-1, y2=-1, caseSelectColor=None, caseHoverColor=None,
+    def draw(self, surface, couleur, x=-1, y=-1, x2=-1, y2=-1, caseSelectColor=None, caseHoverColor=None,
              caseSelectHoverColor=None):
         if x == -1:
             x = self.x
@@ -221,30 +216,34 @@ class Grille:
         case_Hauteur = hauteur / self.hauteur
 
         if caseSelectColor == None:
-            caseSelectColor = "#" + hex((int(couleur[1:], 16) - 0x0b0b0b))[2:]
+            caseSelectColor = (couleur[0]-11,couleur[1]-11,couleur[2]-11)
 
         if caseSelectHoverColor == None:
-            caseSelectHoverColor = "#" + hex((int(couleur[1:], 16) - 0x040404))[2:]
+            caseSelectHoverColor = (couleur[0]-4,couleur[1]-4,couleur[2]-4)
 
         if caseHoverColor == None:
-            caseHoverColor = "#" + hex((int(couleur[1:], 16) - 0x080808))[2:]
+            caseHoverColor = (couleur[0]-8,couleur[1]-8,couleur[2]-8)
 
         for i in range(0, self.hauteur):
             for j in range(0, self.largeur):
-                self.getCaseByCoords(j, i).draw(canvas, x + j * case_Largeur, y + i * case_Hauteur,
+                self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur,
                                                 x + (j * case_Largeur) + case_Largeur,
                                                 y + (i * case_Hauteur) + case_Hauteur, selectFill=caseSelectColor,
                                                 hoverFill=caseHoverColor, bothFill=caseSelectHoverColor)
 
-        canvas.create_line(x, y, x2, y, fill=couleur)
-        canvas.create_line(x, y, x, y2, fill=couleur)
-        canvas.create_line(x2, y, x2, y2, fill=couleur)
-        canvas.create_line(x, y2, x2, y2, fill=couleur)
+        pygame.draw.line(surface, couleur, (x, y), (x2, y))
+        pygame.draw.line(surface, couleur, (x, y), (x, y2))
+        pygame.draw.line(surface, couleur, (x2, y), (x2, y2))
+        pygame.draw.line(surface, couleur, (x, y2), (x2, y2))
         for i in range(0, self.hauteur):
-            canvas.create_line(x, y + (case_Hauteur * i), x + largeur, y + (case_Hauteur * i), fill=couleur)
+            ny = y + (case_Hauteur * i)
+            pygame.draw.line(surface, couleur, (x, ny), (x + largeur, ny))
 
         for i in range(0, self.largeur):
-            canvas.create_line(x + (case_Largeur * i), y, x + (case_Largeur * i), y + hauteur, fill=couleur)
+            nx = x + (case_Largeur * i)
+            pygame.draw.line(surface, couleur, (nx, y), (nx, y + hauteur))
+
+
 
     def draw_cmd(self):
 

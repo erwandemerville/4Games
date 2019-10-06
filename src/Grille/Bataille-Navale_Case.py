@@ -127,10 +127,11 @@ class Case(Case.Case):
     # ARGUMENTS OBLIGATOIRES :
     #
     # self : instance de la classe, ne doit pas être mis en argument.
+    # surface : surface sur laquelle dessiner la case, doit être la surface représentant la fenêtre entière.
     # x : coordonnée horizontale du point le plus en haut a gauche de la zone ou dessiner la case.
     # y : coordonnée verticale du point le plus en haut a gauche de la zone ou dessiner la case.
     # x2 : coordonnée horizontale du point le plus en bas a droite de la zone ou dessiner la case.
-    # y2 : coordonnée verticlae du point le plus en bas a droite de la zone ou dessiner la case.
+    # y2 : coordonnée verticale du point le plus en bas a droite de la zone ou dessiner la case.
     #
     # ARGUMENTS OPTIONELS :
     #
@@ -142,11 +143,11 @@ class Case(Case.Case):
     # Si hoverFill n'est pas précisé, hoverFill sera vert.
     # Si bothFill n'est pas précisé, bothFill sera rouge.
     #
-    def draw(self, canvas, x, y, x2, y2, selectFill="blue", hoverFill="green", bothFill="red"):
+    def draw(self, surface, x, y, x2, y2, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0)):
         #TODO : Ajouter l'affichage de pinned et showShip quand les images seront faites.
         if self.isSelected() and self.isHovered():
-            canvas.create_rectangle(x, y, x2, y2, fill=selectFill);
+            pygame.draw.rect(surface, bothFill, (x, y), (x2, y2))
         elif self.isSelected():
-            canvas.create_rectangle(x, y, x2, y2, fill=selectFill);
+            pygame.draw.rect(surface, selectFill, (x, y), (x2, y2))
         elif self.isHovered():
-            canvas.create_rectangle(x, y, x2, y2, fill=hoverFill);
+            pygame.draw.rect(surface, hoverFill, (x, y), (x2, y2))

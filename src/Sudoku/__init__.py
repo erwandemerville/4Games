@@ -507,7 +507,7 @@ class PartieG:
             self.niveau = self.choixniveau_gui(frame, boutons)
 
     def creerGrille(self, niveau):
-        self.grille_jeu = Grille(9, 9, 10, 10, 310, 310, Sudoku_Case)
+        self.grille_jeu = Grille(9, 9, 145, 65, 495, 405, Sudoku_Case)
         #self.liste_numeros_init = GrillesDeJeu.generer_grille(self.grille_jeu, niveau)
         #self.liste_numeros_init = grilleGenerator.generer(self.grille_jeu, niveau)
         self.liste_numeros_init = GrillesDeJeu.get_grille(niveau, self.grille_jeu)

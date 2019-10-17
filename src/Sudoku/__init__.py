@@ -8,6 +8,8 @@ La classe est adaptée à la fois pour une utilisation sur interface en lignes d
 et pour une utilisation sur interface graphique.
 """
 
+import pygame
+import UiPygame as ui
 import pickle
 import sys
 from Grille.Grille import Grille
@@ -471,3 +473,125 @@ def draw_cmd():
           "I | 0 0 0 | 0 0 0 | 0 0 0 |\n"
           "   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯ \n")
 """
+
+
+
+class PartieG:
+    """Classe principal du module Sudoku, permet de lancer le jeu.
+
+    Pour démarrer une partie de sudoku, simplement saisir 'PartieG()'.
+
+    Une partie pourra être sauvegardée pour être reprise plus tard.
+    La grille sera alors sauvegardée dans un fichier grilleEnCours
+
+    Cette classe sera utilisée pour les applications graphiques
+
+    Attributs :
+    niveau = 1 (facile), 2 (intermédiaire) ou 3 (hardcore)
+    grille_jeu (Attribut de type Grille contenant la grille de jeu)
+    etat_partie (1 = Partie en cours, 2 = Partie gagnée, 3 = Partie pedue)
+    """
+
+    def __init__(self, frame, boutons, data):
+        """CONSTRUCTEUR : Fonction qui gère le déroulement général du jeu 'Sudoku'.
+        Pour passer d'un affichage en lignes de commandes à un affichage graphique,
+        remplacer 'cmd' dans les noms de fonctions par 'gui'"""
+
+        # Vérifie si une grille est en cours.
+        if self.grille_enCours():
+            data.etat = 2
+            self.reprendre_grille_gui(frame, boutons)
+        else:
+            # Afficher le menu de choix du niveau :
+            data.etat = 3
+            self.niveau = self.choixniveau_gui(frame, boutons)
+
+    def creerGrille(self, niveau):
+        self.grille_jeu = Grille(9, 9, 145, 65, 495, 405, Sudoku_Case)
+        #self.liste_numeros_init = GrillesDeJeu.generer_grille(self.grille_jeu, niveau)
+        #self.liste_numeros_init = grilleGenerator.generer(self.grille_jeu, niveau)
+        self.liste_numeros_init = GrillesDeJeu.get_grille(niveau, self.grille_jeu)
+
+    def choixniveau_gui(self, frame, boutons):
+        """INTERFACE GRAPHIQUE : Affiche un menu proposant 3 niveaux de difficulté.
+        L'utilisateur doit cliquer sur le niveau de son choix."""
+        police = pygame.font.SysFont("Impact",25)
+        frame.blit(police.render("Choisir le niveau de difficulé", True, (250,250,250)), (150, 100))
+        color_boutons = (180,180,180)
+        boutons[:] = []
+        boutons.append(ui.Bouton(200, 150, 150, 50,2,(2,235,2),"Facile",color_boutons,police,(255,255,255)))
+        boutons.append(ui.Bouton(200, 250, 150, 50,2,(220,220,2),"Normal",color_boutons,police,(255,255,255)))
+        boutons.append(ui.Bouton(200, 350, 150, 50,2,(235,2,2),"Difficile",color_boutons,police,(255,255,255)))
+
+        frame.fill((0,0,0))
+        boutons[0].draw(frame)
+        boutons[1].draw(frame)
+        boutons[2].draw(frame)
+        pygame.display.flip()
+
+    def charger_grille(self):
+        try:
+            with open('grilleEnCours', 'rb') as fichier:
+                mon_depickler = pickle.Unpickler(fichier)
+                grille_recup = mon_depickler.load()
+                fichier.close()
+        except FileNotFoundError:
+            return 0
+        else:
+            if not grille_recup:
+                return 0
+            else:
+                self.liste_numeros_init = grille_recup[81:162]
+                return grille_recup
+
+    def grille_enCours(self):
+        try:
+            with open('grilleEnCours') as fichier:
+                fichier.close();
+        except FileNotFoundError:
+            return False
+        else:
+            return True
+
+    def reprendre_grille_gui(frame, boutons):
+        """INTERFACE GRAPHIQUE : Invite l'utilisateur à reprendre la grille en cours."""
+        police = pygame.font.SysFont("Impact",25)
+        frame.blit(police.render("Une partie a été savegardée,\nsouhaitez-vous la reprendre ?"), (150, 200))
+        boutons[:] = []
+        boutons.append(ui.Bouton(200, 200, 150, 50))
+        boutons.append(ui.Bouton(200, 400, 150, 50))
+
+        frame.fill((0,0,0))
+        boutons[0].draw(frame,(180,180,180), "Oui",(255,255,255),police)
+        boutons[1].draw(frame,(180,180,180), "Non",(255,255,255),police)
+        pygame.display.flip()
+
+    def sauvegarder_grille(self):
+        """Fonction sauvegardant la grille afin de pouvoir la reprendre plus tard."""
+        liste_grilles = self.grille_jeu.getListeNumeros() + self.liste_numeros_init
+
+        try:
+            with open('grilleEnCours', 'wb') as fichier:
+                mon_pickler = pickle.Pickler(fichier)
+                mon_pickler.dump(liste_grilles)
+                fichier.close()
+        except FileNotFoundError:
+            return 0
+        else:
+            return 1
+
+    def verifier_numero_init(self, position):
+        """Fonction permettant de vérifier si le joueur ne tente pas de modifier un des numéros
+        présents initialement sur la grille de jeu."""
+
+        if self.liste_numeros_init[position] != 0:
+            return 0
+        else :
+            return 1
+
+    def draw(self, frame):
+        frame.fill((0,0,0))
+        surf = pygame.Surface((frame.get_width(), frame.get_height()))
+        self.grille_jeu.draw(surf, (190,190,190))
+        frame.blit(surf, (0,0))
+        pygame.display.flip();

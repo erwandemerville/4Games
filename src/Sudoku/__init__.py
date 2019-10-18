@@ -596,7 +596,7 @@ class PartieG:
                             else:
                                 self.wrongCase[l] = 0
             else:
-                k = (k+2)%10
+                k = (k+1)%10
                 case = self.grille_jeu.getSelectedCase()
                 if case[0] != None:
                     if case[0].estVide() and self.liste_numeros_init[case[1]] == 0:

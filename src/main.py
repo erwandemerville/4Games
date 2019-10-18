@@ -25,11 +25,8 @@ try:
                 data.fin = True
             elif(event.type == MOUSEBUTTONDOWN):
                 # Quand un clic est effectué
-                if (data.etat == 1):
-                    print("OPTIONS")
-                else:
-                    da.Data.menus[data.etat].draw(frame)
-                    da.Data.menus[data.etat].click(frame)
+                da.Data.menus[data.etat].draw(frame)
+                da.Data.menus[data.etat].click(frame)
             elif (event.type == MOUSEMOTION):
                 # Quand la souris est en mouvement
                 if (data.etat == 4):

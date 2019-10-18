@@ -45,8 +45,12 @@ class Data:
                         ui.Bouton(50,frame.get_height()-60,150,50,2,color_boutons_change,"Options",color_boutons,police,color_f),
                         ui.Bouton((frame.get_width()/2)-(150/2),frame.get_height()-60,150,50,2,color_boutons_change,"Profil",color_boutons,police,color_f),
                         ui.Bouton(frame.get_width()-200,frame.get_height()-60,150,50,2,color_boutons_change,"Quitter",color_boutons,police,color_f)]))
+           
+            Data.menus.append(sb.Menu_Optn(data,
+                                           [ui.Bouton(x_btn,y_btn_start+60,width_b,50,2,color_boutons_change,"Loto",color_boutons,police,color_f)] ,
+                                           [ui.Title(50,50,(frame.get_width()-100),60,3,"OPTIONS")]
 
-            Data.menus.append(sb.Menu_Optn(data, []))
+                                           ))
 
             Data.menus.append(sb.Menu_SavedGrille(data, [ui.Bouton(245, 220, 150, 50,0,(45,45,45),"Oui",(180,180,180),police,(255,255,255)), ui.Bouton(245, 320, 150, 50,0,(45,45,45), "Non",(180,180,180),police,(255,255,255))],
                                                     [ui.Title(75, 100, 500, 100, 2, "Une partie a été sauvegardée, voulez-vous la charger?", (0,0,0,0), police20, (255,255,255))]))

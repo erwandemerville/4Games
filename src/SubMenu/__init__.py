@@ -46,7 +46,8 @@ class Main_Menu(Menu_G):
         elif(self.boutons[3].isCursorInRange()):
             print("Lancement du poker")
         elif(self.boutons[4].isCursorInRange()):
-            print("Lancement des options")
+            self.data.setEtat(1)
+            da.Data.menus[1].draw(frame)
         elif(self.boutons[5].isCursorInRange()):
             print("Lancement du profil")
         elif(self.boutons[6].isCursorInRange()):
@@ -56,17 +57,21 @@ class Main_Menu(Menu_G):
 class Menu_Optn(Menu_G):
     "classe représentant le menu des options"
 
-    def __init__(self,data, boutons):
+    def __init__(self,data, boutons,titles):
         # Constructeur prenant la classe Data définie dans le main.py
         super().__init__(data,boutons)
+        self.titles = TitleManager.TitleManager(titles)
 
     def click(self, frame):
         #indique comment le menu doit réagir quand un clic de souris est effectué
         pass
 
     def draw(self, frame):
-        print("héhé")
+        #print("héhé")
+        frame.blit(self.data.fond,(0,0))
         super().draw(frame)
+        self.titles.draw(frame)
+        pygame.display.flip()
 
 class Menu_SavedGrille(Menu_G):
     "classe représentant le menu qui s'affiche pour demander si l'on utilise la grille sauvegardée"

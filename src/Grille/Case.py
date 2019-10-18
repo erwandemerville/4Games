@@ -3,6 +3,7 @@
 
 # Code écrit dans le cadre du projet Algorithmique et Developpement
 # Écrit en septembre 2019 par Lucas Raulier
+import pygame
 from pygame.locals import *
 
 class Case:
@@ -114,10 +115,10 @@ class Case:
     #
     # Si une case n'est pas marquée comme sélectionée ou hovered, cette case sera affichée comme vide.
     #
-    def draw(self, surface, x, y, x2, y2, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0)):
+    def draw(self, surface, x, y, width, height, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0)):
         if self.isSelected() and self.isHovered():
-            pygame.draw.rect(surface, bothFill, (x, y), (x2, y2))
+            pygame.draw.rect(surface, bothFill, (x, y, width, height))
         elif self.isSelected():
-            pygame.draw.rect(surface, selectFill, (x, y), (x2, y2))
+            pygame.draw.rect(surface, selectFill, (x, y, width, height))
         elif self.isHovered():
-            pygame.draw.rect(surface, hoverFill, (x, y), (x2, y2))
+            pygame.draw.rect(surface, hoverFill, (x, y, width, height))

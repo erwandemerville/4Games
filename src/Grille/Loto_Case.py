@@ -94,25 +94,25 @@ class Case(Case.Case):
     # Si textFont n'est pas précisé, textFont sera "Impact".
     # Si choosenFill n'est pas précisé, choosenFill sera (117,117,0).
     #
-    def draw(self, surface, x, y, x2, y2, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0), textFill=(0,0,0), textFont="Impact", choosenFill=(117,117,0)):
+    def draw(self, surface, x, y, width, height, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0), textFill=(0,0,0), textFont="Impact", choosenFill=(117,117,0)):
         # TODO: faire la classe quand le hud sera fait
         if self.isSelected() and self.choosen and self.isHovered():
-            pygame.draw.rect(surface, (choosenFill[0]-49,choosenFill[1]-49, choosenFill[2]), (x, y), (x2, y2))
+            pygame.draw.rect(surface, (choosenFill[0]-49,choosenFill[1]-49, choosenFill[2]), (x, y, width, height))
         elif self.isSelected() and self.choosen:
-            pygame.draw.rect(surface, (choosenFill[0]-24,choosenFill[1]-24, choosenFill[2]), (x, y), (x2, y2))
+            pygame.draw.rect(surface, (choosenFill[0]-24,choosenFill[1]-24, choosenFill[2]), (x, y, width, height))
         elif self.choosen:
-            pygame.draw.rect(surface, choosenFill, (x, y), (x2, y2))
+            pygame.draw.rect(surface, choosenFill, (x, y, width, height))
         elif self.isSelected() and self.isHovered():
-            pygame.draw.rect(surface, bothFill, (x, y), (x2, y2))
+            pygame.draw.rect(surface, bothFill, (x, y, width, height))
         elif self.isSelected():
-            pygame.draw.rect(surface, selectFill, (x, y), (x2, y2))
+            pygame.draw.rect(surface, selectFill, (x, y, width, height))
         elif self.isHovered():
-            pygame.draw.rect(surface, hoverFill, (x, y), (x2, y2))
+            pygame.draw.rect(surface, hoverFill, (x, y, width, height))
 
         if self.number != 0:
-            fontSize = abs(y2-y)-6;
+            fontSize = height-6;
             if self.number > 9:
                 fontSize -= 6;
             police = pygame.font.SysFont(textFont,fontSize)
             label = police.render(str(self.number), 1, textFill)
-            surface.blit(label, (x+abs(x2-x)/3, y))
+            surface.blit(label, (x+width/3, y))

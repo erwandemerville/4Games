@@ -12,9 +12,12 @@ import pygame
 import UiPygame as ui
 import pickle
 import sys
+import os, math
 from Grille.Grille import Grille
 from Grille import Sudoku_Case
 from Sudoku.grillesDeJeu import *
+import Data as da
+import time
 
 liste_pos_l = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
 lettre_to_chiffre = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8}
@@ -492,42 +495,32 @@ class PartieG:
     etat_partie (1 = Partie en cours, 2 = Partie gagnée, 3 = Partie pedue)
     """
 
-    def __init__(self, frame, boutons, data):
+    def __init__(self, frame, data):
         """CONSTRUCTEUR : Fonction qui gère le déroulement général du jeu 'Sudoku'.
         Pour passer d'un affichage en lignes de commandes à un affichage graphique,
         remplacer 'cmd' dans les noms de fonctions par 'gui'"""
 
+        #varaible du chronomètre
+        self.time = 0
+        self.diff = 1
         # Vérifie si une grille est en cours.
-        if self.grille_enCours():
+        if self.charger_grille():
             data.etat = 2
-            self.reprendre_grille_gui(frame, boutons)
         else:
             # Afficher le menu de choix du niveau :
             data.etat = 3
-            self.niveau = self.choixniveau_gui(frame, boutons)
+
+        da.Data.menus[data.etat].draw(frame)
 
     def creerGrille(self, niveau):
-        self.grille_jeu = Grille(9, 9, 145, 65, 495, 405, Sudoku_Case)
-        #self.liste_numeros_init = GrillesDeJeu.generer_grille(self.grille_jeu, niveau)
+        self.time = 0
+        self.diff = niveau
+        self.grille_jeu = Grille(9, 9, 50, 65, 400, 405, Sudoku_Case)
+        self.liste_numeros_init = GrillesDeJeu.get_grille(niveau, self.grille_jeu).getListeNumeros()
+        self.wrongCase = []
+        for i in range(81):
+            self.wrongCase.append(0)
         #self.liste_numeros_init = grilleGenerator.generer(self.grille_jeu, niveau)
-        self.liste_numeros_init = GrillesDeJeu.get_grille(niveau, self.grille_jeu)
-
-    def choixniveau_gui(self, frame, boutons):
-        """INTERFACE GRAPHIQUE : Affiche un menu proposant 3 niveaux de difficulté.
-        L'utilisateur doit cliquer sur le niveau de son choix."""
-        police = pygame.font.SysFont("Impact",25)
-        frame.blit(police.render("Choisir le niveau de difficulé", True, (250,250,250)), (150, 100))
-        color_boutons = (180,180,180)
-        boutons[:] = []
-        boutons.append(ui.Bouton(200, 150, 150, 50,2,(2,235,2),"Facile",color_boutons,police,(255,255,255)))
-        boutons.append(ui.Bouton(200, 250, 150, 50,2,(220,220,2),"Normal",color_boutons,police,(255,255,255)))
-        boutons.append(ui.Bouton(200, 350, 150, 50,2,(235,2,2),"Difficile",color_boutons,police,(255,255,255)))
-
-        frame.fill((0,0,0))
-        boutons[0].draw(frame)
-        boutons[1].draw(frame)
-        boutons[2].draw(frame)
-        pygame.display.flip()
 
     def charger_grille(self):
         try:
@@ -536,39 +529,29 @@ class PartieG:
                 grille_recup = mon_depickler.load()
                 fichier.close()
         except FileNotFoundError:
-            return 0
-        else:
-            if not grille_recup:
-                return 0
-            else:
-                self.liste_numeros_init = grille_recup[81:162]
-                return grille_recup
-
-    def grille_enCours(self):
-        try:
-            with open('grilleEnCours') as fichier:
-                fichier.close();
-        except FileNotFoundError:
             return False
         else:
-            return True
+            if not grille_recup:
+                return False
+            else:
+                if len(grille_recup) != 163:
+                    return False
+                self.grille_jeu = Grille(9, 9, 50, 65, 400, 405, Sudoku_Case)
+                self.grille_jeu.fillByListNumeros(grille_recup[:81])
+                self.liste_numeros_init = grille_recup[81:162]
+                self.time = grille_recup[-1]
+                self.wrongCase = []
+                for i in range(81):
+                    if not(grilleGenerator.verifierNombre(self.grille_jeu, (i%self.grille_jeu.largeur, math.floor(i/self.grille_jeu.largeur)))):
+                        self.wrongCase.append(1)
+                    else:
+                        self.wrongCase.append(0)
+                return True
 
-    def reprendre_grille_gui(frame, boutons):
-        """INTERFACE GRAPHIQUE : Invite l'utilisateur à reprendre la grille en cours."""
-        police = pygame.font.SysFont("Impact",25)
-        frame.blit(police.render("Une partie a été savegardée,\nsouhaitez-vous la reprendre ?"), (150, 200))
-        boutons[:] = []
-        boutons.append(ui.Bouton(200, 200, 150, 50))
-        boutons.append(ui.Bouton(200, 400, 150, 50))
-
-        frame.fill((0,0,0))
-        boutons[0].draw(frame,(180,180,180), "Oui",(255,255,255),police)
-        boutons[1].draw(frame,(180,180,180), "Non",(255,255,255),police)
-        pygame.display.flip()
-
-    def sauvegarder_grille(self):
+    def sauvegarder_grille(self): #Corriger ça
         """Fonction sauvegardant la grille afin de pouvoir la reprendre plus tard."""
         liste_grilles = self.grille_jeu.getListeNumeros() + self.liste_numeros_init
+        liste_grilles.append(self.time);
 
         try:
             with open('grilleEnCours', 'wb') as fichier:
@@ -580,6 +563,9 @@ class PartieG:
         else:
             return 1
 
+    def effacer_sauvegarde(self):
+        os.remove('grilleEnCours')
+
     def verifier_numero_init(self, position):
         """Fonction permettant de vérifier si le joueur ne tente pas de modifier un des numéros
         présents initialement sur la grille de jeu."""
@@ -589,9 +575,104 @@ class PartieG:
         else :
             return 1
 
-    def draw(self, frame):
+    def keyPressed(self, key, data):
+        k = -1
+        for i in range(len(key)-1):
+            if key[i] == 1:
+                k = i
+                break
+
+        if k == -1:
+            return False
+        else:
+            if k == 18:
+                case = self.grille_jeu.getSelectedCase()
+                if case[0] != None:
+                    if self.liste_numeros_init[case[1]] == 0:
+                        case[0].setNumber(0)
+                        for l in range(81):
+                            if not(grilleGenerator.verifierNombre(self.grille_jeu, (l%self.grille_jeu.largeur, math.floor(l/self.grille_jeu.largeur)))):
+                                self.wrongCase[l] = 1
+                            else:
+                                self.wrongCase[l] = 0
+            else:
+                k = (k+2)%10
+                case = self.grille_jeu.getSelectedCase()
+                if case[0] != None:
+                    if case[0].estVide() and self.liste_numeros_init[case[1]] == 0:
+                        case[0].setNumber(k)
+
+                        for l in range(81):
+                            if not(grilleGenerator.verifierNombre(self.grille_jeu, (l%self.grille_jeu.largeur, math.floor(l/self.grille_jeu.largeur)))):
+                                self.wrongCase[l] = 1
+                            else:
+                                self.wrongCase[l] = 0
+                    if self.partieFinie():
+                        data.setEtat(5)
+            return True
+
+    def partieFinie(self):
+        for i in range(len(self.grille_jeu.case)):
+            case = self.grille_jeu.getCase(i)
+            if case.getNumber() == 0 or self.verifier_numero_cl(i, case.getNumber()) == 0:
+                return False
+        return True
+
+    def verifier_numero_cl(self, position, number):
+        """Cette fonction vérifie si le numéro entré n'est pas présent sur la même ligne ou colonne."""
+
+        ok = True
+        n = 0
+        i = 0
+        while i <= 80:
+            i += 9
+            if n <= position < i:
+                for j in range(n, i):
+                    if position != j:
+                        if number == self.grille_jeu.case[j].getNumber():
+                            ok = False
+            n += 9
+
+        if ok:
+            u = position
+            while not (0 <= u <= 8):
+                u -= 9
+
+            k = u
+            while k in range(u, (u+9*8)+1):
+                if position != k:
+                    if number == self.grille_jeu.case[k].getNumber():
+                        ok = False
+
+                k += 9
+
+        if not ok:
+            return 0
+        else:
+            return 1
+
+    def getDiff(self):
+        return self.diff
+
+    def getDiffStr(self):
+        if self.diff == 1:
+            return "Facile"
+        elif self.diff == 2:
+            return "Moyen"
+        elif self.diff == 3:
+            return "Difficile"
+        else:
+            return "Inconnu"
+
+    def timerTick(self):
+        self.time = self.time+1
+
+    def getStringTime(self):
+        return time.strftime('%M:%S ', time.gmtime(self.time))
+
+    def draw(self, frame, menu=None):
         frame.fill((0,0,0))
-        surf = pygame.Surface((frame.get_width(), frame.get_height()))
-        self.grille_jeu.draw(surf, (190,190,190))
-        frame.blit(surf, (0,0))
-        pygame.display.flip();
+        self.grille_jeu.drawForSudoku(frame, (190,190,190), self.liste_numeros_init, self.wrongCase, (104,104,104), (92,92,92), (73,73,73))
+        if menu != None:
+            menu.draw(frame)
+        pygame.display.flip()

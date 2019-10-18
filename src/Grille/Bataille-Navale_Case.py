@@ -143,11 +143,11 @@ class Case(Case.Case):
     # Si hoverFill n'est pas précisé, hoverFill sera vert.
     # Si bothFill n'est pas précisé, bothFill sera rouge.
     #
-    def draw(self, surface, x, y, x2, y2, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0)):
+    def draw(self, surface, x, y, width, height, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0)):
         #TODO : Ajouter l'affichage de pinned et showShip quand les images seront faites.
         if self.isSelected() and self.isHovered():
-            pygame.draw.rect(surface, bothFill, (x, y), (x2, y2))
+            pygame.draw.rect(surface, bothFill, (x, y, width, height))
         elif self.isSelected():
-            pygame.draw.rect(surface, selectFill, (x, y), (x2, y2))
+            pygame.draw.rect(surface, selectFill, (x, y, width, height))
         elif self.isHovered():
-            pygame.draw.rect(surface, hoverFill, (x, y), (x2, y2))
+            pygame.draw.rect(surface, hoverFill, (x, y, width, height))

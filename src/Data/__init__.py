@@ -67,7 +67,7 @@ class Data:
             Data.menus.append(sb.Menu_SudokuP(data, [ui.Bouton(180,165,frame.get_width()-300-60,50,2,(120,120,120),"Reprendre",(152,152,152),police,(255,255,255)),
                                                      ui.Bouton(180,240,frame.get_width()-300-60,50,2,(120,120,120),"Sauvegarder et quitter",(152,152,152),police,(255,255,255)),
                                                      ui.Bouton(180,315,frame.get_width()-300-60,50,2,(120,120,120),"Quitter sans sauvegarder",(152,152,152),police,(255,255,255))]))
-
+            Data.menus[1].readCfg()
             pass
 
         # Fonction setEtat(e)

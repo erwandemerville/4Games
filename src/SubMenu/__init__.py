@@ -4,6 +4,7 @@ import Sudoku
 from abc import ABC, abstractmethod
 from SubMenu import TitleManager
 import Data as da
+import configparser as cp
 
 class Menu_G(ABC):
     "Classe générale représentant un menu"
@@ -46,7 +47,9 @@ class Main_Menu(Menu_G):
         elif(self.boutons[3].isCursorInRange()):
             print("Lancement du poker")
         elif(self.boutons[4].isCursorInRange()):
+            # Lancement des options
             self.data.setEtat(1)
+            da.Data.menus[1].readCfg()
             da.Data.menus[1].draw(frame)
         elif(self.boutons[5].isCursorInRange()):
             print("Lancement du profil")
@@ -61,6 +64,8 @@ class Menu_Optn(Menu_G):
         # Constructeur prenant la classe Data définie dans le main.py
         super().__init__(data,boutons)
         self.titles = TitleManager.TitleManager(titles)
+        self.link_cfg = "fourgame.cfg"
+        self.cfg = cp.ConfigParser()
 
     def click(self, frame):
         #indique comment le menu doit réagir quand un clic de souris est effectué
@@ -75,6 +80,7 @@ class Menu_Optn(Menu_G):
                 self.data.sound_active = False
             else:
                 self.data.sound_active = True
+            self.writeCfg()
         elif(self.boutons[1].isCursorInRange()):
             # Bouton retour au menu
             self.data.etat = 0
@@ -96,7 +102,25 @@ class Menu_Optn(Menu_G):
                 self.boutons[3].setText("Activer les bruitages")
             self.draw(frame)
         
-
+    def writeCfg(self):
+        section = "Sound"
+        isIn = False
+        for s in self.cfg.sections():
+            if(s == 'Sound'):
+                isIn = True
+        if(not(isIn)):
+            self.cfg.add_section(section)
+        self.cfg.set(section,"music",str(self.data.music_active))
+        self.cfg.set(section,"sound",str(self.data.sound_active))
+        self.cfg.write(open(self.link_cfg,'w'))
+    def readCfg(self):
+        file = self.cfg.read(self.link_cfg)
+        if(file == []):
+            self.writeCfg()
+            file = self.cfg.read(self.link_cfg)
+        self.data.setMusic(self.cfg.getboolean("Sound","music"))
+        self.data.setSound(self.cfg.getboolean("Sound","sound"))
+    
     def draw(self, frame):
         #print("héhé")
         frame.blit(self.data.fond,(0,0))

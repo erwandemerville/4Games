@@ -64,7 +64,15 @@ class Menu_Optn(Menu_G):
 
     def click(self, frame):
         #indique comment le menu doit réagir quand un clic de souris est effectué
-        pass
+        if(self.boutons[0].isCursorInRange()):
+            # Bouton sauvegarde enfoncé
+            print("Sauvegarde en cours ... ")
+        elif(self.boutons[1].isCursorInRange()):
+            # Bouton retour au menu
+            self.data.etat = 0
+            frame.blit(self.data.fond, (0,0))
+            da.Data.menus[0].draw(frame)
+        
 
     def draw(self, frame):
         #print("héhé")

@@ -69,9 +69,9 @@ class Menu_Optn(Menu_G):
     def draw(self, frame):
         #print("héhé")
         frame.blit(self.data.fond,(0,0))
-        super().draw(frame)
+        
         self.titles.draw(frame)
-        pygame.display.flip()
+        super().draw(frame)
 
 class Menu_SavedGrille(Menu_G):
     "classe représentant le menu qui s'affiche pour demander si l'on utilise la grille sauvegardée"
@@ -137,6 +137,7 @@ class Menu_Sudoku(Menu_G):
     def __init__(self,data, boutons):
         # Constructeur prenant la classe Data définie dans le main.py
         super().__init__(data,boutons)
+        self.police = pygame.font.SysFont('Impact',20)
 
     def click(self, frame):
         pos = pygame.mouse.get_pos()
@@ -148,9 +149,8 @@ class Menu_Sudoku(Menu_G):
 
     def draw(self, frame):
         pygame.draw.rect(frame, (90, 90, 90), (470, 0, 170, 480))
-        police = pygame.font.SysFont('Impact',20)
-        frame.blit(police.render("Temps :", True, (255,255,255)), (525, 120))
-        frame.blit(police.render(self.data.partie.getStringTime(), True, (255,255,255)), (530, 150))
+        frame.blit(self.police.render("Temps :", True, (255,255,255)), (525, 120))
+        frame.blit(self.police.render(self.data.partie.getStringTime(), True, (255,255,255)), (530, 150))
         super().draw(frame)
 
 class Menu_SudokuEnd(Menu_G):
@@ -159,6 +159,8 @@ class Menu_SudokuEnd(Menu_G):
     def __init__(self,data, boutons):
         # Constructeur prenant la classe Data définie dans le main.py
         super().__init__(data,boutons)
+        self.police = pygame.font.SysFont('Impact',25)
+        self.police20 = pygame.font.SysFont('Impact',20)
 
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
@@ -172,10 +174,8 @@ class Menu_SudokuEnd(Menu_G):
 
     def draw(self, frame):
         frame.fill((0,0,0))
-        police = pygame.font.SysFont('Impact',25)
-        police20 = pygame.font.SysFont('Impact',20)
-        frame.blit(police.render("Partie Terminée", True, (255,255,255)), (230, 120))
-        frame.blit(police20.render("grille niveau " + self.data.partie.getDiffStr() + " terminée en " + self.data.partie.getStringTime(), True, (255,255,255)), (160, 150))
+        frame.blit(self.police.render("Partie Terminée", True, (255,255,255)), (230, 120))
+        frame.blit(self.police20.render("Grille niveau " + self.data.partie.getDiffStr() + " terminée en " + self.data.partie.getStringTime(), True, (255,255,255)), (160, 150))
         super().draw(frame)
 
 class Menu_SudokuP(Menu_G):
@@ -184,6 +184,8 @@ class Menu_SudokuP(Menu_G):
     def __init__(self,data, boutons):
         # Constructeur prenant la classe Data définie dans le main.py
         super().__init__(data,boutons)
+        self.police25 = pygame.font.SysFont('Impact',25)
+        self.police = pygame.font.SysFont("Impact",27)
 
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
@@ -198,11 +200,9 @@ class Menu_SudokuP(Menu_G):
             self.data.setEtat(0)
 
     def draw(self, frame):
-        pygame.draw.rect(frame, (70, 70, 70), (220, 120, 200, 270))
-        police = pygame.font.SysFont('Impact',25)
-
-        police = pygame.font.SysFont("Impact",27)
-        frame.blit(police.render("Pause", True, (255,255,255)), (285, 120))
+        pygame.draw.rect(frame, (70, 70, 70), (150, 120, frame.get_width()-300, 270))
+        
+        frame.blit(self.police.render("Pause", True, (255,255,255)), (285, 120))
         for i in self.boutons:
             i.draw(frame)
         pygame.display.flip()

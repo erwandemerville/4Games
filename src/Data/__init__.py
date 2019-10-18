@@ -35,9 +35,8 @@ class Data:
         def init(frame, data):
             police20 = pygame.font.SysFont('Impact',20)
             police = pygame.font.SysFont('Impact',25)
-            color_boutons = (180,180,180)
-            color_boutons_change = (45,45,45)
-            color_f = (255,255,255);width_b = 400;x_btn = (frame.get_width()/2) - (width_b/2);y_btn_start = 160
+            color_boutons = (180,180,180);color_boutons_change = (45,45,45);color_f = (255,255,255);
+            width_b = 400;x_btn = (frame.get_width()/2) - (width_b/2);y_btn_start = 160
             Data.menus.append(sb.Main_Menu(data, [ui.Bouton(x_btn,y_btn_start,width_b,50,2,color_boutons_change,"Sudoku",color_boutons,police,color_f),
                         ui.Bouton(x_btn,y_btn_start+60,width_b,50,2,color_boutons_change,"Loto",color_boutons,police,color_f),
                         ui.Bouton(x_btn,y_btn_start+120,width_b,50,2,color_boutons_change,"Bataille navale",color_boutons,police,color_f),
@@ -60,8 +59,10 @@ class Data:
             Data.menus.append(sb.Menu_Sudoku(data, [ui.Bouton(480,420,150,50,2,color_boutons_change,"Pause",(152,152,152),police,(255,255,255))]))
 
             Data.menus.append(sb.Menu_SudokuEnd(data, [ui.Bouton(245, 200, 150, 50,2,(2,235,2),"Recommencer",color_boutons,police20,(255,255,255)), ui.Bouton(245, 300, 150, 50,2,(220,220,2),"Retourner au menu",color_boutons,pygame.font.SysFont('Impact',18),(255,255,255))]))
-
-            Data.menus.append(sb.Menu_SudokuP(data, [ui.Bouton(245,165,150,50,2,(120,120,120),"Reprendre",(152,152,152),police,(255,255,255)), ui.Bouton(245,240,150,50,2,(120,120,120),"Quitter et Sauvegarder",(152,152,152),police,(255,255,255)), ui.Bouton(245,315,150,50,2,(120,120,120),"Quitter sans Sauvegarder",(152,152,152),police,(255,255,255))]))
+        
+            Data.menus.append(sb.Menu_SudokuP(data, [ui.Bouton(180,165,frame.get_width()-300-60,50,2,(120,120,120),"Reprendre",(152,152,152),police,(255,255,255)),
+                                                     ui.Bouton(180,240,frame.get_width()-300-60,50,2,(120,120,120),"Sauvegarder et quitter",(152,152,152),police,(255,255,255)),
+                                                     ui.Bouton(180,315,frame.get_width()-300-60,50,2,(120,120,120),"Quitter sans sauvegarder",(152,152,152),police,(255,255,255))]))
 
             pass
 

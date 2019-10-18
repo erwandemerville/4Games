@@ -88,10 +88,11 @@ class Case(Case.Case):
     # Si textFill n'est pas précisé, textFill sera blanc.
     # Si textFont n'est pas précisé, textFont sera "Comic".
     #
-    def draw(self, surface, x, y, x2, y2, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0), textFill=(255,255,255), textFont="Impact"):
+    def draw(self, surface, x, y, width, height, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0), textFill=(255,255,255), textFont="Impact"):
         # TODO: faire la classe quand le hud sera fait
+        super().draw(surface, x, y, width, height, selectFill, hoverFill, bothFill)
         if self.number != 0:
-            fontSize = abs(y2-y)-6
+            fontSize = height-6
             police = pygame.font.SysFont(textFont,int(fontSize))
             label = police.render(str(self.number), 1, textFill)
-            surface.blit(label, (x+abs(x2-x)/3, y))
+            surface.blit(label, (x+(width-1)/3, y))

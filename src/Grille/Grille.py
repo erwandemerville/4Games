@@ -53,6 +53,10 @@ class Grille:
 
         return listenumeros
 
+    def fillByListNumeros(self, list):
+        for i in range(len(list)):
+            self.case[i].setNumber(list[i])
+
     # Fonction getCase
     #
     # self : instance de la classe, ne doit pas être mis en argument.
@@ -116,7 +120,7 @@ class Grille:
         if case != None:
             case.select()
             for i in range(0, self.largeur * self.hauteur):
-                if self.getCase(i) != case:
+                if self.getCase(i) is not case:
                     self.getCase(i).deselect()
         else:
             for i in range(0, self.largeur * self.hauteur):
@@ -159,6 +163,12 @@ class Grille:
                     return False
         return True
 
+    def getSelectedCase(self):
+        for i in range(len(self.case)):
+            if self.case[i].isSelected():
+                return (self.case[i], i)
+        return (None, -1)
+
     # Fonction contient
     #
     # self : instance de la classe, ne doit pas être mis en argument.
@@ -173,6 +183,9 @@ class Grille:
                     return True
         return False
 
+    def getBoundingBox(self):
+        return (self.x, self.y, self.x2, self.y2)
+
     # Fonction draw
     #
     # ARGUMENTS OBLIGATOIRES :
@@ -186,7 +199,7 @@ class Grille:
     # x : coordonnée horizontale du point le plus en haut a gauche de la zone ou dessiner la grille.
     # y : coordonnée verticale du point le plus en haut a gauche de la zone ou dessiner la grille.
     # x2 : coordonnée horizontale du point le plus en bas a droite de la zone ou dessiner la grille.
-    # y2 : coordonnée verticlae du point le plus en bas a droite de la zone ou dessiner la grille.
+    # y2 : coordonnée verticale du point le plus en bas a droite de la zone ou dessiner la grille.
     #
     # Si une ou plusieurs des coordonnées ne sont pas précisées, les points de la grille seront
     # pris comme référence pour les points non précisés.
@@ -199,36 +212,33 @@ class Grille:
     # Si une ou plusieurs des couleurs ne sont pas précisées,
     # elles seront calculées en utilisant l'argument couleur comme base.
     #
-    def draw(self, surface, couleur, x=-1, y=-1, x2=-1, y2=-1, caseSelectColor=None, caseHoverColor=None,
+    def draw(self, surface, couleur, caseSelectColor=None, caseHoverColor=None,
              caseSelectHoverColor=None):
-        if x == -1:
-            x = self.x
-        if x2 == -1:
-            x2 = self.x2
+        x = self.x
+        x2 = self.x2
+        y = self.y
+        y2 = self.y2
 
-        if y == -1:
-            y = self.y
-        if y2 == -1:
-            y2 = self.y2
         largeur = abs(x2 - x)
         hauteur = abs(y2 - y)
         case_Largeur = largeur / self.largeur
         case_Hauteur = hauteur / self.hauteur
+        effectiveCase_Largeur = case_Largeur+1
+        effectiveCase_Hauteur = case_Hauteur+1
 
         if caseSelectColor == None:
-            caseSelectColor = (couleur[0]-11,couleur[1]-11,couleur[2]-11)
+            caseSelectColor = (couleur[0]-27,couleur[1]-27,couleur[2]-27)
 
         if caseSelectHoverColor == None:
-            caseSelectHoverColor = (couleur[0]-4,couleur[1]-4,couleur[2]-4)
+            caseSelectHoverColor = (couleur[0]-33,couleur[1]-33,couleur[2]-33)
 
         if caseHoverColor == None:
-            caseHoverColor = (couleur[0]-8,couleur[1]-8,couleur[2]-8)
+            caseHoverColor = (couleur[0]-45,couleur[1]-45,couleur[2]-45)
 
         for i in range(0, self.hauteur):
             for j in range(0, self.largeur):
-                self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur,
-                                                x + (j * case_Largeur) + case_Largeur,
-                                                y + (i * case_Hauteur) + case_Hauteur, selectFill=caseSelectColor,
+                self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
+                                                effectiveCase_Hauteur, selectFill=caseSelectColor,
                                                 hoverFill=caseHoverColor, bothFill=caseSelectHoverColor)
 
         pygame.draw.line(surface, couleur, (x, y), (x2, y))
@@ -243,7 +253,55 @@ class Grille:
             nx = x + (case_Largeur * i)
             pygame.draw.line(surface, couleur, (nx, y), (nx, y + hauteur))
 
+    def drawForSudoku(self, surface, couleur, casesBase, casesErr, caseSelectColor=None, caseHoverColor=None,
+             caseSelectHoverColor=None, errColor=(184, 3, 3), notBaseColor=(3, 3, 184)):
+        x = self.x
+        x2 = self.x2
+        y = self.y
+        y2 = self.y2
 
+        largeur = abs(x2 - x)
+        hauteur = abs(y2 - y)
+        case_Largeur = largeur / self.largeur
+        case_Hauteur = hauteur / self.hauteur
+        effectiveCase_Largeur = case_Largeur+1
+        effectiveCase_Hauteur = case_Hauteur+1
+
+        if caseSelectColor == None:
+            caseSelectColor = (couleur[0]-27,couleur[1]-27,couleur[2]-27)
+
+        if caseSelectHoverColor == None:
+            caseSelectHoverColor = (couleur[0]-33,couleur[1]-33,couleur[2]-33)
+
+        if caseHoverColor == None:
+            caseHoverColor = (couleur[0]-45,couleur[1]-45,couleur[2]-45)
+
+        for i in range(0, self.hauteur):
+            for j in range(0, self.largeur):
+                if casesErr[i*self.largeur+j] != 0:
+                    self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
+                                                    effectiveCase_Hauteur, selectFill=caseSelectColor,
+                                                    hoverFill=caseHoverColor, bothFill=caseSelectHoverColor, textFill=errColor)
+                elif casesBase[i*self.largeur+j] != 0:
+                    self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
+                                                    effectiveCase_Hauteur, selectFill=caseSelectColor,
+                                                    hoverFill=caseHoverColor, bothFill=caseSelectHoverColor)
+                else:
+                    self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
+                                                    effectiveCase_Hauteur, selectFill=caseSelectColor,
+                                                    hoverFill=caseHoverColor, bothFill=caseSelectHoverColor, textFill=notBaseColor)
+
+        pygame.draw.line(surface, couleur, (x, y), (x2, y))
+        pygame.draw.line(surface, couleur, (x, y), (x, y2))
+        pygame.draw.line(surface, couleur, (x2, y), (x2, y2))
+        pygame.draw.line(surface, couleur, (x, y2), (x2, y2))
+        for i in range(0, self.hauteur):
+            ny = y + (case_Hauteur * i)
+            pygame.draw.line(surface, couleur, (x, ny), (x + largeur, ny))
+
+        for i in range(0, self.largeur):
+            nx = x + (case_Largeur * i)
+            pygame.draw.line(surface, couleur, (nx, y), (nx, y + hauteur))
 
     def draw_cmd(self):
 

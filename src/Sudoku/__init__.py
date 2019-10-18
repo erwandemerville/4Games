@@ -564,7 +564,8 @@ class PartieG:
             return 1
 
     def effacer_sauvegarde(self):
-        os.remove('grilleEnCours')
+        if(self.charger_grille()):
+            os.remove('grilleEnCours')
 
     def verifier_numero_init(self, position):
         """Fonction permettant de vérifier si le joueur ne tente pas de modifier un des numéros
@@ -609,6 +610,8 @@ class PartieG:
                                 self.wrongCase[l] = 0
                     if self.partieFinie():
                         data.setEtat(5)
+                        data.partie.effacer_sauvegarde()
+                        da.Data.menus[5].draw(frame)
             return True
 
     def partieFinie(self):

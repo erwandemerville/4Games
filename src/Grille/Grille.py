@@ -254,7 +254,7 @@ class Grille:
             pygame.draw.line(surface, couleur, (nx, y), (nx, y + hauteur))
 
     def drawForSudoku(self, surface, couleur, casesBase, casesErr, caseSelectColor=None, caseHoverColor=None,
-             caseSelectHoverColor=None, errColor=(184, 3, 3), notBaseColor=(3, 3, 184)):
+             caseSelectHoverColor=None, errColor=(184, 3, 3), notBaseColor=(60, 139, 204)):
         x = self.x
         x2 = self.x2
         y = self.y
@@ -302,37 +302,8 @@ class Grille:
         for i in range(0, self.largeur):
             nx = x + (case_Largeur * i)
             pygame.draw.line(surface, couleur, (nx, y), (nx, y + hauteur))
+        pygame.draw.line(surface,(255,255,255),(x+3*case_Largeur,y),(x+3*case_Largeur,y2),3)
+        pygame.draw.line(surface,(255,255,255),(x+6*case_Largeur,y),(x+6*case_Largeur,y2),3)
+        pygame.draw.line(surface,(255,255,255),(x,y+3*case_Hauteur),(x2,y+3*case_Hauteur),3)
+        pygame.draw.line(surface,(255,255,255),(x,y+6*case_Hauteur),(x2,y+6*case_Hauteur),3)
 
-    def draw_cmd(self):
-
-        print("    1 2 3   4 5 6   7 8 9  \n"
-              "   ˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍˍ ")
-
-        liste_lettres = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
-        lettre = 0
-        compteur = 0
-        liste = []
-        for i in self.case:
-            if i.getNumber() == 0:
-                caract = '-'
-            else:
-                caract = str(i.getNumber())
-            liste.append(caract)
-            compteur += 1
-            if compteur == 9:
-                print("{0} | {1} {2} {3} | {4} {5} {6} | {7} {8} {9} |".format(liste_lettres[lettre],
-                                                                               liste[0], liste[1], liste[2], liste[3],
-                                                                               liste[4], liste[5], liste[6], liste[7],
-                                                                               liste[8]))
-                liste = []
-                compteur = 0
-
-                if lettre == 8:
-                    lettre = 0
-                else:
-                    lettre += 1
-
-                if lettre == 3 or lettre == 6:
-                    print("  | --------------------- |")
-
-        print("   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯ \n")

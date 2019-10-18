@@ -22,7 +22,7 @@ try:
         for event in pygame.event.get():
             if(event.type == QUIT):
                 # En cas d'appui sur la croix
-                fin = True
+                data.fin = True
             elif(event.type == MOUSEBUTTONDOWN):
                 # Quand un clic est effectué
                 if (data.etat == 1):
@@ -41,6 +41,10 @@ try:
             elif event.type == pygame.KEYDOWN:
                 if (data.etat == 4):
                     keys = pygame.key.get_pressed()
+                    if(keys[K_LSHIFT]==1 and keys[K_g]==1):
+                        data.setEtat(5)
+                        data.partie.effacer_sauvegarde()
+                        da.Data.menus[5].draw(frame)
                     data.partie.keyPressed(keys[K_1:K_COLON]+keys[K_KP1:K_KP_PERIOD]+(keys[K_BACKSPACE],0), data)
                     data.partie.draw(frame, da.Data.menus[data.etat])
                 else:

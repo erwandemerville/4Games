@@ -31,6 +31,7 @@ try:
                     da.Data.menus[data.etat].draw(frame)
                     da.Data.menus[data.etat].click(frame)
             elif (event.type == MOUSEMOTION):
+                # Quand la souris est en mouvement
                 if (data.etat == 4):
                     pos = pygame.mouse.get_pos()
                     data.partie.grille_jeu.hoverCase(pos[0], pos[1])

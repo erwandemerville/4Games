@@ -7,7 +7,7 @@ import os
 class Data:
 
         menus = []
-
+    
         def __init__(self, frame):
             # Cette variable représente les différents états dans lequel le jeu peut se trouver.
             #

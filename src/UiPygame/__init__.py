@@ -38,6 +38,12 @@ class Bouton(object):
             return True
         return False
 
+    def setText(self,text):
+        self.text = text
+
+    def getText(self):
+        return self.text
+    
     def update(self,frame):
         self.draw(frame)
         pygame.display.flip()
@@ -69,6 +75,11 @@ class Title():
         self.btn.blit(text_on,(self.width/2 - text_on.get_width()/2,self.height/2 - text_on.get_height()/2))
         frame.blit(self.btn,(self.x,self.y))
 
+    def setText(self,text):
+        self.text = text
+
+    def getText(self):
+        return self.text
 
 
     

@@ -44,6 +44,11 @@ try:
                         da.Data.menus[5].draw(frame)
                     data.partie.keyPressed(keys[K_1:K_COLON]+keys[K_KP1:K_KP_PERIOD]+(keys[K_BACKSPACE],0), data)
                     data.partie.draw(frame, da.Data.menus[data.etat])
+                elif(data.etat == 0):
+                    keys = pygame.key.get_pressed()
+                    if(keys[K_LSHIFT]==1 and keys[K_s]==1):
+                        print("Sound_active = ",data.sound_active," | Music active = ",data.music_active)
+                    da.Data.menus[data.etat].draw(frame)
                 else:
                     da.Data.menus[data.etat].draw(frame)
 

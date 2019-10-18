@@ -67,11 +67,34 @@ class Menu_Optn(Menu_G):
         if(self.boutons[0].isCursorInRange()):
             # Bouton sauvegarde enfoncé
             print("Sauvegarde en cours ... ")
+            if(self.boutons[2].getText() == "Activer la musique"):
+                self.data.music_active = False
+            else:
+                self.data.music_active = True
+            if(self.boutons[3].getText() == "Activer les bruitages"):
+                self.data.sound_active = False
+            else:
+                self.data.sound_active = True
         elif(self.boutons[1].isCursorInRange()):
             # Bouton retour au menu
             self.data.etat = 0
             frame.blit(self.data.fond, (0,0))
             da.Data.menus[0].draw(frame)
+        elif(self.boutons[2].isCursorInRange()):
+            # Bouton on/off musique
+            if(self.boutons[2].getText() == "Activer la musique"):
+                self.boutons[2].setText("Désactiver la musique")
+            else:
+                self.boutons[2].setText("Activer la musique")
+            
+            self.draw(frame)
+        elif(self.boutons[3].isCursorInRange()):
+            # Bouton on/off bruitages
+            if(self.boutons[3].getText() == "Activer les bruitages"):
+                self.boutons[3].setText("Désactiver les bruitages")
+            else:
+                self.boutons[3].setText("Activer les bruitages")
+            self.draw(frame)
         
 
     def draw(self, frame):
@@ -80,6 +103,8 @@ class Menu_Optn(Menu_G):
         
         self.titles.draw(frame)
         super().draw(frame)
+
+    
 
 class Menu_SavedGrille(Menu_G):
     "classe représentant le menu qui s'affiche pour demander si l'on utilise la grille sauvegardée"

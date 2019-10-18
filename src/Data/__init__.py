@@ -48,7 +48,7 @@ class Data:
             Data.menus.append(sb.Menu_Optn(data,
                                            [    ui.Bouton(50,frame.get_height()-60,200,50,2,color_boutons_change,"Sauvegarder",color_boutons,police,color_f),
                                                 ui.Bouton(frame.get_width()-50-200,frame.get_height()-60,200,50,2,color_boutons_change,"Retour",color_boutons,police,color_f),
-                                                ui.Bouton(75,200,frame.get_width()-150,50,2,color_boutons_change,"Activer la musique",color_boutons,police,color_f),
+                                                ui.Bouton(75,200,frame.get_width()-150,50,2,color_boutons_change,"Désactiver la musique",color_boutons,police,color_f),
                                                 ui.Bouton(75,300,frame.get_width()-150,50,2,color_boutons_change,"Activer les bruitages",color_boutons,police,color_f)
                                                 ] ,
                                            [ui.Title(50,50,(frame.get_width()-100),60,3,"OPTIONS",(152,152,152),police,(255,255,255))]

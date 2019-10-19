@@ -48,8 +48,8 @@ class Main_Menu(Menu_G):
             print("Lancement du poker")
         elif(self.boutons[4].isCursorInRange()):
             # Lancement des options
-            self.data.setEtat(1)
             da.Data.menus[1].readCfg()
+            self.data.setEtat(1)
             da.Data.menus[1].draw(frame)
         elif(self.boutons[5].isCursorInRange()):
             print("Lancement du profil")
@@ -120,9 +120,17 @@ class Menu_Optn(Menu_G):
             file = self.cfg.read(self.link_cfg)
         self.data.setMusic(self.cfg.getboolean("Sound","music"))
         self.data.setSound(self.cfg.getboolean("Sound","sound"))
+        if(self.data.music_active):
+            self.boutons[2].setText("Désactiver la musique")
+        else:
+            self.boutons[2].setText("Activer la musique")
+        
+        if(self.data.sound_active):
+            self.boutons[3].setText("Désactiver les bruitages")
+        else:
+            self.boutons[3].setText("Activer les bruitages")
     
     def draw(self, frame):
-        #print("héhé")
         frame.blit(self.data.fond,(0,0))
         
         self.titles.draw(frame)
@@ -206,7 +214,7 @@ class Menu_Sudoku(Menu_G):
 
     def draw(self, frame):
         pygame.draw.rect(frame, (90, 90, 90), (470, 0, 170, 480))
-        frame.blit(self.police.render("Temps :", True, (255,255,255)), (525, 120))
+        frame.blit(self.police.render("Temps : ", True, (255,255,255)), (525, 120))
         frame.blit(self.police.render(self.data.partie.getStringTime(), True, (255,255,255)), (530, 150))
         super().draw(frame)
 

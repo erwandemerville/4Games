@@ -278,7 +278,11 @@ class Grille:
 
         for i in range(0, self.hauteur):
             for j in range(0, self.largeur):
-                if casesErr[i*self.largeur+j] != 0:
+                if casesErr[i*self.largeur+j] != 0 and casesBase[i*self.largeur+j] != 0:
+                    self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
+                                                    effectiveCase_Hauteur, selectFill=caseSelectColor,
+                                                    hoverFill=caseHoverColor, bothFill=caseSelectHoverColor, textFill=(errColor[0]+50, errColor[1]+50, errColor[2]+50))
+                elif casesErr[i*self.largeur+j] != 0:
                     self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
                                                     effectiveCase_Hauteur, selectFill=caseSelectColor,
                                                     hoverFill=caseHoverColor, bothFill=caseSelectHoverColor, textFill=errColor)
@@ -306,4 +310,3 @@ class Grille:
         pygame.draw.line(surface,(255,255,255),(x+6*case_Largeur,y),(x+6*case_Largeur,y2),3)
         pygame.draw.line(surface,(255,255,255),(x,y+3*case_Hauteur),(x2,y+3*case_Hauteur),3)
         pygame.draw.line(surface,(255,255,255),(x,y+6*case_Hauteur),(x2,y+6*case_Hauteur),3)
-

@@ -631,7 +631,7 @@ class PartieG:
         return True
 
     def victoire(self,data):
-        data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [FireWorkParticule.FireworkParticule((100,100), 15, (230, 15, 15), 0, firstCouleurTime=10), FireWorkParticule.FireworkParticule((100,100), 15, (15, 15, 230), 0)], 10, 20, (320, 480), (0, -10) , 0, 1))
+        data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [FireWorkParticule.FireworkParticule((100,100), 15, (230, 60, 60), 0, firstCouleurTime=10)], 10, 20, (320, 480), (0, -10) , 0, 1))
 
     def verifier_numero_cl(self, position, number):
         """Cette fonction vérifie si le numéro entré n'est pas présent sur la même ligne ou colonne."""

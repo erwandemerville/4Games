@@ -23,10 +23,11 @@ class FireworkEmitter(PE.CircleEmitter):
                 yDelta = y - self.position[1]
                 distCenter = math.sqrt(xDelta * xDelta + yDelta * yDelta)
                 distRatio = distCenter / Nrayon
-                p.couleur = (min(p.couleur[0] * distRatio,255), min(p.couleur[1] * distRatio,255), min(p.couleur[2] * distRatio,255))
-                print("Explode : ",p.couleur)
-                p.life = p.life * distRatio
-                self.system.addParticule(p)
+                if distRatio < 1 :
+                    p.couleur = (min(p.couleur[0],255), min(p.couleur[1],255), min(p.couleur[2],255))
+                    print("Explode : ",p.couleur)
+                    p.life = p.life * (1 - distRatio)
+                    self.system.addParticule(p)
         pass
 
     def tick(self):

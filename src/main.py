@@ -58,6 +58,7 @@ try:
                     data.partie.timerTick()
                     data.partie.draw(frame, da.Data.menus[4])
             t = t+1
+        data.particules.tick()
 
 except Exception as e:
     pygame.quit()

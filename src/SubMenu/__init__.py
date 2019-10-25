@@ -92,7 +92,7 @@ class Menu_Optn(Menu_G):
                 self.boutons[2].setText("Désactiver la musique")
             else:
                 self.boutons[2].setText("Activer la musique")
-            
+
             self.draw(frame)
         elif(self.boutons[3].isCursorInRange()):
             # Bouton on/off bruitages
@@ -101,7 +101,7 @@ class Menu_Optn(Menu_G):
             else:
                 self.boutons[3].setText("Activer les bruitages")
             self.draw(frame)
-        
+
     def writeCfg(self):
         section = "Sound"
         isIn = False
@@ -124,19 +124,19 @@ class Menu_Optn(Menu_G):
             self.boutons[2].setText("Désactiver la musique")
         else:
             self.boutons[2].setText("Activer la musique")
-        
+
         if(self.data.sound_active):
             self.boutons[3].setText("Désactiver les bruitages")
         else:
             self.boutons[3].setText("Activer les bruitages")
-    
+
     def draw(self, frame):
         frame.blit(self.data.fond,(0,0))
-        
+
         self.titles.draw(frame)
         super().draw(frame)
 
-    
+
 
 class Menu_SavedGrille(Menu_G):
     "classe représentant le menu qui s'affiche pour demander si l'on utilise la grille sauvegardée"
@@ -214,8 +214,15 @@ class Menu_Sudoku(Menu_G):
 
     def draw(self, frame):
         pygame.draw.rect(frame, (90, 90, 90), (470, 0, 170, 480))
-        frame.blit(self.police.render("Temps : ", True, (255,255,255)), (525, 120))
-        frame.blit(self.police.render(self.data.partie.getStringTime(), True, (255,255,255)), (530, 150))
+        frame.blit(self.police.render("Difficulté : ", True, (255,255,255)), (553 - self.police.size("Difficulté : ")[0]/2, 40))
+        temp = self.data.partie.getDiffStr()
+        frame.blit(self.police.render(temp, True, (255,255,255)), (553 - self.police.size(temp)[0]/2, 70))
+        frame.blit(self.police.render("Temps : ", True, (255,255,255)), (553 - self.police.size("Temps : ")[0]/2, 120))
+        temp = self.data.partie.getStringTime()
+        frame.blit(self.police.render(temp, True, (255,255,255)), (553 - self.police.size(temp)[0]/2, 150))
+        frame.blit(self.police.render("Nombre d'erreurs : ", True, (255,255,255)), (553 - self.police.size("Nombre d'erreurs : ")[0]/2, 200))
+        temp = str(self.data.partie.getNbErreurs())
+        frame.blit(self.police.render(temp, True, (255,255,255)), (553 - self.police.size(temp)[0]/2, 230))
         super().draw(frame)
 
 class Menu_SudokuEnd(Menu_G):
@@ -266,7 +273,7 @@ class Menu_SudokuP(Menu_G):
 
     def draw(self, frame):
         pygame.draw.rect(frame, (70, 70, 70), (150, 120, frame.get_width()-300, 270))
-        
+
         frame.blit(self.police.render("Pause", True, (255,255,255)), (285, 120))
         for i in self.boutons:
             i.draw(frame)

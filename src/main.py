@@ -41,6 +41,7 @@ try:
                     if(keys[K_LSHIFT]==1 and keys[K_g]==1):
                         data.setEtat(5)
                         data.partie.effacer_sauvegarde()
+                        data.partie.victoire(data)
                         da.Data.menus[5].draw(frame)
                     data.partie.keyPressed(keys[K_1:K_COLON]+keys[K_KP1:K_KP_PERIOD]+(keys[K_BACKSPACE],0), data)
                     data.partie.draw(frame, da.Data.menus[data.etat])
@@ -58,7 +59,10 @@ try:
                     data.partie.timerTick()
                     data.partie.draw(frame, da.Data.menus[4])
             t = t+1
-        data.particules.tick()
+        if(not(data.particules.isEmpty())):
+            data.particules.tick()
+            data.particules.draw(frame)
+        
 
 except Exception as e:
     pygame.quit()

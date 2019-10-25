@@ -1,7 +1,8 @@
+import pygame
 class ParticleSystem:
     "Classe du Système de Particules"
 
-    def __init(self):
+    def __init__(self):
         self.emitters = []
         self.particules = []
 
@@ -20,6 +21,7 @@ class ParticleSystem:
     def draw(self, frame):
         for i in self.particules:
             i.draw(frame)
+        pygame.display.flip()
 
     def addParticule(self, particle):
         self.particules.append(particle)
@@ -28,4 +30,7 @@ class ParticleSystem:
         self.emitters.append(emitter)
 
     def removeEmitter(self, emitter):
-        self.emitters.ramove(emitter)
+        self.emitters.remove(emitter)
+
+    def isEmpty(self):
+        return len(self.particules)==0 and len(self.emitters)==0

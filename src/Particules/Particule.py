@@ -6,10 +6,14 @@ class Particule:
 
     def __init__(self, position, life, couleur=(255,255,255), vitesse=1, direction=0, deathFrames=1, gravity=0):
         self.life = life
-        self.couleur = couleur
+        if(couleur[0] <= 255 and couleur[1] <= 255 and couleur[2] <= 255):
+            self.couleur = couleur
+        else:
+            self.couleur = (255,255,255)
         self.v = vitesse
         self.vitesse = (vitesse*math.cos(direction), vitesse*math.sin(direction))
         self.position = position
+        self.direction = direction
         self.alpha = 1.0
         self.alphaDiff = 1.0 / deathFrames
         self.gravity = gravity

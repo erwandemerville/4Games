@@ -52,16 +52,18 @@ try:
                     da.Data.menus[data.etat].draw(frame)
                 else:
                     da.Data.menus[data.etat].draw(frame)
-
+        if data.etat == 5:
+            da.Data.menus[5].draw(frame)
         if time.time()-t > 1:
             if data.partie != None:
                 if (data.etat == 4):
                     data.partie.timerTick()
                     data.partie.draw(frame, da.Data.menus[4])
             t = t+1
-        if(not(data.particules.isEmpty())):
-            data.particules.tick()
-            data.particules.draw(frame)
+        data.particules.tick()
+        data.particules.draw(frame)
+
+        pygame.display.flip()
         
 
 except Exception as e:

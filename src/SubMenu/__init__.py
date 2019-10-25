@@ -28,7 +28,6 @@ class Menu_G(ABC):
         for i in self.boutons:
             i.draw(frame)
 
-        pygame.display.flip()
         pass
 
 class Main_Menu(Menu_G):
@@ -162,7 +161,6 @@ class Menu_SavedGrille(Menu_G):
         for i in self.boutons:
             i.draw(frame)
         self.titles.draw(frame)
-        pygame.display.flip()
 
 class Menu_Diff(Menu_G):
     "classe du menu de difficulté"
@@ -194,7 +192,6 @@ class Menu_Diff(Menu_G):
         for i in self.boutons:
             i.draw(frame)
         self.titles.draw(frame)
-        pygame.display.flip()
 
 class Menu_Sudoku(Menu_G):
     "Menu contenant le bouton pause du Sudoku"
@@ -277,4 +274,3 @@ class Menu_SudokuP(Menu_G):
         frame.blit(self.police.render("Pause", True, (255,255,255)), (285, 120))
         for i in self.boutons:
             i.draw(frame)
-        pygame.display.flip()

@@ -1,4 +1,3 @@
-import pygame
 class ParticleSystem:
     "Classe du Système de Particules"
 
@@ -21,7 +20,6 @@ class ParticleSystem:
     def draw(self, frame):
         for i in self.particules:
             i.draw(frame)
-        pygame.display.flip()
 
     def addParticule(self, particle):
         self.particules.append(particle)

@@ -18,6 +18,7 @@ from Grille import Sudoku_Case
 from Sudoku.grillesDeJeu import *
 import Data as da
 import time
+from Particules import FireWorkParticule
 
 liste_pos_l = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
 lettre_to_chiffre = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8}
@@ -617,7 +618,8 @@ class PartieG:
                                 self.wrongCase[l] = 0
                     if self.partieFinie():
                         data.setEtat(5)
-                        data.partie.effacer_sauvegarde()
+                        self.effacer_sauvegarde()
+                        self.victoire();
                         da.Data.menus[5].draw(frame)
             return True
 
@@ -627,6 +629,9 @@ class PartieG:
             if case.getNumber() == 0 or self.verifier_numero_cl(i, case.getNumber()) == 0:
                 return False
         return True
+
+    def victoire(self):
+        data.particules.addEmitter(FireworkParticule.FireworkEmitter(data.particules, [FireworkParticule.FireworkParticule((0,0), 15, (230, 15, 15), 0)], 4, 20, (320, 480), (0, -10)))
 
     def verifier_numero_cl(self, position, number):
         """Cette fonction vérifie si le numéro entré n'est pas présent sur la même ligne ou colonne."""

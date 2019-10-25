@@ -503,6 +503,7 @@ class PartieG:
         #varaible du chronomètre
         self.time = 0
         self.diff = 1
+        self.erreur = 0
         # Vérifie si une grille est en cours.
         if self.charger_grille():
             data.etat = 2
@@ -515,6 +516,7 @@ class PartieG:
     def creerGrille(self, niveau):
         self.time = 0
         self.diff = niveau
+        self.erreur = 0
         self.grille_jeu = Grille(9, 9, 50, 65, 400, 405, Sudoku_Case)
         self.liste_numeros_init = GrillesDeJeu.get_grille(niveau, self.grille_jeu).getListeNumeros()
         self.wrongCase = []
@@ -534,12 +536,14 @@ class PartieG:
             if not grille_recup:
                 return False
             else:
-                if len(grille_recup) != 163:
+                if len(grille_recup) != 165:
                     return False
                 self.grille_jeu = Grille(9, 9, 50, 65, 400, 405, Sudoku_Case)
                 self.grille_jeu.fillByListNumeros(grille_recup[:81])
                 self.liste_numeros_init = grille_recup[81:162]
-                self.time = grille_recup[-1]
+                self.time = grille_recup[-3]
+                self.diff = grille_recup[-2]
+                self.erreur = grille_recup[-1]
                 self.wrongCase = []
                 for i in range(81):
                     if not(grilleGenerator.verifierNombre(self.grille_jeu, (i%self.grille_jeu.largeur, math.floor(i/self.grille_jeu.largeur)))):
@@ -548,10 +552,12 @@ class PartieG:
                         self.wrongCase.append(0)
                 return True
 
-    def sauvegarder_grille(self): #Corriger ça
+    def sauvegarder_grille(self):
         """Fonction sauvegardant la grille afin de pouvoir la reprendre plus tard."""
         liste_grilles = self.grille_jeu.getListeNumeros() + self.liste_numeros_init
-        liste_grilles.append(self.time);
+        liste_grilles.append(self.time)
+        liste_grilles.append(self.diff)
+        liste_grilles.append(self.erreur)
 
         try:
             with open('grilleEnCours', 'wb') as fichier:
@@ -597,12 +603,13 @@ class PartieG:
                             else:
                                 self.wrongCase[l] = 0
             else:
-                k = (k+1)%10
+                k = (k+1+(math.floor(k/9))) %10
                 case = self.grille_jeu.getSelectedCase()
                 if case[0] != None:
                     if case[0].estVide() and self.liste_numeros_init[case[1]] == 0:
                         case[0].setNumber(k)
-
+                        if not(grilleGenerator.verifierNombre(self.grille_jeu, (case[1]%self.grille_jeu.largeur, math.floor(case[1]/self.grille_jeu.largeur)))):
+                            self.erreur = self.erreur+1
                         for l in range(81):
                             if not(grilleGenerator.verifierNombre(self.grille_jeu, (l%self.grille_jeu.largeur, math.floor(l/self.grille_jeu.largeur)))):
                                 self.wrongCase[l] = 1
@@ -672,6 +679,9 @@ class PartieG:
 
     def getStringTime(self):
         return time.strftime('%M:%S ', time.gmtime(self.time))
+
+    def getNbErreurs(self):
+        return self.erreur
 
     def draw(self, frame, menu=None):
         frame.fill((0,0,0))

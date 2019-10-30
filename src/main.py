@@ -7,6 +7,7 @@ import os,sys,time
 
 try:
     pygame.init()
+    FPS = 60
     frame = pygame.display.set_mode((640,480))
 
     data = da.Data(frame)
@@ -17,6 +18,8 @@ try:
     pygame.display.flip()
 
     t = time.time()
+    currentTime = time.time()
+    lastFrameTime = currentTime
 
     while(not(data.fin)):
         for event in pygame.event.get():
@@ -62,9 +65,13 @@ try:
             t = t+1
         data.particules.tick()
         data.particules.draw(frame)
-
+        currentTime = time.time()
+        sleepTime = 1./FPS - (currentTime - lastFrameTime)
+        lastFrameTime = currentTime
+        if sleepTime > 0:
+            time.sleep(sleepTime)
         pygame.display.flip()
-        
+
 
 except Exception as e:
     pygame.quit()

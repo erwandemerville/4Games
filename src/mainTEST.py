@@ -64,4 +64,6 @@ while(not(data.fin)):
         data.particules.tick()
         data.particules.draw(frame)
 
+    pygame.display.flip()
+
 pygame.quit()

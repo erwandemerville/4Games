@@ -20,8 +20,8 @@ class CircleEmitter(Emitter):
         self.rayon = rayon
 
     def spawn(self, position):
-        for x in range(position[0]-self.rayon, position[0]+self.rayon):
-            for y in range(position[1]-self.rayon, position[1]+self.rayon):
+        for x in range(int(position[0]-self.rayon), int(position[0]+self.rayon)):
+            for y in range(int(position[1]-self.rayon), int(position[1]+self.rayon)):
                 p = random.choice(self.particules).clone((x, y))
                 xDelta = x - self.position[0]
                 yDelta = y - self.position[1]

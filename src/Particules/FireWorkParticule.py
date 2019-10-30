@@ -3,21 +3,21 @@ from Particules.Emitters import Emitter as PE
 import random, math
 
 class FireworkEmitter(PE.CircleEmitter):
-    def __init__(self, system, particules, rayon, life, position, vitesse, gravity=0, explode=-1):
+    def __init__(self, system, particules, rayon, life, position, vitesse, gravity=0, explode=0):
         super().__init__(system, particules, rayon)
         self.life = life
         self.position = position
         self.vitesse = vitesse
-        self.gravity = gravity
+        self.gravity = gravity*0.1
         self.explode = explode
 
     def isDead(self):
         return self.life <= 0
 
-    def explode(self): #TODO finir explosion feux d'artifice
-        Nrayon = self.rayon * (2 + random.random())
-        for x in range(self.position[0]-Nrayon, self.position[0]+Nrayon):
-            for y in range(self.position[1]-Nrayon, self.position[1]+Nrayon):
+    def explodeF(self): #TODO finir explosion feux d'artifice
+        Nrayon = round(self.rayon * (self.explode+1 + random.random()))
+        for x in range(int(self.position[0]-Nrayon), int(self.position[0]+Nrayon)):
+            for y in range(int(self.position[1]-Nrayon), int(self.position[1]+Nrayon)):
                 p = random.choice(self.particules).clone((x, y))
                 xDelta = x - self.position[0]
                 yDelta = y - self.position[1]
@@ -25,29 +25,25 @@ class FireworkEmitter(PE.CircleEmitter):
                 distRatio = distCenter / Nrayon
                 if distRatio < 1 :
                     p.couleur = (min(p.couleur[0],255), min(p.couleur[1],255), min(p.couleur[2],255))
-                    print("Explode : ",p.couleur)
-                    p.life = p.life * (1 - distRatio)
+                    p.life = p.life * (8 - (8*distRatio) - (1.25*math.pow(distRatio, 2)))
                     self.system.addParticule(p)
+
+        nb = 4+random.random()*4
+        for i in range(1, int(nb)):
+            self.system.addEmitter(FireworkEmitter(self.system, self.particules, self.rayon/2, 1000, self.position, ((2*self.explode) * math.cos(math.radians(i * (360/nb))), (2*self.explode) * math.sin(math.radians(i * (360/nb)))), 1, 0))
+
         pass
 
+    def applyGravity(self):
+        self.vitesse = (self.vitesse[0], self.vitesse[1]+self.gravity)
+
     def tick(self):
-        if self.life > 0:
-            self.life = self.life - 1
+        self.life = self.life - 1
+        if self.life > 1:
             self.spawn(self.position)
             self.position = (self.position[0]+self.vitesse[0], self.position[1]+self.vitesse[1])
-        elif self.explode != -1:
-            self.explode()
-
-class FireworkParticule(Particule.Particule):
-    def __init__(self, position, life, couleur=(255,255,255), vitesse=1, direction=0, deathFrames=1, gravity=0, firstCouleurTime=1):
-        super().__init__(position, life, couleur, vitesse, direction, deathFrames, gravity)
-        print("Constructeur : ",couleur)
-        self.firstCouleurTime = self.life - firstCouleurTime
-        self.couleurDiff = (math.ceil(couleur[0]/firstCouleurTime), math.ceil(couleur[1]/firstCouleurTime), math.ceil(couleur[2]/firstCouleurTime))
-        print("const du fw particule : ",self.couleurDiff)
-
-    def tick(self):
-        super().tick()
-        if self.life < self.firstCouleurTime:
-            self.couleur = (min(abs(self.couleur[0]-self.couleurDiff[0]),255), min(abs(self.couleur[1]-self.couleurDiff[1]),255), min(abs(self.couleur[2]-self.couleurDiff[2]),255))
-        print("tick du fw particule : ",self.couleur," self.life = ",self.life)
+            self.applyGravity()
+            if (self.gravity > 0 and self.position[1] > 480):
+                self.life = 0
+        elif self.explode != 0:
+            self.explodeF()

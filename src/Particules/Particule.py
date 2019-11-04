@@ -4,34 +4,26 @@ import math
 class Particule:
     "Classe de base de particule."
 
-    def __init__(self, position, life, couleur=(255,255,255), vitesse=1, direction=0, deathFrames=1, gravity=0):
+    def __init__(self, position, life, couleur=(255,255,255)):
         self.life = life
         if(couleur[0] <= 255 and couleur[1] <= 255 and couleur[2] <= 255):
             self.couleur = couleur
         else:
             self.couleur = (255,255,255)
-        self.v = vitesse
-        self.vitesse = (vitesse*math.cos(direction), vitesse*math.sin(direction))
         self.position = position
-        self.direction = direction
-        self.alpha = 1.0
-        self.alphaDiff = 1.0 / deathFrames
-        self.gravity = gravity
 
     def tick(self):
-        if self.life > 0:
-            self.life = self.life-1
-        else:
-            self.alpha = self.alpha - self.alphaDiff
+        self.life = self.life-1
 
     def isDead(self):
-        return self.alpha <= 0.0
+        return self.life < 1
 
     def getPos(self):
         return self.position
 
-    def draw(self, frame):
-        frame.fill(self.couleur, (self.position, (1,1)))
+    def draw(self, pxarray):
+        if self.position[0] > -1 and self.position[0] < len(pxarray) and self.position[1] > -1 and self.position[1] < len(pxarray[0]):
+            pxarray[self.position[0], self.position[1]] = self.couleur
 
     def clone(self, position):
-        return Particule(position, self.life, self.couleur, self.v, self.direction, 1.0 / self.alphaDiff)
+        return Particule(position, self.life, self.couleur)

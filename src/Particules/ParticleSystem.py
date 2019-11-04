@@ -1,11 +1,15 @@
+import pygame
+
 class ParticleSystem:
     "Classe du Système de Particules"
 
     def __init__(self):
         self.emitters = []
         self.particules = []
+        self.mustDrawV = False
 
     def tick(self):
+        self.mustDrawV = len(self.particules) > 0
         for i in self.particules:
             if i.isDead():
                 self.particules.remove(i)
@@ -18,8 +22,10 @@ class ParticleSystem:
                 i.tick()
 
     def draw(self, frame):
-        for i in self.particules:
-            i.draw(frame)
+        if self.mustDraw:
+            pArray = pygame.PixelArray(frame)
+            for i in self.particules:
+                i.draw(pArray)
 
     def addParticule(self, particle):
         self.particules.append(particle)
@@ -32,3 +38,12 @@ class ParticleSystem:
 
     def isEmpty(self):
         return len(self.particules)==0 and len(self.emitters)==0
+
+    def mustDraw(self):
+        return self.mustDrawV
+
+    def clear(self):
+        while len(self.emitters) > 0:
+            self.emitters.remove(self.emitters[0])
+        while len(self.particules) > 0:
+            self.particules.remove(self.particules[0])

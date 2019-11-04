@@ -7,7 +7,8 @@ import os,sys,time
 
 try:
     pygame.init()
-    FPS = 60
+    FPS = 60.0
+    mustRedraw = True
     frame = pygame.display.set_mode((640,480))
 
     data = da.Data(frame)
@@ -30,6 +31,7 @@ try:
                 # Quand un clic est effectué
                 da.Data.menus[data.etat].draw(frame)
                 da.Data.menus[data.etat].click(frame)
+                mustRedraw = False
             elif (event.type == MOUSEMOTION):
                 # Quand la souris est en mouvement
                 if (data.etat == 4):
@@ -38,6 +40,7 @@ try:
                     data.partie.draw(frame, da.Data.menus[data.etat])
                 else:
                     da.Data.menus[data.etat].draw(frame)
+                mustRedraw = False
             elif event.type == pygame.KEYDOWN:
                 if (data.etat == 4):
                     keys = pygame.key.get_pressed()
@@ -48,15 +51,16 @@ try:
                         da.Data.menus[5].draw(frame)
                     data.partie.keyPressed(keys[K_1:K_COLON]+keys[K_KP1:K_KP_PERIOD]+(keys[K_BACKSPACE],0), data)
                     data.partie.draw(frame, da.Data.menus[data.etat])
+                    mustRedraw = False
                 elif(data.etat == 0):
                     keys = pygame.key.get_pressed()
                     if(keys[K_LSHIFT]==1 and keys[K_s]==1):
                         print("Sound_active = ",data.sound_active," | Music active = ",data.music_active)
-                    da.Data.menus[data.etat].draw(frame)
                 else:
                     da.Data.menus[data.etat].draw(frame)
-        if data.etat == 5:
-            da.Data.menus[5].draw(frame)
+                    mustRedraw = False
+        if mustRedraw == True and data.particules.mustDraw() == True:
+            da.Data.menus[data.etat].draw(frame)
         if time.time()-t > 1:
             if data.partie != None:
                 if (data.etat == 4):
@@ -67,11 +71,11 @@ try:
         data.particules.draw(frame)
         currentTime = time.time()
         sleepTime = 1./FPS - (currentTime - lastFrameTime)
-        lastFrameTime = currentTime
+        lastFrameTime = currentTime + sleepTime
+        pygame.display.flip()
         if sleepTime > 0:
             time.sleep(sleepTime)
-        pygame.display.flip()
-
+        mustRedraw = True
 
 except Exception as e:
     pygame.quit()

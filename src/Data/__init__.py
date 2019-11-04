@@ -37,15 +37,16 @@ class Data:
         def init(frame, data):
             police20 = pygame.font.SysFont('Impact',20)
             police = pygame.font.SysFont('Impact',25)
-            color_boutons = (180,180,180);color_boutons_change = (45,45,45);color_f = (255,255,255);
+            color_boutons = (170,170,170);color_boutons_change = (45,45,45);color_f = (255,255,255);
             width_b = 400;x_btn = (frame.get_width()/2) - (width_b/2);y_btn_start = 160
-            Data.menus.append(sb.Main_Menu(data, [ui.Bouton(x_btn,y_btn_start,width_b,50,2,color_boutons_change,"Sudoku",color_boutons,police,color_f),
-                        ui.Bouton(x_btn,y_btn_start+60,width_b,50,2,color_boutons_change,"Loto",color_boutons,police,color_f),
-                        ui.Bouton(x_btn,y_btn_start+120,width_b,50,2,color_boutons_change,"Bataille navale",color_boutons,police,color_f),
-                        ui.Bouton(x_btn,y_btn_start+180,width_b,50,2,color_boutons_change,"Poker",color_boutons,police,color_f),
-                        ui.Bouton(50,frame.get_height()-60,150,50,2,color_boutons_change,"Options",color_boutons,police,color_f),
-                        ui.Bouton((frame.get_width()/2)-(150/2),frame.get_height()-60,150,50,2,color_boutons_change,"Profil",color_boutons,police,color_f),
-                        ui.Bouton(frame.get_width()-200,frame.get_height()-60,150,50,2,color_boutons_change,"Quitter",color_boutons,police,color_f)]))
+            Data.menus.append(sb.Main_Menu(data, [ui.Bouton(x_btn,y_btn_start-50,width_b,50,2,color_boutons_change,"Sudoku",color_boutons,police,color_f),
+                        ui.Bouton(x_btn,y_btn_start+10,width_b,50,2,color_boutons_change,"Loto",color_boutons,police,color_f),
+                        ui.Bouton(x_btn,y_btn_start+70,width_b,50,2,color_boutons_change,"Bataille navale",color_boutons,police,color_f),
+                        ui.Bouton(x_btn,y_btn_start+130,width_b,50,2,color_boutons_change,"Poker",color_boutons,police,color_f),
+                        ui.Bouton(30,frame.get_height()-130,280,50,2,color_boutons_change,"Options",color_boutons,police,color_f),
+                        ui.Bouton((frame.get_width()/2)+10,frame.get_height()-130,280,50,2,color_boutons_change,"Profil",color_boutons,police,color_f),
+                        ui.Bouton(30,frame.get_height()-60,280,50,2,color_boutons_change,"Classements",color_boutons,police,color_f),
+                        ui.Bouton((frame.get_width()/2)+10,frame.get_height()-60,280,50,2,color_boutons_change,"Quitter",color_boutons,police,color_f)]))
 
             Data.menus.append(sb.Menu_Optn(data,
                                            [    ui.Bouton(50,frame.get_height()-60,200,50,2,color_boutons_change,"Sauvegarder",color_boutons,police,color_f),

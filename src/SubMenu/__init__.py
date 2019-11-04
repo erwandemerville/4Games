@@ -53,6 +53,8 @@ class Main_Menu(Menu_G):
         elif(self.boutons[5].isCursorInRange()):
             print("Lancement du profil")
         elif(self.boutons[6].isCursorInRange()):
+            print("Lancement des classements")
+        elif(self.boutons[7].isCursorInRange()):
             self.data.fin = True
         pass
 
@@ -236,10 +238,12 @@ class Menu_SudokuEnd(Menu_G):
             self.data.setEtat(4)
             self.data.partie.creerGrille(self.data.partie.getDiff())
             self.data.partie.draw(frame)
+            self.data.particules.clear()
         elif self.boutons[1].isCursorInRange():
             self.data.setEtat(0)
             frame.blit(self.data.fond, (0,0))
             da.Data.menus[0].draw(frame)
+            self.data.particules.clear()
 
     def draw(self, frame):
         frame.fill((0,0,0))

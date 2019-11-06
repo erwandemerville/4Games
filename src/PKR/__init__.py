@@ -47,9 +47,10 @@ def posCardInTab(c,tab):
     return -1
 
 def permuter2cartes(i,j,t):
-    temp = t[i]
-    t[i] = t[j]
-    t[j] = temp
+    if(len(t)> i or len(t)>j):
+        temp = t[i]
+        t[i] = t[j]
+        t[j] = temp
 
 def nearAs(c):
     return (valueHauteur(c) >= 9) or (valueHauteur(c) <= 4)
@@ -62,6 +63,8 @@ def detectQuinteFlush(tab):
             permuter2cartes(i+1,N-1,tab)
             N = N - 1
             triCards(tab,N)
+        else:
+            i = i + 1
     for i in range(N-4):
         if((valueHauteur(tab[i])+1 == valueHauteur(tab[i+1])) and (valueCardByColor(tab[i]) == valueCardByColor(tab[i+1])) and nearAs(tab[i]) and nearAs(tab[i+1])):
             if( (valueHauteur(tab[i+1])+1 == valueHauteur(tab[i+2])) and (valueCardByColor(tab[i+1]) == valueCardByColor(tab[i+2])) and nearAs(tab[i+2]) ):
@@ -122,6 +125,8 @@ def detectQuinte(tab):
             tab[N-1] = temp
             N = N - 1
             triCards(tab,N)
+        else:
+            i = i + 1
     for i in range(N-4):
         if((valueHauteur(tab[i]+1) == valueHauteur(tab[i+1])) and (valueHauteur(tab[i+1]+1) == valueHauteur(tab[i+2])) and (valueHauteur(tab[i+2]+1) == valueHauteur(tab[i+3])) and (valueHauteur(tab[i+3]+1) == valueHauteur(tab[i+4])) ):
             return True
@@ -177,8 +182,8 @@ def valuePaires(tab,m):
     tb = []; tbb = [];nb_paire = 0
     for i in range(len(tab)-1):
         if(valueHauteur(tab[i])==valueHauteur(tab[i+1])):
-            tb[nb_paire] = tab[i]
-            tbb[nb_paire] = tab[i+1]
+            tb.append(tab[i])
+            tbb.append(tab[i+1])
             nb_paire = nb_paire + 1
     triCards(tb);triCards(tbb)
     if(nb_paire > 1):
@@ -194,7 +199,7 @@ def valuePaires(tab,m):
             return valuePairCard(tb[0]) + valuePairCard(tb[1]) + 161
         elif(countingNbCardInHand(ttemp,4,m)==1):
             card_in_hand = 0
-            for i in range(len(tab)):
+            for i in range(len(ttemp)):
                 if(ttemp[i] == m[0]):
                     card_in_hand = m[0]
                 elif(ttemp[i] == m[1]):
@@ -270,28 +275,92 @@ def valueFlush(tab,m):
     triCards(tab)
     return 0
 def valueFullHouse(tab):
-    return 5
+    tb = [-1,-1,-1];id_brelan = -1;N = len(tab)
+    # Trouver le meilleur brelan
+    for i in range(len(tab)-2):
+        if( (valueHauteur(tab[i])==valueHauteur(tab[i+1])) and (valueHauteur(tab[i+1])==valueHauteur(tab[i+2])) ):
+            tb[0] = tab[i];tb[1] = tab[i+1];tb[2] = tab[i+2];id_brelan = i
+    resultatfinal = valueBrelan(tb[0])
+    # Déplacer le brelan dans la partie plus traitée
+    permuter2cartes(id_brelan,len(tab)-1,tab);permuter2cartes(id_brelan+1,len(tab)-2,tab);permuter2cartes(id_brelan+2,len(tab)-3,tab)
+    # Détecter la meilleur paire
+    for i in range(N-4):
+        if(valueHauteur(tab[i])==valueHauteur(tab[i+1])):
+            tb[0] = tab[i]
+            tb[1] = tab[i+1]
+    return resultatfinal + valuePairCard(tb[0]) + 1710
+def valueCarre(tab,m):
+    tb = [-1,-1,-1,-1]
+    for i in range(len(tab)-2):
+        if( (valueHauteur(tab[i])==valueHauteur(tab[i+1])) and (valueHauteur(tab[i+1])==valueHauteur(tab[i+2])) ):
+            if( valueHauteur(tab[i+2])==valueHauteur(tab[i+3]) ):
+                tb[0] = tab[i];tb[1] = tab[i+1];tb[2] = tab[i+2];tb[3] = tab[i+3]
+    # Vérifier si les cartes de la main forment un brelan
+    if(isCardInTab(m[0],tab) and isCardInTab(m[1],tab)):
+        return valueHauteur(tb[0]) + 14 + 3579
+    elif(not(isCardInTab(m[0],tab)) and not(isCardInTab(m[1],tab))):
+        if(valueHauteur(m[0]) > valueHauteur(m[1])):
+            return valueHauteur(tb[0]) + 14 + 3579 + valueHauteur(m[0])
+        return valueHauteur(tb[0]) + 14 + 3579 + valueHauteur(m[1])
+            
+    elif(not(isCardInTab(m[0],tab)) and (isCardInTab(m[1],tab))):
+        return valueHauteur(tb[0]) + 14 + 3579 + valueHauteur(m[1])
+    elif((isCardInTab(m[0],tab)) and not(isCardInTab(m[1],tab))):
+        return valueHauteur(tb[0]) + 14 + 3579 + valueHauteur(m[0])
+    return 0
+def valueQuinteflush(tab):
+    Nperm = len(tab);i=0;N=len(tab)
+    while(i < N):
+        if(valueHauteur(tab[i])==valueHauteur(tab[i+1])):
+            permuter2cartes(i+1,N-1,tab)
+            N = N - 1
+            triCards(tab,N)
+        else:
+            i = i + 1
+    valueause = -1
+    for i in range(N-4):
+        if( (valueHauteur(tab[i])+1==valueHauteur(tab[i+1])) and (valueCardByColor(tab[i])==valueCardByColor(tab[i+1])) ):
+            if( (valueHauteur(tab[i+1])+1==valueHauteur(tab[i+2])) and (valueCardByColor(tab[i+1])==valueCardByColor(tab[i+2])) ):
+                if( (valueHauteur(tab[i+2])+1==valueHauteur(tab[i+3])) and (valueCardByColor(tab[i+2])==valueCardByColor(tab[i+3])) ):
+                    if( (valueHauteur(tab[i+3])+1==valueHauteur(tab[i+4])) and (valueCardByColor(tab[i+3])==valueCardByColor(tab[i+4])) ):
+                        valueause = tab[i+1]
+    if((valueHauteur(tab[N-1])==13) and valueause == -1):
+        if(valueHauteur(tab[0])==1):
+            if(valueHauteur(tab[1])==2):
+                if(valueHauteur(tab[2])==3):
+                    if(valueHauteur(tab[3])==4):
+                        valueause = tab[0]
+    triCards(tab,Nperm)
+    return 3619 + valueHauteur(valueause)
+# Fonction de tests
+def testValueHand():
+    # Vérifie qu'une paire < double paire
+    assert(valueHand([102,103],[207,307,309,312,411]) < valueHand([102,103],[207,307,302,312,411]))
+    assert(valueHand([102,103],[207,307,309,312,411]) < valueHand([102,103],[203,307,302,312,411]))
+    # Vérifie qu'une double paire < brelan
+    assert(valueHand([102,103],[203,307,302,312,411]) < valueHand([102,103],[202,307,302,312,411]))
+    assert(valueHand([102,103],[203,307,302,312,411]) < valueHand([403,103],[203,307,302,312,411]))
 # Fonctions finales
 
 #Détermine la valeur main avec des cartes communes
 def valueHandByTable(m,tab):
     tbl = createTempTab(m,tab)
-    if(detectQuinteFlush(tab)==2):
+    if(detectQuinteFlush(tbl)==2):
         return 4000
-    elif(detectQuinteFlush(tab)==1):
-        return -1
-    elif(detectCarre(tab)):
-        return -2
-    elif(detectFullHouse(tab)):
-        return -3
-    elif(detectFlush(tab)):
-        return valueFlush(tab,m)
-    elif(detectQuinte(tab)):
-        return valueQuinte(tab)
-    elif(detectBrelan(tab)):
-        return valueBrelans(tab,m)
-    elif(detectPaire(tab)):
-        return valuePaires(tab,m)
+    elif(detectQuinteFlush(tbl)==1):
+        return valueQuinteflush(tbl)
+    elif(detectCarre(tbl)):
+        return valueCarre(tbl,m)
+    elif(detectFullHouse(tbl)):
+        return valueFullHouse(tbl)
+    elif(detectFlush(tbl)):
+        return valueFlush(tbl,m)
+    elif(detectQuinte(tbl)):
+        return valueQuinte(tbl)
+    elif(detectBrelan(tbl)):
+        return valueBrelans(tbl,m)
+    elif(detectPaire(tbl)):
+        return valuePaires(tbl,m)
     else:
         return valueHauteurs(m)
 
@@ -304,3 +373,4 @@ def valueHand(m,tab):
     else:
         return valueHandByTable(m,tab)
     
+testValueHand()

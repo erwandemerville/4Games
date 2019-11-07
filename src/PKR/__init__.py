@@ -16,10 +16,17 @@ def valueHauteur(c):
         return val - 1
 
 def valueCardByColor(c):
-    if(math.trunc(c/100)>= 0 and math.trunc(c/100)<= 3):
+    if(math.trunc(c/100)>= 0 and math.trunc(c/100)<= 4):
         return math.trunc(c/100)
     else:
         return -1
+
+def nbColorInTab(tab,color):
+    nb = 0
+    for i in tab:
+        if(valueCardByColor(i) == color):
+            nb = nb + 1
+    return nb
 
 def compareCarte(c1,c2):
     return valueHauteur(c1) - valueHauteur(c2)
@@ -56,11 +63,22 @@ def nearAs(c):
     return (valueHauteur(c) >= 9) or (valueHauteur(c) <= 4)
 
 def detectQuinteFlush(tab):
-    Nperm = len(tab);i=0;N = len(tab)
-    # Retirer les doublons
-    while(i+1 < N):
-        if(valueHauteur(tab[i]) == valueHauteur(tab[i+1])):
-            permuter2cartes(i+1,N-1,tab)
+    triCards(tab)
+    Nperm = len(tab);i=0;N = len(tab);color_dominate = -1
+    if(nbColorInTab(tab,1)>=5):
+        color_dominate = 1
+    elif(nbColorInTab(tab,2)>=5):
+        color_dominate = 2
+    elif(nbColorInTab(tab,3)>=5):
+        color_dominate = 3
+    elif(nbColorInTab(tab,4)>=5):
+        color_dominate = 4
+    else:
+        return 0
+    # Retirer les cartes n'ayant pas la même couleur 5 fois
+    while(i < N):
+        if(valueCardByColor(tab[i]) != color_dominate):
+            permuter2cartes(i,N-1,tab)
             N = N - 1
             triCards(tab,N)
         else:
@@ -315,10 +333,22 @@ def valueCarre(tab,m):
         return valueHauteur(tb[0]) + 14 + 3579 + valueHauteur(m[0])
     return 0
 def valueQuinteflush(tab):
-    Nperm = len(tab);i=0;N=len(tab)
+    triCards(tab)
+    Nperm = len(tab);i=0;N = len(tab);color_dominate = -1
+    if(nbColorInTab(tab,1)>=5):
+        color_dominate = 1
+    elif(nbColorInTab(tab,2)>=5):
+        color_dominate = 2
+    elif(nbColorInTab(tab,3)>=5):
+        color_dominate = 3
+    elif(nbColorInTab(tab,4)>=5):
+        color_dominate = 4
+    else:
+        return 0
+    # Retirer les cartes n'ayant pas la même couleur 5 fois
     while(i < N):
-        if(valueHauteur(tab[i])==valueHauteur(tab[i+1])):
-            permuter2cartes(i+1,N-1,tab)
+        if(valueCardByColor(tab[i]) != color_dominate):
+            permuter2cartes(i,N-1,tab)
             N = N - 1
             triCards(tab,N)
         else:
@@ -359,17 +389,20 @@ def testValueHand():
     assert(valueHand([102,309],[102,409,209,301,311]) < valueHand([109,309],[102,409,209,301,311]))
     assert(valueHand([208,408],[201,303,301,101,211]) < valueHand([208,401],[201,303,301,101,213]))
     # Vérifie qu'un carré < quinte flush
-    print(valueHand([102,103],[105,104,402,101,411]))
     assert(valueHand([109,309],[102,409,209,301,311]) < valueHand([102,103],[105,104,402,101,411]))
-    assert(valueHand([208,401],[201,303,301,101,213]) < valueHand([408,109],[201,303,410,412,411]))
+    assert(valueHand([208,401],[201,303,301,101,213]) < valueHand([408,409],[201,303,410,412,411]))
+    # Vérifie qu'une quinte flush < quinte flush royale
+    assert(valueHand([102,103],[105,104,402,101,411]) < valueHand([113,112],[111,110,402,101,411]))
+    assert(valueHand([408,409],[201,303,410,412,411]) < valueHand([401,413],[201,303,410,412,411]))
 # Fonctions finales
 
 #Détermine la valeur main avec des cartes communes
 def valueHandByTable(m,tab):
     tbl = createTempTab(m,tab)
-    if(detectQuinteFlush(tbl)==2):
+    nb_quinteflush = detectQuinteFlush(tbl)
+    if(nb_quinteflush==2):
         return 4000
-    elif(detectQuinteFlush(tbl)==1):
+    elif(nb_quinteflush==1):
         return valueQuinteflush(tbl)
     elif(detectCarre(tbl)):
         return valueCarre(tbl,m)

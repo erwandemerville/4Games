@@ -16,7 +16,7 @@ def valueHauteur(c):
         return val - 1
 
 def valueCardByColor(c):
-    if(math.trunc(c/100)>= 0 and math.trunc(c/100)<= 4):
+    if(math.trunc(c/100)>= 0 and math.trunc(c/100)<= 3):
         return math.trunc(c/100)
     else:
         return -1
@@ -71,8 +71,8 @@ def detectQuinteFlush(tab):
         color_dominate = 2
     elif(nbColorInTab(tab,3)>=5):
         color_dominate = 3
-    elif(nbColorInTab(tab,4)>=5):
-        color_dominate = 4
+    elif(nbColorInTab(tab,0)>=5):
+        color_dominate = 0
     else:
         return 0
     # Retirer les cartes n'ayant pas la même couleur 5 fois
@@ -341,8 +341,8 @@ def valueQuinteflush(tab):
         color_dominate = 2
     elif(nbColorInTab(tab,3)>=5):
         color_dominate = 3
-    elif(nbColorInTab(tab,4)>=5):
-        color_dominate = 4
+    elif(nbColorInTab(tab,0)>=5):
+        color_dominate = 0
     else:
         return 0
     # Retirer les cartes n'ayant pas la même couleur 5 fois
@@ -371,29 +371,32 @@ def valueQuinteflush(tab):
 # Fonction de tests
 def testValueHand():
     # Vérifie qu'une paire < double paire
-    assert(valueHand([102,103],[207,307,309,312,411]) < valueHand([102,103],[207,307,302,312,411]))
-    assert(valueHand([102,103],[207,307,309,312,411]) < valueHand([102,103],[203,307,302,312,411]))
+    assert(valueHand([102,103],[207,307,309,312,11]) < valueHand([102,103],[207,307,302,312,11]))
+    assert(valueHand([102,103],[207,307,309,312,11]) < valueHand([102,103],[203,307,302,312,11]))
     # Vérifie qu'une double paire < brelan
-    assert(valueHand([102,103],[203,307,302,312,411]) < valueHand([102,103],[202,307,302,312,411]))
-    assert(valueHand([102,103],[203,307,302,312,411]) < valueHand([403,103],[203,307,302,312,411]))
+    assert(valueHand([102,103],[203,307,302,312,11]) < valueHand([102,103],[202,307,302,312,11]))
+    assert(valueHand([102,103],[203,307,302,312,11]) < valueHand([3,103],[203,307,302,312,11]))
     # Vérifie qu'un brelan < quinte
-    assert(valueHand([102,103],[202,307,302,312,411]) < valueHand([102,103],[205,304,402,301,411]))
-    assert(valueHand([403,103],[203,307,302,312,411]) < valueHand([408,109],[201,303,310,312,411]))
+    assert(valueHand([102,103],[202,307,302,312,11]) < valueHand([102,103],[205,304,2,301,11]))
+    assert(valueHand([3,103],[203,307,302,312,11]) < valueHand([8,109],[201,303,310,312,11]))
     # Vérifie qu'une quinte < flush
-    assert(valueHand([102,103],[205,304,402,301,411]) < valueHand([102,109],[105,104,113,301,311]))
-    assert(valueHand([408,109],[201,303,310,312,411]) < valueHand([208,209],[201,303,202,309,211]))
+    assert(valueHand([102,103],[205,304,2,301,11]) < valueHand([102,109],[105,104,113,301,311]))
+    assert(valueHand([8,109],[201,303,310,312,11]) < valueHand([208,209],[201,303,202,309,211]))
     # Vérifie qu'un flush < full house
-    assert(valueHand([102,109],[105,104,113,301,311]) < valueHand([102,309],[102,409,209,301,311]))
-    assert(valueHand([208,209],[201,303,202,309,211]) < valueHand([208,408],[201,303,301,101,211]))
+    assert(valueHand([102,109],[105,104,113,301,311]) < valueHand([102,309],[102,9,209,301,311]))
+    assert(valueHand([208,209],[201,303,202,309,211]) < valueHand([208,8],[201,303,301,101,211]))
     # Vérifie qu'un full house < carre
-    assert(valueHand([102,309],[102,409,209,301,311]) < valueHand([109,309],[102,409,209,301,311]))
-    assert(valueHand([208,408],[201,303,301,101,211]) < valueHand([208,401],[201,303,301,101,213]))
+    assert(valueHand([102,309],[102,9,209,301,311]) < valueHand([109,309],[102,9,209,301,311]))
+    assert(valueHand([208,8],[201,303,301,101,211]) < valueHand([208,1],[201,303,301,101,213]))
     # Vérifie qu'un carré < quinte flush
-    assert(valueHand([109,309],[102,409,209,301,311]) < valueHand([102,103],[105,104,402,101,411]))
-    assert(valueHand([208,401],[201,303,301,101,213]) < valueHand([408,409],[201,303,410,412,411]))
+    assert(valueHand([109,309],[102,9,209,301,311]) < valueHand([102,103],[105,104,2,101,11]))
+    assert(valueHand([208,1],[201,303,301,101,213]) < valueHand([8,9],[201,303,10,12,11]))
     # Vérifie qu'une quinte flush < quinte flush royale
-    assert(valueHand([102,103],[105,104,402,101,411]) < valueHand([113,112],[111,110,402,101,411]))
-    assert(valueHand([408,409],[201,303,410,412,411]) < valueHand([401,413],[201,303,410,412,411]))
+    assert(valueHand([102,103],[105,104,2,101,11]) < valueHand([113,112],[111,110,2,101,11]))
+    assert(valueHand([8,409],[201,303,10,12,11]) < valueHand([1,13],[201,303,10,12,11]))
+    # Vérifie que les quinte flush royales valent 4000
+    for i in range(4):
+        assert(valueHand([13+100*i,12+100*i],[11+100*i,10+100*i,102,1+100*i,406]))
 # Fonctions finales
 
 #Détermine la valeur main avec des cartes communes

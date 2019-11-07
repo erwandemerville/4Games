@@ -53,10 +53,15 @@ class Main_Menu(Menu_G):
         elif(self.boutons[5].isCursorInRange()):
             print("Lancement du profil")
         elif(self.boutons[6].isCursorInRange()):
-            print("Lancement des classements")
+            self.data.setEtat(7)
+            da.Data.menus[7].draw(frame)
         elif(self.boutons[7].isCursorInRange()):
             self.data.fin = True
         pass
+
+    def draw(self, frame):
+        frame.blit(self.data.fond, (0,0))
+        super().draw(frame)
 
 class Menu_Optn(Menu_G):
     "classe représentant le menu des options"
@@ -137,7 +142,38 @@ class Menu_Optn(Menu_G):
         self.titles.draw(frame)
         super().draw(frame)
 
+class Menu_Classements(Menu_G):
+    "classe représentant le menu montrant les classements"
 
+    def __init__(self, data, boutons):
+        super().__init__(data,boutons)
+        self.current_Classement = 0
+
+    def click(self, frame):
+        if self.boutons[0].isCursorInRange():
+            self.current_Classement = 0
+        elif self.boutons[1].isCursorInRange():
+            self.current_Classement = 1
+        elif self.boutons[2].isCursorInRange():
+            self.current_Classement = 2
+        elif self.boutons[3].isCursorInRange():
+            self.current_Classement = 3
+        elif self.boutons[4].isCursorInRange():
+            self.data.setEtat("main")
+        else:
+            return 0
+
+        self.draw(frame)
+
+    def draw(self, frame):
+        frame.blit(self.data.fond, (0,0))
+        super().draw(frame)
+        if self.data.classements[self.current_Classement] != None:
+            self.data.classements[self.current_Classement].draw(frame, 0, 8, (20, 120, frame.get_width() - 40, frame.get_height() - 220))
+        else:
+            police = pygame.font.SysFont("Impact",30)
+            frame.blit(police.render("Non Disponible", True, (255,255,255)), (frame.get_width()/2 - police.size("Non Disponible")[0]/2, frame.get_height()/2-15))
+        pass
 
 class Menu_SavedGrille(Menu_G):
     "classe représentant le menu qui s'affiche pour demander si l'on utilise la grille sauvegardée"

@@ -43,7 +43,7 @@ class Bouton(object):
 
     def getText(self):
         return self.text
-    
+
     def update(self,frame):
         self.draw(frame)
         pygame.display.flip()
@@ -80,6 +80,3 @@ class Title():
 
     def getText(self):
         return self.text
-
-
-    

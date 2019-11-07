@@ -170,11 +170,20 @@ class PartieG:
                 return False
         return True
 
+    def compareTimes(self, a, b, c, d):
+        tA = time.strptime(a, "%M:%S")
+        tB = time.strptime(b, "%M:%S")
+        return tA.tm_min*60+tA.tm_sec+c*60>tB.tm_min*60+tB.tm_sec+d*60
+
     def victoire(self,data):
+        data.classements[0].ajouterScore(("TEST", self.getStringTime(), self.erreur))
+        #data.classements[0].sort(lambda a,b,c,d : print(str(a)+"_:_"+str(b)+"_:_"+str(c)+"_:_"+str(d)))
+        data.classements[0].sort(self.compareTimes)
+        data.classements[0].save("Classements_Sudoku.yolo")
         rayon = 4
-        data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(235, 0, 0), (100, 0, 0)], rayon, 60, (160, 480), (0, -4) , 0, 2))
+        data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(235, 0, 0), (0, 0, 0)], rayon, 60, (160, 480), (0, -4) , 0, 2))
         #data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(0, 235, 0), (0, 100, 0)], rayon, 60, (320, 480), (0, -4) , 0, 2))
-        data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(0, 0, 235), (0, 0, 100)], rayon, 60, (480, 480), (0, -4) , 0, 2))
+        data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(0, 0, 235), (0, 0, 0)], rayon, 60, (480, 480), (0, -4) , 0, 2))
 
     def verifier_numero_cl(self, position, number):
         """Cette fonction vérifie si le numéro entré n'est pas présent sur la même ligne ou colonne."""
@@ -226,7 +235,7 @@ class PartieG:
         self.time = self.time+1
 
     def getStringTime(self):
-        return time.strftime('%M:%S ', time.gmtime(self.time))
+        return time.strftime('%M:%S', time.gmtime(self.time))
 
     def getNbErreurs(self):
         return self.erreur

@@ -4,10 +4,19 @@ import SubMenu as sb
 import UiPygame as ui
 import os
 from Particules import ParticleSystem
+from Classements import Classements
 
 class Data:
 
         menus = []
+        etatsStr = {"main": 0,
+                    "options": 1,
+                    "Sudoku_Saved": 2,
+                    "Sudoku_Diff": 3,
+                    "Sudoku_Game": 4,
+                    "Sudoku_Win": 5,
+                    "Sudoku_Pause": 6,
+                    "Classements":7}
 
         def __init__(self, frame):
             # Cette variable représente les différents états dans lequel le jeu peut se trouver.
@@ -32,6 +41,8 @@ class Data:
             self.fond = pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "background_menu.jpg")).convert()
             frame.blit(self.fond, (0,0))
             self.particules = ParticleSystem.ParticleSystem()
+            self.classements = [Classements.Classement(["Profil", "Temps", "Erreurs"], [0.5, 0.75]), None, None, None]
+            self.classements[0].load("Classements_Sudoku.yolo")
 
         @staticmethod
         def init(frame, data):
@@ -70,6 +81,13 @@ class Data:
             Data.menus.append(sb.Menu_SudokuP(data, [ui.Bouton(180,165,frame.get_width()-300-60,50,2,(120,120,120),"Reprendre",(152,152,152),police,(255,255,255)),
                                                      ui.Bouton(180,240,frame.get_width()-300-60,50,2,(120,120,120),"Sauvegarder et quitter",(152,152,152),police,(255,255,255)),
                                                      ui.Bouton(180,315,frame.get_width()-300-60,50,2,(120,120,120),"Quitter sans sauvegarder",(152,152,152),police,(255,255,255))]))
+
+            Data.menus.append(sb.Menu_Classements(data, [ui.Bouton(10, 10, frame.get_width()/4 - 20, 50, 2, (45, 45, 45), "Sudoku", (170, 170, 170), police,(255,255,255)),
+                                                         ui.Bouton(frame.get_width()/4+10, 10, frame.get_width()/4 - 20, 50, 2, (45, 45, 45), "Poker", (170, 170, 170), police,(255,255,255)),
+                                                         ui.Bouton(frame.get_width()/2+10, 10, frame.get_width()/4 - 20, 50, 2, (45, 45, 45), "Loto", (170, 170, 170), police,(255,255,255)),
+                                                         ui.Bouton(3*frame.get_width()/4+10, 10, frame.get_width()/4 - 20, 50, 2, (45, 45, 45), "Bataille Navale", (170, 170, 170), police20,(255,255,255)),
+                                                         ui.Bouton(frame.get_width()/2 - 75, frame.get_height()-60, 150, 50, 2, (45,45,45), "Retour au menu", (170,170,170), police20,(255,255,255))]))
+
             Data.menus[1].readCfg()
             pass
 
@@ -78,7 +96,12 @@ class Data:
         # e : le nouvel état du jeu
         #
         def setEtat(self, e):
-            self.etat = e
+            if isinstance(e, int):
+                self.etat = e
+            elif isinstance(e, str):
+                self.etat = Data.etatsStr[e]
+            else:
+                raise TypeError("setEtat from Data object takes an int or a string as argument.")
 
         # Fonction setSound(e)
         #

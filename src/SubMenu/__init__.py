@@ -5,6 +5,9 @@ from abc import ABC, abstractmethod
 from SubMenu import TitleManager
 import Data as da
 import configparser as cp
+import Poker.Jeu as pk
+import PKR
+
 
 class Menu_G(ABC):
     "Classe générale représentant un menu"
@@ -40,18 +43,23 @@ class Main_Menu(Menu_G):
         if(self.boutons[0].isCursorInRange()):
             self.data.partie = Sudoku.PartieG(frame, self.data)
         elif(self.boutons[1].isCursorInRange()):
-            print("Lancement du loto")
+            # Lancement du loto
+            self.data.setEtat("Loto_Choose")
         elif(self.boutons[2].isCursorInRange()):
-            print("Lancement de la bataille navale")
+            # Lancement de la bataille navale
+            self.data.setEtat("BN_Place")
         elif(self.boutons[3].isCursorInRange()):
-            print("Lancement du poker")
+            # Lancement du poker
+            self.data.partie = pk.Jeu()
+            self.data.partie.lancerPartie(2)
         elif(self.boutons[4].isCursorInRange()):
             # Lancement des options
             da.Data.menus[1].readCfg()
             self.data.setEtat(1)
             da.Data.menus[1].draw(frame)
         elif(self.boutons[5].isCursorInRange()):
-            print("Lancement du profil")
+            # Lancement du profil
+            self.data.setEtat("profil")
         elif(self.boutons[6].isCursorInRange()):
             self.data.setEtat(7)
             da.Data.menus[7].draw(frame)

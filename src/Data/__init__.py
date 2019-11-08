@@ -16,7 +16,14 @@ class Data:
                     "Sudoku_Game": 4,
                     "Sudoku_Win": 5,
                     "Sudoku_Pause": 6,
-                    "Classements":7}
+                    "Classements":7,
+                    "Loto_Choose":8,
+                    "Loto_Play":9,
+                    "Loto_End":10,
+                    "BN_Place":11,
+                    "BN_Play":12,
+                    "BN_End":13,
+                    "profil":14}
 
         def __init__(self, frame):
             # Cette variable représente les différents états dans lequel le jeu peut se trouver.

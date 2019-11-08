@@ -7,11 +7,13 @@ class ParticleSystem:
         self.emitters = []
         self.particules = []
         self.mustDrawV = False
+        self.time = 0
 
     def tick(self):
         self.mustDrawV = len(self.particules) > 0
+        self.time = self.time + 1
         for i in self.particules:
-            if i.isDead():
+            if i.isDead(self.time):
                 self.particules.remove(i)
             else:
                 i.tick()
@@ -28,6 +30,7 @@ class ParticleSystem:
                 i.draw(pArray)
 
     def addParticule(self, particle):
+        particle.life = self.time + particle.life
         self.particules.append(particle)
 
     def addEmitter(self, emitter):

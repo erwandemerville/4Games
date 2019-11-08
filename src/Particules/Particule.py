@@ -13,10 +13,10 @@ class Particule:
         self.position = position
 
     def tick(self):
-        self.life = self.life-1
+        pass
 
-    def isDead(self):
-        return self.life < 1
+    def isDead(self, tps):
+        return self.life < tps
 
     def getPos(self):
         return self.position

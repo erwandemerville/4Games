@@ -4,6 +4,7 @@ import Data as da
 import UiPygame as ui
 import SubMenu as sb
 import os,sys,time
+from BatailleNavale import testJeuCmd
 
 try:
     pygame.init()
@@ -22,6 +23,7 @@ try:
     currentTime = time.time()
     lastFrameTime = currentTime
 
+    test = testJeuCmd.testBN()
     while(not(data.fin)):
         for event in pygame.event.get():
             if(event.type == QUIT):

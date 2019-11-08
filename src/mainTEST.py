@@ -4,6 +4,7 @@ import Data as da
 import UiPygame as ui
 import SubMenu as sb
 import os,sys,time
+from BatailleNavale import testJeuCmd
 
 #Corriger bug du bouton Quitter
 
@@ -18,6 +19,8 @@ da.Data.menus[0].draw(frame)
 pygame.display.flip()
 
 t = time.time()
+
+test = testJeuCmd.testBN()
 
 while(not(data.fin)):
     for event in pygame.event.get():

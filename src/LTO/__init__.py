@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 
 from src import SubMenu
 from src import Data as da
@@ -16,16 +17,7 @@ class Menu_LotoChoose(SubMenu.Menu_G):
         self.police = pygame.font.SysFont("Impact",27)
 
     def click(self, frame):
-        if self.boutons[0].isCursorInRange():
-            self.data.partie.draw(frame, da.Data.menus[4])
-            self.data.setEtat(4)
-        elif (self.boutons[1].isCursorInRange() or self.boutons[2].isCursorInRange()):
-
-            if self.boutons[1].isCursorInRange():
-                self.data.partie.sauvegarder_grille()
-
-            frame.blit(self.data.fond, (0, 0))
-            self.data.setEtat(0)
+        print("hehe")
 
     def draw(self, frame):
         frame.blit(self.data.fond,(0,0))
@@ -45,6 +37,9 @@ class Menu_LotoPlay(SubMenu.Menu_G):
         self.police25 = pygame.font.SysFont('Impact',25)
         self.police = pygame.font.SysFont("Impact",27)
 
+    def click(self, frame):
+        print("hehe")
+
 
 class Menu_LotoEnd(SubMenu.Menu_G):
     "Menu de fin du Loto"
@@ -56,3 +51,6 @@ class Menu_LotoEnd(SubMenu.Menu_G):
                                     "Valider", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
         self.police25 = pygame.font.SysFont('Impact',25)
         self.police = pygame.font.SysFont("Impact",27)
+
+    def click(self, frame):
+        print("hehe")

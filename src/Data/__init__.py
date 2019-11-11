@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import SubMenu as sb
 import UiPygame as ui
+from src import LTO
 import os
 from Particules import ParticleSystem
 from Classements import Classements
@@ -95,6 +96,13 @@ class Data:
                                                          ui.Bouton(3*frame.get_width()/4+10, 10, frame.get_width()/4 - 20, 50, 2, (45, 45, 45), "Bataille Navale", (170, 170, 170), police20,(255,255,255)),
                                                          ui.Bouton(frame.get_width()/2 - 75, frame.get_height()-60, 150, 50, 2, (45,45,45), "Retour au menu", (170,170,170), police20,(255,255,255))]))
 
+            Data.menus.append(LTO.Menu_LotoChoose(data,frame))#Loto choose
+            Data.menus.append(LTO.Menu_LotoPlay(data,frame))#Loto Play
+            Data.menus.append(LTO.Menu_LotoEnd(data,frame))#Loto End
+            Data.menus.append(None)#BN Place
+            Data.menus.append(None)#BN Play
+            Data.menus.append(None)#BN End
+            Data.menus.append(None)#Profil
             Data.menus[1].readCfg()
             pass
 

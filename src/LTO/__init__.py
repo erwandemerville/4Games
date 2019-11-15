@@ -49,21 +49,30 @@ class Menu_LotoPlay(SubMenu.Menu_G):
                                     "Bingo !", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
         self.police25 = pygame.font.SysFont('Impact',25)
         self.police = pygame.font.SysFont("Impact",27)
+        self.sizeBoule = round(frame.get_height() / 14)
 
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
             # Cas où il apuuie sur "Abandon"
             self.data.setEtat("Loto_End")
-            self.data.soundSystem.playSound("rire")
+            #self.data.soundSystem.playSound("rire")
+            self.data.soundSystem.playMusic("triste")
         elif self.boutons[1].isCursorInRange():
             # Cas où il appuie sur bingo
             print("Bingo!")
 
+    def drawBouleSortie(self,frame,value):
+        surface = pygame.Surface((self.sizeBoule*2,self.sizeBoule*2))
+        pygame.draw.circle(surface,(15,255,15),(self.sizeBoule,self.sizeBoule),self.sizeBoule)
+        frame.blit(self.policeTitle.render(value, True, (255,12,12),
+        (self.sizeBoule-self.policeTitle.size(value)[0]/2,frame.get_height()*0.3)),
+                   ())
+        frame.blit(surface,(150,150))
+
     def draw(self, frame):
         frame.blit(self.data.fond,(0,0))
-        pygame.draw.rect(frame, (0, 95, 70), (200, 120, frame.get_width()-300, 270))
-        #pygame.draw.rect(frame, (90, 90, 90), (470, 0, 170, 480))
-        frame.blit(self.police.render("Pause", True, (255,255,255)), (285, 120))
+        pygame.draw.rect(frame, (0, 95, 70), (0, 0, frame.get_width(), frame.get_height()),self.sizeBoule)
+        self.drawBouleSortie(frame,"4")
         self.boutons[0].draw(frame)
         self.boutons[1].draw(frame)
 
@@ -86,9 +95,11 @@ class Menu_LotoEnd(SubMenu.Menu_G):
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
             # Cas où il apuuie sur "Lancer la partie"
+            self.data.soundSystem.stopMusic("triste")
             self.data.setEtat("main")
         elif self.boutons[1].isCursorInRange():
             # Cas où il apuuie sur "Rejouer"
+            self.data.soundSystem.stopMusic("triste")
             self.data.setEtat("Loto_Choose")
 
     def draw(self, frame):

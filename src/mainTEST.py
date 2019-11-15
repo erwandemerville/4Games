@@ -8,11 +8,15 @@ from BatailleNavale import testJeuCmd
 
 #Corriger bug du bouton Quitter
 
+
+
 pygame.init()
 frame = pygame.display.set_mode((640,480))
 
 data = da.Data(frame)
 da.Data.init(frame, data)
+
+test = testJeuCmd.testBN(data)
 
 da.Data.menus[0].draw(frame)
 

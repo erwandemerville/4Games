@@ -21,36 +21,8 @@ class Case(Case.Case):
     def __init__(self):
         super().__init__();
         self.showShip = False;
-        self.pinned = False;
         self.contenu = None;
         self.shot = False;
-
-    # Fonction showShip
-    #
-    # self : instance de la classe, ne doit pas être mis en argument.
-    #
-    # Marque que cette case doit afficher le bateau qu'elle contient (si elle en contient un)
-    #
-    def showShip(self):
-        self.showShip = True;
-
-    # Fonction unshowShip
-    #
-    # self : instance de la classe, ne doit pas être mis en argument.
-    #
-    # Marque que cette case ne doit pas afficher le bateau qu'elle contient (si elle en contient un)
-    #
-    def unshowShip(self):
-        self.showShip = False;
-
-    # Fonction isShowingSelected
-    #
-    # self : instance de la classe, ne doit pas être mis en argument.
-    #
-    # Retourne un booleen indiquant si cette case doit afficher le bateau qu'elle contient (si elle en contient un).
-    #
-    def isShowingSelected(self):
-        return self.showShip;
 
     # Fonction pin
     #
@@ -58,17 +30,8 @@ class Case(Case.Case):
     #
     # Marque que cette case est épinglée
     #
-    def pin(self):
-        self.pinned = True;
-
-    # Fonction unpin
-    #
-    # self : instance de la classe, ne doit pas être mis en argument.
-    #
-    # Marque que cette case n'est pas/plus épinglée
-    #
-    def unpin(self):
-        self.pinned = False;
+    def shoot(self):
+        self.shot = True;
 
     # Fonction isPinned
     #
@@ -76,8 +39,8 @@ class Case(Case.Case):
     #
     # Retourne un booleen indiquant si cette case est marquée comme épinglée
     #
-    def isPinned(self):
-        return self.pinned;
+    def isShot(self):
+        return self.shot;
 
     # Fonction setContenu
     #
@@ -113,7 +76,7 @@ class Case(Case.Case):
     #
     # Fonction retournant un booleen indiquant si cette case est considérée comme vide
     #
-    def estVide():
+    def estVide(self):
         return self.contenu == None;
 
     # Fonction contient

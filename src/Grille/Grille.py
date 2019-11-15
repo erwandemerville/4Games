@@ -10,6 +10,7 @@ import math
 
 from Grille import Loto_Case
 from Grille import Sudoku_Case
+from Grille import Bataille_Navale_Case
 
 
 class Grille:
@@ -30,6 +31,10 @@ class Grille:
     # contenue dans le rectangle formé par les points (x1, y1) et (x2, y2).
     #
     def __init__(self, largeur, hauteur, x1, y1, x2, y2, module):
+        if module == Bataille_Navale_Case:
+            self.showShips = True
+        else:
+            self.showShips = None
         self.largeur = largeur
         self.hauteur = hauteur
         self.x = x1
@@ -185,6 +190,36 @@ class Grille:
 
     def getBoundingBox(self):
         return (self.x, self.y, self.x2, self.y2)
+
+        # Fonction showShip
+        #
+        # self : instance de la classe, ne doit pas être mis en argument.
+        #
+        # Marque que cette case doit afficher le bateau qu'elle contient (si elle en contient un)
+        #
+
+    def showShip(self):
+        self.showShips = True;
+
+        # Fonction unshowShip
+        #
+        # self : instance de la classe, ne doit pas être mis en argument.
+        #
+        # Marque que cette case ne doit pas afficher le bateau qu'elle contient (si elle en contient un)
+        #
+
+    def unshowShip(self):
+        self.showShips = False;
+
+        # Fonction isShowingSelected
+        #
+        # self : instance de la classe, ne doit pas être mis en argument.
+        #
+        # Retourne un booleen indiquant si cette case doit afficher le bateau qu'elle contient (si elle en contient un).
+        #
+
+    def isShowingSelected(self):
+        return self.showShips;
 
     # Fonction draw
     #

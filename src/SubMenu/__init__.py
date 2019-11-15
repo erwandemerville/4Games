@@ -7,7 +7,7 @@ import Data as da
 import configparser as cp
 import Poker.Jeu as pk
 import PKR
-
+import time
 
 class Menu_G(ABC):
     "Classe générale représentant un menu"
@@ -64,6 +64,10 @@ class Main_Menu(Menu_G):
             self.data.setEtat(7)
             da.Data.menus[7].draw(frame)
         elif(self.boutons[7].isCursorInRange()):
+            self.data.soundSystem.playSound("byebye")
+            sleepTime = 3
+            if sleepTime > 0:
+                time.sleep(sleepTime)
             self.data.fin = True
         pass
 

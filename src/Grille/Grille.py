@@ -8,7 +8,7 @@ import pygame
 from pygame.locals import *
 import math
 
-from Grille import Loto_Case
+from src.Grille import Loto_Case
 from Grille import Sudoku_Case
 
 
@@ -227,13 +227,13 @@ class Grille:
         effectiveCase_Hauteur = case_Hauteur+1
 
         if caseSelectColor == None:
-            caseSelectColor = (couleur[0]-27,couleur[1]-27,couleur[2]-27)
+            caseSelectColor = (min(couleur[0]-27, 0),min(couleur[1]-27, 0),min(couleur[2]-27, 0))
 
         if caseSelectHoverColor == None:
-            caseSelectHoverColor = (couleur[0]-33,couleur[1]-33,couleur[2]-33)
+            caseSelectHoverColor = (min(couleur[0]-33, 0),min(couleur[1]-33, 0),min(couleur[2]-33, 0))
 
         if caseHoverColor == None:
-            caseHoverColor = (couleur[0]-45,couleur[1]-45,couleur[2]-45)
+            caseHoverColor = (min(couleur[0]-45, 0),min(couleur[1]-45, 0), min(couleur[2]-45, 0))
 
         for i in range(0, self.hauteur):
             for j in range(0, self.largeur):
@@ -268,13 +268,13 @@ class Grille:
         effectiveCase_Hauteur = case_Hauteur+1
 
         if caseSelectColor == None:
-            caseSelectColor = (couleur[0]-27,couleur[1]-27,couleur[2]-27)
+            caseSelectColor = (min(couleur[0]-27, 0),min(couleur[1]-27, 0),min(couleur[2]-27, 0))
 
         if caseSelectHoverColor == None:
-            caseSelectHoverColor = (couleur[0]-33,couleur[1]-33,couleur[2]-33)
+            caseSelectHoverColor = (min(couleur[0]-33, 0),min(couleur[1]-33, 0),min(couleur[2]-33, 0))
 
         if caseHoverColor == None:
-            caseHoverColor = (couleur[0]-45,couleur[1]-45,couleur[2]-45)
+            caseHoverColor = (min(couleur[0]-45, 0),min(couleur[1]-45, 0), min(couleur[2]-45, 0))
 
         for i in range(0, self.hauteur):
             for j in range(0, self.largeur):

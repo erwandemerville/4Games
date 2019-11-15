@@ -1,6 +1,7 @@
 # Code écrit dans le cadre du projet Algorithmique et Developpement
 # Écrit en septembre 2019 par Lucas Raulier
 
+import pygame
 try:
     import Case;
 except:
@@ -113,6 +114,6 @@ class Case(Case.Case):
             fontSize = height-6;
             if self.number > 9:
                 fontSize -= 6;
-            police = pygame.font.SysFont(textFont,fontSize)
+            police = pygame.font.SysFont(textFont,int(fontSize))
             label = police.render(str(self.number), 1, textFill)
             surface.blit(label, (x+width/3, y))

@@ -3,6 +3,7 @@ from pygame.locals import *
 import SubMenu as sb
 import UiPygame as ui
 from src import LTO
+from src import Sound
 import os
 from Particules import ParticleSystem
 from Classements import Classements
@@ -45,6 +46,7 @@ class Data:
             # Ces variables permettent d'activer et désactiver le son/musique
             self.sound_active = True;
             self.music_active = True;
+            self.soundSystem = Sound.SoundManager(self)
             self.fin = False
             self.fond = pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "background_menu.jpg")).convert()
             frame.blit(self.fond, (0,0))

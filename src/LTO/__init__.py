@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 
 from src import SubMenu
+from src.Grille import Grille
+from src.Grille import Loto_Case
 from src import Data as da
 from src import UiPygame as ui
 from src.UiPygame import Title
@@ -19,6 +21,7 @@ class Menu_LotoChoose(SubMenu.Menu_G):
                        "Changer de grilles", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
         self.police25 = pygame.font.SysFont('Impact',25)
         self.police = pygame.font.SysFont("Impact",27)
+        self.grilleToDraw1 = Grille.Grille(10, 3, 30, 120, 330, 210, Loto_Case)
 
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
@@ -27,11 +30,12 @@ class Menu_LotoChoose(SubMenu.Menu_G):
 
     def draw(self, frame):
         frame.blit(self.data.fond,(0,0))
-        pygame.draw.rect(frame, (70, 70, 70), (150, 120, frame.get_width()-300, 270))
+        pygame.draw.rect(frame, (70, 70, 70), (0, 0, frame.get_width(), frame.get_height()))
         #pygame.draw.rect(frame, (90, 90, 90), (470, 0, 170, 480))
         frame.blit(self.police.render("Pause", True, (255,255,255)), (285, 120))
         self.boutons[0].draw(frame)
         self.boutons[1].draw(frame)
+        self.grilleToDraw1.draw(frame, (255, 0, 0))
 
 class Menu_LotoPlay(SubMenu.Menu_G):
     "Menu jeu du Loto"
@@ -48,8 +52,9 @@ class Menu_LotoPlay(SubMenu.Menu_G):
 
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
-            # Cas où il apuuie sur "Lancer la partie"
+            # Cas où il apuuie sur "Abandon"
             self.data.setEtat("Loto_End")
+            self.data.soundSystem.playSound("rire")
         elif self.boutons[1].isCursorInRange():
             # Cas où il appuie sur bingo
             print("Bingo!")
@@ -75,7 +80,8 @@ class Menu_LotoEnd(SubMenu.Menu_G):
                                     "Rejouer", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
         self.police25 = pygame.font.SysFont('Impact',25)
         self.police = pygame.font.SysFont("Impact",27)
-        self.titre = Title(20,20,frame.get_width()-40,50,2,"Fin de partie",(170, 170, 170),self.police,(255,255,255))
+        self.policeTitle = pygame.font.SysFont("Impact",80)
+        self.titre = Title(20,20,frame.get_width()-40,50,2,"Fin de partie",(12, 12, 251),self.police,(255,255,255))
 
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
@@ -89,7 +95,14 @@ class Menu_LotoEnd(SubMenu.Menu_G):
         frame.blit(self.data.fond,(0,0))
         pygame.draw.rect(frame, (70, 70, 70), (0, 0, frame.get_width(), frame.get_height()))
         #pygame.draw.rect(frame, (90, 90, 90), (470, 0, 170, 480))
-        frame.blit(self.police.render("Perdu !", True, (255,255,255)), ((frame.get_width()/2)-27,frame.get_height()*0.3,))
+        if(True):
+            self.titre.rgb = (0, 0, 0)
+            frame.blit(self.policeTitle.render("Perdu !", True, (255,12,12)),
+                       ((frame.get_width()/2)-self.policeTitle.size("Perdu !")[0]/2,frame.get_height()*0.3))
+        else:
+            self.titre.rgb = (12, 12, 251)
+            frame.blit(self.policeTitle.render("Gagné !", True, (255,255,255)),
+                       ((frame.get_width()/2)-self.policeTitle.size("Gagné !")[0]/2,frame.get_height()*0.3))
         self.titre.draw(frame)
         self.boutons[0].draw(frame)
         self.boutons[1].draw(frame)

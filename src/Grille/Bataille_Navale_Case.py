@@ -20,24 +20,23 @@ class Case(Case.Case):
     #
     def __init__(self):
         super().__init__();
-        self.showShip = False;
         self.contenu = None;
         self.shot = False;
 
-    # Fonction pin
+    # Fonction shoot
     #
     # self : instance de la classe, ne doit pas être mis en argument.
     #
-    # Marque que cette case est épinglée
+    # Marque que cette case à déjà été tiré dessus
     #
     def shoot(self):
         self.shot = True;
 
-    # Fonction isPinned
+    # Fonction isShot
     #
     # self : instance de la classe, ne doit pas être mis en argument.
     #
-    # Retourne un booleen indiquant si cette case est marquée comme épinglée
+    # Retourne un booleen indiquant si cette case est marquée comme tiré
     #
     def isShot(self):
         return self.shot;
@@ -118,3 +117,7 @@ class Case(Case.Case):
             pygame.draw.rect(surface, selectFill, (x, y, width, height))
         elif self.isHovered():
             pygame.draw.rect(surface, hoverFill, (x, y, width, height))
+
+    def drawBoat(self, surface, x, y, width, height):
+        surface.blit(self.contenu, (x, y), (0, 0, width, height))
+        pass

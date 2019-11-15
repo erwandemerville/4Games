@@ -1,5 +1,3 @@
-
-
 import pygame
 import pickle
 import os, math, time
@@ -15,12 +13,12 @@ class GameBN:
                  "Sous-marin": ["", "", ""],
                  "Torpilleur": ["", ""]}
 
-    def __init__(self):
-
-        self.grille_J1 = Grille.Grille(10, 10, 0, 0, 9, 9, Bataille_Navale_Case)
-        self.grille2_J1 = Grille.Grille(10, 10, 0, 0, 9, 9, Bataille_Navale_Case)
-        self.grille_J2 = Grille.Grille(10, 10, 0, 0, 9, 9, Bataille_Navale_Case)
-        self.grille2_J2 = Grille.Grille(10, 10, 0, 0, 9, 9, Bataille_Navale_Case)
+    def __init__(self, data):
+        #self.grille_J1 = Grille.Grille(10, 10, 210, 245, 430, 465, Bataille_Navale_Case)
+        #self.grille_J2 = Grille.Grille(10, 10, 210, 15, 430, 235, Bataille_Navale_Case)
+        self.data = data
+        self.grille_J1 = Grille.Grille(10, 10, 145, 100, 495, 450, Bataille_Navale_Case)
+        self.grille_J2 = Grille.Grille(10, 10, 145, -450, 495, -100, Bataille_Navale_Case)
 
     def ajouter_Bateau(self, grille, direction, position, type):
 
@@ -48,7 +46,12 @@ class GameBN:
         caseY = int(input("Veuillez selectionner la case(Y) sur laquelle placer le porte-avion : "))
         self.ajouter_Bateau(self.grille_J1, direction, (caseX, caseY), "Porte-Avion")
 
-
-
-
-
+    def draw(self, frame, menu=None):
+        frame.fill((1, 80, 172))
+        if self.data.etat == 12:
+            pygame.draw.line(frame, (250, 250, 250), (160, 240), (480, 240))
+        self.grille_J1.draw(frame, (250, 250, 250), (95, 95, 244), (85, 85, 234), (90, 90, 239))
+        self.grille_J2.draw(frame, (250, 250, 250), (95, 95, 244), (85, 85, 234), (90, 90, 239))
+        if menu != None:
+            menu.draw(frame)
+        pass

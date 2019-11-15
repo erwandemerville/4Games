@@ -1,8 +1,6 @@
 import pygame
 from pygame.locals import *
 import Data as da
-import UiPygame as ui
-import SubMenu as sb
 import os,sys,time
 from BatailleNavale import testJeuCmd
 
@@ -23,7 +21,6 @@ try:
     currentTime = time.time()
     lastFrameTime = currentTime
 
-    test = testJeuCmd.testBN()
     while(not(data.fin)):
         for event in pygame.event.get():
             if(event.type == QUIT):
@@ -39,6 +36,10 @@ try:
                 if (data.etat == 4):
                     pos = pygame.mouse.get_pos()
                     data.partie.grille_jeu.hoverCase(pos[0], pos[1])
+                    data.partie.draw(frame, da.Data.menus[data.etat])
+                elif (data.etat == 11):
+                    pos = pygame.mouse.get_pos()
+                    data.partie.grille_J1.hoverCase(pos[0], pos[1])
                     data.partie.draw(frame, da.Data.menus[data.etat])
                 else:
                     da.Data.menus[data.etat].draw(frame)

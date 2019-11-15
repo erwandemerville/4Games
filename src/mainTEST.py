@@ -20,8 +20,6 @@ pygame.display.flip()
 
 t = time.time()
 
-test = testJeuCmd.testBN()
-
 while(not(data.fin)):
     for event in pygame.event.get():
         if(event.type == QUIT):
@@ -36,6 +34,10 @@ while(not(data.fin)):
             if (data.etat == 4):
                 pos = pygame.mouse.get_pos()
                 data.partie.grille_jeu.hoverCase(pos[0], pos[1])
+                data.partie.draw(frame, da.Data.menus[data.etat])
+            elif (data.etat == 11):
+                pos = pygame.mouse.get_pos()
+                data.partie.grille_J1.hoverCase(pos[0], pos[1])
                 data.partie.draw(frame, da.Data.menus[data.etat])
             else:
                 da.Data.menus[data.etat].draw(frame)

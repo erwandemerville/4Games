@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import SubMenu as sb
+from BatailleNavale import BN_Menu
 import UiPygame as ui
 import os
 from Particules import ParticleSystem
@@ -16,7 +17,14 @@ class Data:
                     "Sudoku_Game": 4,
                     "Sudoku_Win": 5,
                     "Sudoku_Pause": 6,
-                    "Classements":7}
+                    "Classements":7,
+                    "Loto_Choose":8,
+                    "Loto_Play":9,
+                    "Loto_End":10,
+                    "BN_Place":11,
+                    "BN_Play":12,
+                    "BN_End":13,
+                    "profil":14}
 
         def __init__(self, frame):
             # Cette variable représente les différents états dans lequel le jeu peut se trouver.
@@ -88,6 +96,13 @@ class Data:
                                                          ui.Bouton(3*frame.get_width()/4+10, 10, frame.get_width()/4 - 20, 50, 2, (45, 45, 45), "Bataille Navale", (170, 170, 170), police20,(255,255,255)),
                                                          ui.Bouton(frame.get_width()/2 - 75, frame.get_height()-60, 150, 50, 2, (45,45,45), "Retour au menu", (170,170,170), police20,(255,255,255))]))
 
+            Data.menus.append(None)#Loto choose
+            Data.menus.append(None)#Loto Play
+            Data.menus.append(None)#Loto End
+            Data.menus.append(BN_Menu.BN_Place_Boats(data, [ui.Bouton(frame.get_width()/2 - frame.get_width()/8, 20, frame.get_width()/4, 50, 2, (45, 45, 45), "Valider", (170, 170, 170), police, (255, 255, 255))]))#BN Place
+            Data.menus.append(None)#BN Play
+            Data.menus.append(None)#BN End
+            Data.menus.append(None)#Profil
             Data.menus[1].readCfg()
             pass
 

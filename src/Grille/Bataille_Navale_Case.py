@@ -1,6 +1,7 @@
 # Code écrit dans le cadre du projet Algorithmique et Developpement
 # Écrit en septembre 2019 par Lucas Raulier
 
+import pygame
 try:
     import Case;
 except:
@@ -8,6 +9,8 @@ except:
 
 class Case(Case.Case):
     'Case pour la bataille navale'
+
+    shotTexture = ["*", "X"]
 
     # Constructeur de la Case
     #
@@ -20,6 +23,7 @@ class Case(Case.Case):
         self.showShip = False;
         self.pinned = False;
         self.contenu = None;
+        self.shot = False;
 
     # Fonction showShip
     #

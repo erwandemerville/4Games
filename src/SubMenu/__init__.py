@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import Sudoku
+import BatailleNavale
 from abc import ABC, abstractmethod
 from SubMenu import TitleManager
 import Data as da
@@ -42,7 +43,8 @@ class Main_Menu(Menu_G):
         elif(self.boutons[1].isCursorInRange()):
             print("Lancement du loto")
         elif(self.boutons[2].isCursorInRange()):
-            print("Lancement de la bataille navale")
+            self.data.partie = BatailleNavale.GameBN(self.data)
+            self.data.setEtat("BN_Place")
         elif(self.boutons[3].isCursorInRange()):
             print("Lancement du poker")
         elif(self.boutons[4].isCursorInRange()):

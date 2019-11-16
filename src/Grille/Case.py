@@ -2,7 +2,7 @@
 # -*-coding:Utf-8 -*
 
 # Code écrit dans le cadre du projet Algorithmique et Developpement
-# Écrit en septembre 2019 par Lucas Raulier
+# Écrit en septembre 2019 par Lucas Raulier et modifiée en Novembre 2019 par BendoTV
 import pygame
 from pygame.locals import *
 
@@ -18,6 +18,7 @@ class Case:
     def __init__(self):
         self.selected = False;
         self.hovered = False;
+        self.number = 0;
 
     # Fonction select
     #
@@ -91,6 +92,14 @@ class Case:
     #
     def contient(self, X):
         return False;
+    # Fonction getNumber
+    # retourne la valeur de l'attribut number
+    def getNumber(self):
+        return self.number
+    # Fonction setNumber
+    # change la valeur de l'attribut number par la valeur donnée en entrée
+    def setNumber(self,valeur):
+        self.number = valeur
 
     # Fonction draw
     #

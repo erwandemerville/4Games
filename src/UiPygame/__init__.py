@@ -48,7 +48,6 @@ class Bouton(object):
         self.draw(frame)
         pygame.display.flip()
 
-#A ne pas utiliser, en construction xD
 class Title():
     def __init__(self,x,y,width,height,border = 0,text = "",rgb=(255,255,255),police = None,rgb_text = (0,0,0)):
         #Constructeur

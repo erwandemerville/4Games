@@ -63,9 +63,9 @@ try:
             da.Data.menus[data.etat].draw(frame)
         if time.time()-t > 1:
             if data.partie != None:
-                if (data.etat == 4):
+                if (data.etat == 4 or data.etat == 9):
                     data.partie.timerTick()
-                    data.partie.draw(frame, da.Data.menus[4])
+                    data.partie.draw(frame, da.Data.menus[data.etat])
             t = t+1
         data.particules.tick()
         data.particules.draw(frame)

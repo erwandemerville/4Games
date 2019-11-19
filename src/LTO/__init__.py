@@ -64,13 +64,18 @@ class Loto_Party():
             # appel à après les 5 s
             self.timer = 0
             self.data.menus[9].nbInBoule = self.sortirUneBoule()
-            self.draw(self.frame,False)
             self.printStateGame()
-            if(self.asWinnerInIA()):
-                self.stop()
-                self.data.setEtat("Loto_End")
-                self.data.soundSystem.playMusic("triste")
-                self.data.menus[10].asWin = False
+        if self.timer > 2 and (self.asWinnerInIA()):
+            self.stop()
+            self.data.setEtat("Loto_End")
+            self.data.soundSystem.playMusic("triste")
+            self.data.menus[10].asWin = False
+        if(self.data.menus[9].nbInBoule==0):
+            self.data.menus[9].titre.text = "Début de partie"
+        elif(self.timer > 1):
+            self.data.menus[9].titre.text = str(5-self.timer)
+        else:
+            self.data.menus[9].titre.text = "Une nouvelle boule est sortie !"
 
     def stop(self):
         pass
@@ -80,21 +85,26 @@ class Loto_Party():
         print("Nombre de cases restantes du perso principal sur : grilleA=",
               self.nbCasesLeft(self.grille1_mainplayer),
               " et grilleB=",self.nbCasesLeft(self.grille2_mainplayer))
+        print("GrilleA : ",self.grille1_mainplayer.getListeNumeros())
+        print("GrilleB : ",self.grille2_mainplayer.getListeNumeros())
         for ia in self.tab_IA:
             print("Nombre de cases restantes de ",ia.nom," sur : grille1=",
                   self.nbCasesLeft(ia.grilles[0])," et grille2=",
                   self.nbCasesLeft(ia.grilles[1]))
+            print("Grille 0 : ",ia.grilles[0].getListeNumeros())
+            print("Grille 1 : ",ia.grilles[1].getListeNumeros())
 
     def sortirUneBoule(self):
         boule = choice(self.boules_in_game)
         self.boules_in_game.remove(boule)
         self.boules_sorties.append(boule)
-        self.data.menus[9]
         return boule
     def reset(self):
-        self.boules_sorties.clear();self.boules_in_game.clear();
+        self.boules_sorties.clear();self.boules_in_game.clear()
         for i in range(1,90):
             self.boules_in_game.append(i)
+        for ia in self.tab_IA:
+            ia.reset()
 
 class Menu_LotoChoose(SubMenu.Menu_G):
     "Menu pause du Loto"
@@ -132,10 +142,12 @@ class Menu_LotoChoose(SubMenu.Menu_G):
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
             # Cas où il appuie sur "Lancer la partie"
-            self.data.setEtat("Loto_Play")
-            self.data.menus[9].partie.start()
             self.data.menus[9].grilleToDraw1 = self.grilleToDraw1
             self.data.menus[9].grilleToDraw2 = self.grilleToDraw2
+            self.data.menus[9].partie.addGrilleToMainPlayer(self.grilleToDraw1,self.grilleToDraw2)
+            self.data.setEtat("Loto_Play")
+            self.data.menus[9].partie.start()
+            self.data.menus[9].nbInBoule = 0
         elif self.boutons[1].isCursorInRange():
             # Cas où il appuie sur "Changer de grilles"
             self.generateRandomContenuGrille(self.grilleToDraw1)
@@ -169,6 +181,7 @@ class Menu_LotoPlay(SubMenu.Menu_G):
                                     "Bingo !", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
         self.police25 = pygame.font.SysFont('Impact',25)
         self.police = pygame.font.SysFont("Impact",27)
+        self.police19 = pygame.font.SysFont("Impact",19)
         self.sizeBoule = round(frame.get_height() / 14)
         self.colorBackground = (0,0,0)
         self.grilleToDraw1 = Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case)
@@ -184,6 +197,7 @@ class Menu_LotoPlay(SubMenu.Menu_G):
                 # Cas où il apuuie sur "Abandon"
                 self.data.setEtat("Loto_End")
                 self.partie.stop()
+                self.nbInBoule = 0
                 #self.data.soundSystem.playSound("rire")
                 self.data.soundSystem.playMusic("triste")
             elif self.boutons[1].isCursorInRange():
@@ -192,7 +206,19 @@ class Menu_LotoPlay(SubMenu.Menu_G):
                 if(not(self.data.menus[10].asWin)):
                     self.data.soundSystem.playMusic("triste")
                 self.partie.stop()
+                self.nbInBoule = 0
                 self.data.setEtat("Loto_End")
+
+    def drawIA(self,frame,ia,x,y):
+        surface = pygame.Surface((100,60))
+        surface.fill(self.colorBackground)
+        if(ia.isWinner()):
+            text_on = self.police19.render("Bingo!",True,(255,255,255))
+        else:
+            text_on = self.police19.render(ia.nom,True,(255,255,255))
+        pygame.draw.rect(surface,(12,12,45),(0,35,100,60))
+        surface.blit(text_on,(50 - text_on.get_width()/2,35))
+        frame.blit(surface,(x,y))
 
     def drawBouleSortie(self,frame,value):
         surface = pygame.Surface((self.sizeBoule*2,self.sizeBoule*2))
@@ -212,11 +238,13 @@ class Menu_LotoPlay(SubMenu.Menu_G):
     def draw(self, frame):
         frame.blit(self.data.fond,(0,0))
         pygame.draw.rect(frame, self.colorBackground, (0, 0, frame.get_width(), frame.get_height()))
-        self.drawBouleSortie(frame,str(self.nbInBoule))
-        self.drawGrille(self.grilleToDraw1,frame,(80,90))
-        self.drawGrille(self.grilleToDraw2,frame,(80,200))
+        if(self.nbInBoule>0):
+            self.drawBouleSortie(frame,str(self.nbInBoule))
+        self.drawGrille(self.grilleToDraw1,frame,(40,90))
+        self.drawGrille(self.grilleToDraw2,frame,(40,200))
         self.boutons[0].draw(frame)
         self.boutons[1].draw(frame)
+        self.drawIA(frame,self.partie.tab_IA[0],370,200)
         self.titre.draw(frame)
 
 
@@ -245,6 +273,7 @@ class Menu_LotoEnd(SubMenu.Menu_G):
             # Cas où il apuuie sur "Rejouer"
             self.data.soundSystem.stopMusic("triste")
             self.data.setEtat("Loto_Choose")
+            self.data.menus[9].nbInBoule = 0
 
     def draw(self, frame):
         frame.blit(self.data.fond,(0,0))

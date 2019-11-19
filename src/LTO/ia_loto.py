@@ -1,17 +1,34 @@
-from src.Grille import Grille, Loto_Case
-from src.LTO import *
+from src.Grille import Loto_Case
+from src import *
+from random import *
+
+from src.Grille.Grille import Grille
 
 
 class IA_Loto():
 
     def __init__(self,jeu):
-        self.grilles = [Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case), Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case)]
+        self.grilles = [Grille(5, 3, 0, 0, 300, 90, Loto_Case), Grille(5, 3, 0, 0, 300, 90, Loto_Case)]
         self.nom = "IA"
         self.jeu = jeu
 
+    def existInList(self,cont,value):
+        for j in cont:
+            if(j == value):
+                return True
+        return False
+    def generateRandomContenuGrille(self,grille):
+        cont = [randint(1, 90)]
+        for i in range(14):
+            val = randint(1, 90)
+            while self.existInList(cont, val):
+                val = randint(1, 90)
+            cont.append(val)
+        grille.fillByListNumeros(cont)
+
     def reset(self):
-        Menu_LotoChoose.generateRandomContenuGrille(self.grilles[0])
-        Menu_LotoChoose.generateRandomContenuGrille(self.grilles[1])
+        for grill in self.grilles:
+            self.generateRandomContenuGrille(grill)
 
     def isOneGrilleWinner(self,grille):
         for i in grille.case:

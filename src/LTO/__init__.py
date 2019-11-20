@@ -201,21 +201,21 @@ class Menu_LotoPlay(SubMenu.Menu_G):
         return -1
     def click(self, frame):
         value = self.isCursorInRangeGrilles(self.grilleToDraw1,40,90)
-        case = self.grilleToDraw1.getCase(value)
-        if not(case==None):
-            print("in grill1")
-            if case.jetonIn:
-                case.jetonIn = False
-            else:
-                case.jetonIn = True
+        if(not(value==-1)):
+            case = self.grilleToDraw1.getCase(value)
+            if not(case==None):
+                if case.jetonIn:
+                    case.jetonIn = False
+                else:
+                    case.jetonIn = True
         value2 = self.isCursorInRangeGrilles(self.grilleToDraw2,40,200)
         case2 = self.grilleToDraw2.getCase(value2)
-        if not(case2==None):
-            print("in grill 2")
-            if case2.jetonIn:
-                case2.jetonIn = False
-            else:
-                case2.jetonIn = True
+        if(not(value2==-1)):
+            if not(case2==None):
+                if case2.jetonIn:
+                    case2.jetonIn = False
+                else:
+                    case2.jetonIn = True
 
         if self.boutons[0].isCursorInRange():
             # Cas où il apuuie sur "Abandon"

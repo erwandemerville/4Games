@@ -21,6 +21,7 @@ class Case(Case.Case):
         super().__init__();
         self.number = number;
         self.choosen = False;
+        self.jetonIn = False;
 
     # Fonction choose
     #
@@ -117,3 +118,6 @@ class Case(Case.Case):
             police = pygame.font.SysFont(textFont,int(fontSize))
             label = police.render(str(self.number), 1, textFill)
             surface.blit(label, (x+width/3, y))
+        if self.jetonIn:
+            pygame.draw.circle(surface,(0,0,0),(int(x+width/2),int(y+height/2)),14)
+            pygame.draw.circle(surface,(242,255,128),(int(x+width/2),int(y+height/2)),13)

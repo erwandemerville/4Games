@@ -191,33 +191,58 @@ class Menu_LotoPlay(SubMenu.Menu_G):
         self.data.partie = self.partie
         self.nbInBoule = 0
         self.frame = frame
-
+    def isCursorInRangeGrilles(self,grille,x,y):
+        pos = pygame.mouse.get_pos();footX = 60;footY = 30
+        for i in range(0,5):
+            for j in range(0,3):
+                if(x+grille.x+i*footX <= pos[0] <= x+grille.x+footX+i*footX):
+                    if(y+grille.y+j*footY <= pos[1] <= y+grille.y+footY+j*footY):
+                        return j*5+i
+        return -1
     def click(self, frame):
-            if self.boutons[0].isCursorInRange():
-                # Cas où il apuuie sur "Abandon"
-                self.data.setEtat("Loto_End")
-                self.partie.stop()
-                self.nbInBoule = 0
-                #self.data.soundSystem.playSound("rire")
+        value = self.isCursorInRangeGrilles(self.grilleToDraw1,40,90)
+        case = self.grilleToDraw1.getCase(value)
+        if not(case==None):
+            print("in grill1")
+            if case.jetonIn:
+                case.jetonIn = False
+            else:
+                case.jetonIn = True
+        value2 = self.isCursorInRangeGrilles(self.grilleToDraw2,40,200)
+        case2 = self.grilleToDraw2.getCase(value2)
+        if not(case2==None):
+            print("in grill 2")
+            if case2.jetonIn:
+                case2.jetonIn = False
+            else:
+                case2.jetonIn = True
+
+        if self.boutons[0].isCursorInRange():
+            # Cas où il apuuie sur "Abandon"
+            self.data.setEtat("Loto_End")
+            self.partie.stop()
+            self.nbInBoule = 0
+            #self.data.soundSystem.playSound("rire")
+            self.data.soundSystem.playMusic("triste")
+        elif self.boutons[1].isCursorInRange():
+            # Cas où il appuie sur bingo
+            self.data.menus[10].asWin = self.partie.isMainPlayerWinner()
+            if(not(self.data.menus[10].asWin)):
                 self.data.soundSystem.playMusic("triste")
-            elif self.boutons[1].isCursorInRange():
-                # Cas où il appuie sur bingo
-                self.data.menus[10].asWin = self.partie.isMainPlayerWinner()
-                if(not(self.data.menus[10].asWin)):
-                    self.data.soundSystem.playMusic("triste")
-                self.partie.stop()
-                self.nbInBoule = 0
-                self.data.setEtat("Loto_End")
+            self.partie.stop()
+            self.nbInBoule = 0
+            self.data.setEtat("Loto_End")
 
     def drawIA(self,frame,ia,x,y):
-        surface = pygame.Surface((100,60))
+        surface = pygame.Surface((100,100))
         surface.fill(self.colorBackground)
         if(ia.isWinner()):
             text_on = self.police19.render("Bingo!",True,(255,255,255))
         else:
             text_on = self.police19.render(ia.nom,True,(255,255,255))
-        pygame.draw.rect(surface,(12,12,45),(0,35,100,60))
-        surface.blit(text_on,(50 - text_on.get_width()/2,35))
+        pygame.draw.circle(surface,(100,100,100),(50,20),20)
+        pygame.draw.rect(surface,(12,12,45),(0,70,100,100))
+        surface.blit(text_on,(50 - text_on.get_width()/2,80))
         frame.blit(surface,(x,y))
 
     def drawBouleSortie(self,frame,value):

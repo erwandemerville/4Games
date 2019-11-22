@@ -6,6 +6,9 @@ from abc import ABC, abstractmethod
 from SubMenu import TitleManager
 import Data as da
 import configparser as cp
+import Poker.Jeu as pk
+import PKR
+import time
 
 class Menu_G(ABC):
     "Classe générale représentant un menu"
@@ -41,24 +44,32 @@ class Main_Menu(Menu_G):
         if(self.boutons[0].isCursorInRange()):
             self.data.partie = Sudoku.PartieG(frame, self.data)
         elif(self.boutons[1].isCursorInRange()):
-            print("Lancement du loto")
+            # Lancement du loto
+            self.data.setEtat("Loto_Choose")
         elif(self.boutons[2].isCursorInRange()):
             self.data.partie = BatailleNavale.GameBN(self.data)
             self.data.setEtat("BN_Place")
             self.data.partie.draw(frame, da.Data.menus[self.data.etat])
         elif(self.boutons[3].isCursorInRange()):
-            print("Lancement du poker")
+            # Lancement du poker
+            self.data.partie = pk.Jeu()
+            self.data.partie.lancerPartie(2)
         elif(self.boutons[4].isCursorInRange()):
             # Lancement des options
             da.Data.menus[1].readCfg()
             self.data.setEtat("options")
             self.data.getCurrentMenu().draw(frame)
         elif(self.boutons[5].isCursorInRange()):
-            print("Lancement du profil")
+            # Lancement du profil
+            self.data.setEtat("profil")
         elif(self.boutons[6].isCursorInRange()):
             self.data.setEtat("Classements")
             self.data.getCurrentMenu().draw(frame)
         elif(self.boutons[7].isCursorInRange()):
+            self.data.soundSystem.playSound("byebye")
+            sleepTime = 3
+            if sleepTime > 0:
+                time.sleep(sleepTime)
             self.data.fin = True
         pass
 
@@ -319,3 +330,31 @@ class Menu_SudokuP(Menu_G):
         frame.blit(self.police.render("Pause", True, (255,255,255)), (285, 120))
         for i in self.boutons:
             i.draw(frame)
+
+class Menu_LotoChoose(Menu_G):
+    "Menu pause du Sudoku"
+
+    def __init__(self,data, boutons):
+        # Constructeur prenant la classe Data définie dans le main.py
+        super().__init__(data,boutons)
+        self.police25 = pygame.font.SysFont('Impact',25)
+        self.police = pygame.font.SysFont("Impact",27)
+
+    def click(self, frame):
+        if self.boutons[0].isCursorInRange():
+            self.data.partie.draw(frame, da.Data.menus[4])
+            self.data.setEtat(4)
+        elif (self.boutons[1].isCursorInRange() or self.boutons[2].isCursorInRange()):
+
+            if self.boutons[1].isCursorInRange():
+                self.data.partie.sauvegarder_grille()
+
+            frame.blit(self.data.fond, (0, 0))
+            self.data.setEtat(0)
+
+    def draw(self, frame):
+        frame.blit(self.data.fond,(0,0))
+        pygame.draw.rect(frame, (70, 70, 70), (150, 120, frame.get_width()-300, 270))
+        #pygame.draw.rect(frame, (90, 90, 90), (470, 0, 170, 480))
+        frame.blit(self.police.render("Pause", True, (255,255,255)), (285, 120))
+        self.boutons[0].draw(frame)

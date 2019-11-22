@@ -24,7 +24,8 @@ class Data:
                     "BN_Place":11,
                     "BN_Play":12,
                     "BN_End":13,
-                    "profil":14}
+                    "BN_PlaceIA":14,
+                    "profil":15}
 
         def __init__(self, frame):
             # Cette variable représente les différents états dans lequel le jeu peut se trouver.
@@ -100,11 +101,21 @@ class Data:
             Data.menus.append(None)#Loto Play
             Data.menus.append(None)#Loto End
             Data.menus.append(BN_Menu.BN_Place_Boats(data, [ui.Bouton(frame.get_width()/2 - frame.get_width()/8, 20, frame.get_width()/4, 50, 2, (45, 45, 45), "Valider", (170, 170, 170), police, (255, 255, 255))]))#BN Place
-            Data.menus.append(None)#BN Play
-            Data.menus.append(None)#BN End
+            Data.menus.append(BN_Menu.BN_Jouer(data, [ui.Bouton(500, 110, 150, 50, 2, (45, 45, 45), "voir la grille de l'adversaire", (170, 170, 170), pygame.font.SysFont('Impact',12), (255, 255, 255)),
+                                                      ui.Bouton(500, 210, 150, 50, 2, None, "Tirer", (170, 170, 170), police, (255, 255, 255))]))#BN Play
+            Data.menus.append(BN_Menu.BN_GGAGNER(data, [ui.Bouton(160, 290, 320, 50, 2, (45, 45, 45), "Rejouer", (170, 170, 170), police, (255, 255, 255)),
+                                                        ui.Bouton(160, 390, 320, 50, 2, (45, 45, 45), "Retour au menu", (170, 170, 170), police, (255, 255, 255))]))#BN End
+            Data.menus.append(None)#BN PlaceIA
             Data.menus.append(None)#Profil
             Data.menus[1].readCfg()
             pass
+
+        # Fonction getCurrentMenu
+        #
+        # Fonction servant a récupérer le menu actuel
+        #
+        def getCurrentMenu(self):
+            return Data.menus[self.etat]
 
         # Fonction setEtat(e)
         #
@@ -138,3 +149,40 @@ class Data:
         #
         def getParticleSystem(self):
             return self.particules
+
+        # Fonction haveTimerTick
+        #
+        # permet de déterminer la partie contenue dans cette instance de la classe utilise la boucle
+        # du chronomètre du main
+        #
+        def haveTimerTick(self):
+            if self.partie == None:
+                return False
+            else:
+                try:
+                    d = self.partie.timerTick()
+                    if isinstance(d, list):
+                        for i in d:
+                            if self.etat == d:
+                                return True
+                        return False
+                    elif d == None:
+                        return True
+                    else:
+                        return self.etat == d
+                except:
+                    return False
+
+        # Fonction mustDraw
+        #
+        # permet de déterminer la partie contenue dans cette instance de la classe doit être redéssinée a chaque
+        # itération de la boucle principale
+        #
+        def mustDraw(self):
+            if self.partie == None:
+                return False
+            else:
+                try:
+                    return self.partie.mustDraw()
+                except:
+                    return False

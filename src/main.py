@@ -28,47 +28,54 @@ try:
                 data.fin = True
             elif(event.type == MOUSEBUTTONDOWN):
                 # Quand un clic est effectué
-                da.Data.menus[data.etat].draw(frame)
-                da.Data.menus[data.etat].click(frame)
+                data.getCurrentMenu().click(frame)
+                data.getCurrentMenu().draw(frame)
                 mustRedraw = False
             elif (event.type == MOUSEMOTION):
                 # Quand la souris est en mouvement
-                if (data.etat == 4):
+                if data.etat == 4:
                     pos = pygame.mouse.get_pos()
                     data.partie.grille_jeu.hoverCase(pos[0], pos[1])
                     data.partie.draw(frame, da.Data.menus[data.etat])
-                elif (data.etat == 11):
+                elif data.etat == 11 or data.etat == 12:
                     pos = pygame.mouse.get_pos()
-                    data.partie.grille_J1.hoverCase(pos[0], pos[1])
-                    data.partie.draw(frame, da.Data.menus[data.etat])
+                    if data.etat == 11 or (data.etat == 12 and data.partie.currentPlayData[0] == 1):
+                        data.partie.getGrille().hoverCase(pos[0], pos[1])
+                    data.partie.draw(frame, data.getCurrentMenu())
                 else:
-                    da.Data.menus[data.etat].draw(frame)
+                    data.getCurrentMenu().draw(frame)
                 mustRedraw = False
             elif event.type == pygame.KEYDOWN:
+                keys = pygame.key.get_pressed()
                 if (data.etat == 4):
-                    keys = pygame.key.get_pressed()
                     if(keys[K_LSHIFT]==1 and keys[K_g]==1):
-                        data.setEtat(5)
+                        data.setEtat("Sudoku_Win")
                         data.partie.effacer_sauvegarde()
                         data.partie.victoire(data)
-                        da.Data.menus[5].draw(frame)
+                        data.getCurrentMenu().draw(frame)
                     data.partie.keyPressed(keys[K_1:K_COLON]+keys[K_KP1:K_KP_PERIOD]+(keys[K_BACKSPACE],0), data)
                     data.partie.draw(frame, da.Data.menus[data.etat])
                     mustRedraw = False
+                elif(data.etat == 12):
+                    if(keys[K_LSHIFT]==1 and keys[K_g]==1):
+                        data.setEtat("BN_End")
+                        data.partie.victoire(data)
+                        data.getCurrentMenu().draw(frame)
                 elif(data.etat == 0):
-                    keys = pygame.key.get_pressed()
                     if(keys[K_LSHIFT]==1 and keys[K_s]==1):
                         print("Sound_active = ",data.sound_active," | Music active = ",data.music_active)
                 else:
                     da.Data.menus[data.etat].draw(frame)
                     mustRedraw = False
-        if mustRedraw == True and data.particules.mustDraw() == True:
-            da.Data.menus[data.etat].draw(frame)
+        if mustRedraw and data.particules.mustDraw():
+            data.getCurrentMenu().draw(frame)
+        elif mustRedraw and data.mustDraw():
+            print(data.partie, data.getCurrentMenu())
+            data.partie.draw(frame, data.getCurrentMenu())
         if time.time()-t > 1:
             if data.partie != None:
-                if (data.etat == 4):
-                    data.partie.timerTick()
-                    data.partie.draw(frame, da.Data.menus[4])
+                if data.haveTimerTick():
+                    data.partie.draw(frame, da.Data.menus[data.etat])
             t = t+1
         data.particules.tick()
         data.particules.draw(frame)

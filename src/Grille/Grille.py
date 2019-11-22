@@ -191,33 +191,30 @@ class Grille:
     def getBoundingBox(self):
         return (self.x, self.y, self.x2, self.y2)
 
-        # Fonction showShip
-        #
-        # self : instance de la classe, ne doit pas être mis en argument.
-        #
-        # Marque que cette case doit afficher le bateau qu'elle contient (si elle en contient un)
-        #
-
+    # Fonction showShip
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Marque que cette grille doit afficher les bateau qu'elle contient (si elle en contient un)
+    #
     def showShip(self):
         self.showShips = True;
 
-        # Fonction unshowShip
-        #
-        # self : instance de la classe, ne doit pas être mis en argument.
-        #
-        # Marque que cette case ne doit pas afficher le bateau qu'elle contient (si elle en contient un)
-        #
-
+    # Fonction unshowShip
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Marque que cette grille ne doit pas afficher les bateau qu'elle contient (si elle en contient un)
+    #
     def unshowShip(self):
         self.showShips = False;
 
-        # Fonction isShowingSelected
-        #
-        # self : instance de la classe, ne doit pas être mis en argument.
-        #
-        # Retourne un booleen indiquant si cette case doit afficher le bateau qu'elle contient (si elle en contient un).
-        #
-
+    # Fonction isShowingSelected
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Retourne un booleen indiquant si cette grille doit afficher les bateau qu'elle contient (si elle en contient un).
+    #
     def isShowingSelected(self):
         return self.showShips;
 
@@ -270,11 +267,18 @@ class Grille:
         if caseHoverColor == None:
             caseHoverColor = (min(couleur[0]-45, 0),min(couleur[1]-45, 0),min(couleur[2]-45, 0))
 
-        for i in range(0, self.hauteur):
-            for j in range(0, self.largeur):
-                self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
-                                                effectiveCase_Hauteur, selectFill=caseSelectColor,
-                                                hoverFill=caseHoverColor, bothFill=caseSelectHoverColor)
+        if self.showShips == None:
+            for i in range(0, self.hauteur):
+                for j in range(0, self.largeur):
+                    self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
+                                                    effectiveCase_Hauteur, selectFill=caseSelectColor,
+                                                    hoverFill=caseHoverColor, bothFill=caseSelectHoverColor)
+        else:
+            for i in range(0, self.hauteur):
+                for j in range(0, self.largeur):
+                    self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
+                                                    effectiveCase_Hauteur, selectFill=caseSelectColor,
+                                                    hoverFill=caseHoverColor, bothFill=caseSelectHoverColor, showShip=self.showShips)
 
         pygame.draw.line(surface, couleur, (x, y), (x2, y))
         pygame.draw.line(surface, couleur, (x, y), (x, y2))

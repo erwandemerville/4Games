@@ -48,7 +48,6 @@ class Bouton(object):
         self.draw(frame)
         pygame.display.flip()
 
-#A ne pas utiliser, en construction xD
 class Title():
     def __init__(self,x,y,width,height,border = 0,text = "",rgb=(255,255,255),police = None,rgb_text = (0,0,0)):
         #Constructeur
@@ -66,9 +65,10 @@ class Title():
         else:
             self.police = pygame.font.SysFont('Impact',14)
 
-    #Permet de dessiner le bouton dans une fenetre donnée
+    #Permet de dessiner le titre dans une fenetre donnée
     def draw(self,frame):
-        self.btn.fill(self.rgb)
+        if self.rgb != None:
+            self.btn.fill(self.rgb)
         if(self.border > 0):
             pygame.draw.rect(self.btn,(0,0,0),[0,0,self.width,self.height],self.border)
         text_on = self.police.render(self.text,True,self.rgb_text)

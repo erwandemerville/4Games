@@ -8,7 +8,7 @@ class SpriteSheet:
 
     def __init__(self, filename, nbLignes, nbColonnes = 1):
         try:
-            self.sheet = pygame.image.load(filename).convert()
+            self.sheet = self.fond = pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", filename)).convert()
             if nbLignes < 1:
                 raise ValueError("nbLignes argument of SpriteSheet constructor must be > 1")
             elif nbColonnes <1:

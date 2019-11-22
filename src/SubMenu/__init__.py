@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import Sudoku
+import BatailleNavale
 from abc import ABC, abstractmethod
 from SubMenu import TitleManager
 import Data as da
@@ -46,8 +47,9 @@ class Main_Menu(Menu_G):
             # Lancement du loto
             self.data.setEtat("Loto_Choose")
         elif(self.boutons[2].isCursorInRange()):
-            # Lancement de la bataille navale
+            self.data.partie = BatailleNavale.GameBN(self.data)
             self.data.setEtat("BN_Place")
+            self.data.partie.draw(frame, da.Data.menus[self.data.etat])
         elif(self.boutons[3].isCursorInRange()):
             # Lancement du poker
             self.data.partie = pk.Jeu()
@@ -55,14 +57,14 @@ class Main_Menu(Menu_G):
         elif(self.boutons[4].isCursorInRange()):
             # Lancement des options
             da.Data.menus[1].readCfg()
-            self.data.setEtat(1)
-            da.Data.menus[1].draw(frame)
+            self.data.setEtat("options")
+            self.data.getCurrentMenu().draw(frame)
         elif(self.boutons[5].isCursorInRange()):
             # Lancement du profil
             self.data.setEtat("profil")
         elif(self.boutons[6].isCursorInRange()):
-            self.data.setEtat(7)
-            da.Data.menus[7].draw(frame)
+            self.data.setEtat("Classements")
+            self.data.getCurrentMenu().draw(frame)
         elif(self.boutons[7].isCursorInRange()):
             self.data.soundSystem.playSound("byebye")
             sleepTime = 3
@@ -101,9 +103,9 @@ class Menu_Optn(Menu_G):
             self.writeCfg()
         elif(self.boutons[1].isCursorInRange()):
             # Bouton retour au menu
-            self.data.etat = 0
+            self.data.setEtat("main")
             frame.blit(self.data.fond, (0,0))
-            da.Data.menus[0].draw(frame)
+            self.data.getCurrentMenu().draw(frame)
         elif(self.boutons[2].isCursorInRange()):
             # Bouton on/off musique
             if(self.boutons[2].getText() == "Activer la musique"):
@@ -172,6 +174,7 @@ class Menu_Classements(Menu_G):
             self.current_Classement = 3
         elif self.boutons[4].isCursorInRange():
             self.data.setEtat("main")
+            self.data.getCurrentMenu().draw(frame);
         else:
             return 0
 
@@ -198,12 +201,12 @@ class Menu_SavedGrille(Menu_G):
     def click(self, frame):
         if (self.boutons[0].isCursorInRange()):
             self.data.partie.charger_grille()
-            self.data.setEtat(4)
+            self.data.setEtat("Sudoku_Game")
             self.data.partie.draw(frame)
         elif (self.boutons[1].isCursorInRange()):
-            self.data.setEtat(3)
+            self.data.setEtat("Sudoku_Diff")
 
-        da.Data.menus[self.data.etat].draw(frame)
+        self.data.getCurrentMenu().draw(frame)
         pass
 
     def draw(self, frame):
@@ -229,12 +232,12 @@ class Menu_Diff(Menu_G):
             self.data.partie.creerGrille(3)
 
         if(self.boutons[0].isCursorInRange() or self.boutons[1].isCursorInRange() or self.boutons[2].isCursorInRange()):
-            self.data.setEtat(4);
+            self.data.setEtat("Sudoku_Game");
 
             # L'état de la partie passe à "En cours"
             self.data.partie.etat_partie = 1;
             self.data.partie.draw(frame)
-            da.Data.menus[4].draw(frame)
+            self.data.getCurrentMenu().draw(frame)
         pass
 
     def draw(self, frame):
@@ -257,7 +260,7 @@ class Menu_Sudoku(Menu_G):
         self.data.partie.draw(frame, self)
 
         if (self.boutons[0].isCursorInRange()):
-            self.data.setEtat(6)
+            self.data.setEtat("Sudoku_Pause")
 
     def draw(self, frame):
         pygame.draw.rect(frame, (90, 90, 90), (470, 0, 170, 480))
@@ -283,14 +286,14 @@ class Menu_SudokuEnd(Menu_G):
 
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
-            self.data.setEtat(4)
+            self.data.setEtat("Sudoku_Game")
             self.data.partie.creerGrille(self.data.partie.getDiff())
             self.data.partie.draw(frame)
             self.data.particules.clear()
         elif self.boutons[1].isCursorInRange():
-            self.data.setEtat(0)
+            self.data.setEtat("main")
             frame.blit(self.data.fond, (0,0))
-            da.Data.menus[0].draw(frame)
+            self.data.getCurrentMenu().draw(frame)
             self.data.particules.clear()
 
     def draw(self, frame):
@@ -311,14 +314,15 @@ class Menu_SudokuP(Menu_G):
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
             self.data.partie.draw(frame, da.Data.menus[4])
-            self.data.setEtat(4)
+            self.data.setEtat("Sudoku_Game")
         elif (self.boutons[1].isCursorInRange() or self.boutons[2].isCursorInRange()):
 
             if self.boutons[1].isCursorInRange():
                 self.data.partie.sauvegarder_grille()
 
             frame.blit(self.data.fond, (0, 0))
-            self.data.setEtat(0)
+            self.data.setEtat("main")
+            self.data.getCurrentMenu().draw(frame)
 
     def draw(self, frame):
         pygame.draw.rect(frame, (70, 70, 70), (150, 120, frame.get_width()-300, 270))

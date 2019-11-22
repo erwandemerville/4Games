@@ -16,6 +16,29 @@ class Animation:
         self.currentFrame = 0
         self.done = False
 
+    # Fonction setLoop
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    # loop : argument indiquant si l'animation doit tourner sur elle même
+    #
+    # Fonction permettant de définir si l'animation peut tourner sur elle même.
+    #
+    def setLoop(self, loop):
+        self.loop = loop
+
+
+    # Fonction scale
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    # nw : nouvelle largeur de l'animation
+    # nh : nouvelle hauteur de l'animation
+    #
+    # Permet de changer la taille des frames de l'animation.
+    #
+    def scale(self, nw, nh):
+        for i in self.frames:
+            pygame.transform.scale(i, (nw, nh))
+
     # Fonction draw
     #
     # self : instance de la classe, ne doit pas être mis en argument.

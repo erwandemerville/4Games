@@ -73,6 +73,7 @@ class Classement:
                     temp = self.values[i]
                     self.values[i] = self.values[i+1]
                     self.values[i+1] = temp
+                    reTurn = True
 
     def ajouterScore(self, valueObj):
         self.values.append(valueObj)

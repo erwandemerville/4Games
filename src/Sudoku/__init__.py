@@ -47,10 +47,10 @@ class PartieG:
         self.erreur = 0
         # Vérifie si une grille est en cours.
         if self.charger_grille():
-            data.etat = 2
+            data.setEtat("Sudoku_Saved")
         else:
             # Afficher le menu de choix du niveau :
-            data.etat = 3
+            data.setEtat("Sudoku_Diff")
 
         da.Data.menus[data.etat].draw(frame)
 
@@ -181,9 +181,7 @@ class PartieG:
         data.classements[0].sort(self.compareTimes)
         data.classements[0].save("Classements_Sudoku.yolo")
         rayon = 4
-        data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(235, 0, 0), (0, 0, 0)], rayon, 60, (160, 480), (0, -4) , 0, 2))
-        #data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(0, 235, 0), (0, 100, 0)], rayon, 60, (320, 480), (0, -4) , 0, 2))
-        data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(0, 0, 235), (0, 0, 0)], rayon, 60, (480, 480), (0, -4) , 0, 2))
+        data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(235, 0, 0), (0, 0, 0)], rayon, 60, (320, 480), (0, -4) , 0, 2))
 
     def verifier_numero_cl(self, position, number):
         """Cette fonction vérifie si le numéro entré n'est pas présent sur la même ligne ou colonne."""
@@ -233,6 +231,7 @@ class PartieG:
 
     def timerTick(self):
         self.time = self.time+1
+        return 4
 
     def getStringTime(self):
         return time.strftime('%M:%S', time.gmtime(self.time))

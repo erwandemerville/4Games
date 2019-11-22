@@ -10,6 +10,7 @@ import math
 
 from src.Grille import Loto_Case
 from Grille import Sudoku_Case
+from Grille import Bataille_Navale_Case
 
 
 class Grille:
@@ -30,6 +31,10 @@ class Grille:
     # contenue dans le rectangle formé par les points (x1, y1) et (x2, y2).
     #
     def __init__(self, largeur, hauteur, x1, y1, x2, y2, module):
+        if module == Bataille_Navale_Case:
+            self.showShips = True
+        else:
+            self.showShips = None
         self.largeur = largeur
         self.hauteur = hauteur
         self.x = x1
@@ -186,6 +191,33 @@ class Grille:
     def getBoundingBox(self):
         return (self.x, self.y, self.x2, self.y2)
 
+    # Fonction showShip
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Marque que cette grille doit afficher les bateau qu'elle contient (si elle en contient un)
+    #
+    def showShip(self):
+        self.showShips = True;
+
+    # Fonction unshowShip
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Marque que cette grille ne doit pas afficher les bateau qu'elle contient (si elle en contient un)
+    #
+    def unshowShip(self):
+        self.showShips = False;
+
+    # Fonction isShowingSelected
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Retourne un booleen indiquant si cette grille doit afficher les bateau qu'elle contient (si elle en contient un).
+    #
+    def isShowingSelected(self):
+        return self.showShips;
+
     # Fonction draw
     #
     # ARGUMENTS OBLIGATOIRES :
@@ -233,13 +265,20 @@ class Grille:
             caseSelectHoverColor = (min(couleur[0]-33, 0),min(couleur[1]-33, 0),min(couleur[2]-33, 0))
 
         if caseHoverColor == None:
-            caseHoverColor = (min(couleur[0]-45, 0),min(couleur[1]-45, 0), min(couleur[2]-45, 0))
+            caseHoverColor = (min(couleur[0]-45, 0),min(couleur[1]-45, 0),min(couleur[2]-45, 0))
 
-        for i in range(0, self.hauteur):
-            for j in range(0, self.largeur):
-                self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
-                                                effectiveCase_Hauteur, selectFill=caseSelectColor,
-                                                hoverFill=caseHoverColor, bothFill=caseSelectHoverColor)
+        if self.showShips == None:
+            for i in range(0, self.hauteur):
+                for j in range(0, self.largeur):
+                    self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
+                                                    effectiveCase_Hauteur, selectFill=caseSelectColor,
+                                                    hoverFill=caseHoverColor, bothFill=caseSelectHoverColor)
+        else:
+            for i in range(0, self.hauteur):
+                for j in range(0, self.largeur):
+                    self.getCaseByCoords(j, i).draw(surface, x + j * case_Largeur, y + i * case_Hauteur, effectiveCase_Largeur,
+                                                    effectiveCase_Hauteur, selectFill=caseSelectColor,
+                                                    hoverFill=caseHoverColor, bothFill=caseSelectHoverColor, showShip=self.showShips)
 
         pygame.draw.line(surface, couleur, (x, y), (x2, y))
         pygame.draw.line(surface, couleur, (x, y), (x, y2))
@@ -274,7 +313,7 @@ class Grille:
             caseSelectHoverColor = (min(couleur[0]-33, 0),min(couleur[1]-33, 0),min(couleur[2]-33, 0))
 
         if caseHoverColor == None:
-            caseHoverColor = (min(couleur[0]-45, 0),min(couleur[1]-45, 0), min(couleur[2]-45, 0))
+            caseHoverColor = (min(couleur[0]-45, 0),min(couleur[1]-45, 0),min(couleur[2]-45, 0))
 
         for i in range(0, self.hauteur):
             for j in range(0, self.largeur):

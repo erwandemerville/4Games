@@ -18,11 +18,8 @@ class BN_IA:
         return self.tirs[case]
 
     def tirer(self):
-        print("TEST")
         case = self.determinerTirCase()
-        print("TEST3")
         self.tirs.remove(case)
-        print("TEST4 :", (case%self.grille.largeur, math.floor(case/self.grille.largeur)))
         self.partie.playTir(case=(case%self.grille.largeur, math.floor(case/self.grille.largeur)))
 
     def generateGrille(self):

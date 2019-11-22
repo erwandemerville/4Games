@@ -1,6 +1,8 @@
 from random import randint
 
 import pygame
+
+import LTO
 import UiPygame as ui
 import SubMenu
 from Grille import Grille, Loto_Case
@@ -127,9 +129,10 @@ class Menu_LotoPlay(SubMenu.Menu_G):
             # Cas où il appuie sur bingo
             self.data.setEtat("Loto_End")
             self.data.menus[10].asWin = self.data.partie.isMainPlayerWinner()
+            del self.data.partie
+            self.data.partie = None
             if(not(self.data.getCurrentMenu().asWin)):
                 self.data.soundSystem.playMusic("triste")
-            self.data.partie.stop()
             self.nbInBoule = 0
 
     def drawIA(self,frame,ia,x,y):
@@ -190,11 +193,12 @@ class Menu_LotoEnd(SubMenu.Menu_G):
 
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
-            # Cas où il apuuie sur "Lancer la partie"
+            # Cas où il appuie sur "Go to main"
             self.data.soundSystem.stopMusic("triste")
             self.data.setEtat("main")
         elif self.boutons[1].isCursorInRange():
-            # Cas où il apuuie sur "Rejouer"
+            # Cas où il apupuie sur "Rejouer"
+            self.data.partie = LTO.Loto_Party(frame, self.data)
             self.data.soundSystem.stopMusic("triste")
             self.data.setEtat("Loto_Choose")
             self.data.menus[9].nbInBoule = 0

@@ -13,7 +13,9 @@ class SoundManager():
         self.data = data
         self.mx = pygame.mixer.init(48000,16,8)
         self.sound_link = {"rire": Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "rires.wav")),
-                           "byebye": Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Au revoir.wav"))}
+                           "byebye": Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Au revoir.wav")),
+                           "BN_boom" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bataille Navale/boom.wav")),
+                           "BN_plouf" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bataille Navale/plouf.wav"))}
         self.music_link = {"triste": Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "tristitude.wav"))}
 
     # Joue un son avec sound, un élement de sound_link

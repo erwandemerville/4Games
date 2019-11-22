@@ -284,6 +284,7 @@ class GameBN:
             case_Largeur = largeur / grille.largeur
             case_Hauteur = hauteur / grille.hauteur
             if self.tirTimer == 30:
+                self.data.soundSystem.playSound("BN_plouf" if self.getGrille().getCaseByCoords(self.tirData[0], self.tirData[1]).estVide() else "BN_boom")
                 self.tir(grille, (self.tirData[0]+1, self.tirData[1]+1))
             elif self.tirTimer == 1:
                 if self.checkVictory(grille):

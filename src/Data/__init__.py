@@ -40,9 +40,9 @@ class Data:
             # 6 - Partie de Sudoku en Pause
             #
             self.etat = 0
-
             # Cette variable représente la partie au cas ou on en aurait besoin.
             self.partie = None;
+            self.joueur = None
 
             # Ces variables permettent d'activer et désactiver le son/musique
             self.sound_active = True;

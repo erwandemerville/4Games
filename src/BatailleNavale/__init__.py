@@ -56,6 +56,10 @@ class GameBN:
         self.tirData = [-1, -1]
         self.tirTimer = 0;
         self.winner = 0
+        self.tirTouche = [0, 0]
+        self.tirCoule = [0, 0]
+        self.tirs = [0, 0]
+        self.time = 0
         self.IA = None
 
     def createIA(self):
@@ -124,8 +128,19 @@ class GameBN:
             print("Position invalide")
             return None
         else:
-            grille.getCaseByCoords(position[0]-1, position[1]-1).shoot()
+            case = grille.getCaseByCoords(position[0]-1, position[1]-1)
+            case.shoot()
+            self.tirs[self.currentPlayData[0]-1] = self.tirs[self.currentPlayData[0]-1] + 1
+            if case.estVide():
+                self.tirCoule[self.currentPlayData[0]-1] = self.tirCoule[self.currentPlayData[0]-1]+1
+            else:
+                self.tirTouche[self.currentPlayData[0]-1] = self.tirTouche[self.currentPlayData[0]-1]+1
+            #print(self.currentPlayData[0], self.tirs[self.currentPlayData[0]-1], (self.tirTouche[self.currentPlayData[0]-1], self.tirCoule[self.currentPlayData[0]-1]))
             return not grille.getCaseByCoords(position[0]-1, position[1]-1).estVide()
+
+    def timerTick(self):
+        self.time = self.time + 1
+        return 12
 
     def checkVictory(self, grille):
         i = 0
@@ -134,6 +149,9 @@ class GameBN:
                 if not grille.getCaseByCoords(x, y).estVide() and grille.getCaseByCoords(x, y).isShot():
                     i = i+1
         return i == 17
+
+    def precision(self, joueur):
+        return (self.tirTouche[joueur]/self.tirs[joueur]) * 100
 
     def cmd(self):
         self.ajouter_Bateau(self.grille_J1, "Horizontale", (1, 1), "Porte-Avion")

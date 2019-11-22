@@ -78,4 +78,13 @@ class BN_GGAGNER(SubMenu.Menu_G):
 
     def draw(self, frame):
         frame.fill((10,10,10))
+
+        police20 = pygame.font.SysFont('Impact', 20)
+        police = pygame.font.SysFont('Impact', 30)
+        if self.data.partie.winner == 1:
+            frame.blit(police.render("Gagné!", True, (25, 245, 25)), ((frame.get_width() - police.size("Gagné!")[0])/2, 170))
+        else:
+            frame.blit(police.render("Perdu!", True, (245, 25, 25)), ((frame.get_width() - police.size("Perdu!")[0])/2, 170))
+        l = "Partie gagnée par le joueur " + str(self.data.partie.winner-1) + "avec une précision de" + str(self.data.partie.precision(self.data.partie.winner-1)) + "%."
+        frame.blit(police20.render(l, True, (255, 255, 255)), ((frame.get_width() - police.size(l)[0])/2, 220))
         super().draw(frame)

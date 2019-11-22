@@ -1,13 +1,12 @@
 import pygame
 from pygame.locals import *
-from src import Sudoku
-from src import BatailleNavale
+import Sudoku, LTO
+import BatailleNavale
 from abc import ABC, abstractmethod
-from src.SubMenu import TitleManager
-from src import Data as da
+from SubMenu import TitleManager
+import Data as da
 import configparser as cp
-import src.Poker.Jeu as pk
-from src import PKR
+import Poker.Jeu as pk
 import time
 
 class Menu_G(ABC):
@@ -46,6 +45,7 @@ class Main_Menu(Menu_G):
         elif(self.boutons[1].isCursorInRange()):
             # Lancement du loto
             self.data.setEtat("Loto_Choose")
+            self.data.partie = LTO.Loto_Party(frame,self.data)
         elif(self.boutons[2].isCursorInRange()):
             self.data.partie = BatailleNavale.GameBN(self.data)
             self.data.setEtat("BN_Place")

@@ -1,4 +1,4 @@
-from src.Grille import Loto_Case, Grille
+from Grille import Loto_Case, Grille
 from random import *
 
 class IA_Loto():

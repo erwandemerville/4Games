@@ -1,13 +1,12 @@
 import pygame
-from pygame.locals import *
-from src import SubMenu as sb
-from src.BatailleNavale import BN_Menu
-from src import UiPygame as ui
-from src import LTO
-from src import Sound
+import SubMenu as sb
+from BatailleNavale import BN_Menu
+import UiPygame as ui
+from LTO import loto_menu as lm
+import Sound
 import os
-from src.Particules import ParticleSystem
-from stc.Classements import Classements
+from Particules import ParticleSystem
+from Classements import Classements
 
 class Data:
 
@@ -101,9 +100,9 @@ class Data:
                                                          ui.Bouton(frame.get_width()/2 - 75, frame.get_height()-60, 150, 50, 2, (45,45,45), "Retour au menu", (170,170,170), police20,(255,255,255))]))
 
 
-            Data.menus.append(LTO.Menu_LotoChoose(data,frame))#Loto choose
-            Data.menus.append(LTO.Menu_LotoPlay(data,frame))#Loto Play
-            Data.menus.append(LTO.Menu_LotoEnd(data,frame))#Loto End
+            Data.menus.append(lm.Menu_LotoChoose(data,frame))#Loto choose
+            Data.menus.append(lm.Menu_LotoPlay(data,frame))#Loto Play
+            Data.menus.append(lm.Menu_LotoEnd(data,frame))#Loto End
             Data.menus.append(BN_Menu.BN_Place_Boats(data, [ui.Bouton(frame.get_width()/2 - frame.get_width()/8, 20, frame.get_width()/4, 50, 2, (45, 45, 45), "Valider", (170, 170, 170), police, (255, 255, 255))]))#BN Place
             Data.menus.append(BN_Menu.BN_Jouer(data, [ui.Bouton(500, 110, 150, 50, 2, (45, 45, 45), "voir la grille de l'adversaire", (170, 170, 170), pygame.font.SysFont('Impact',12), (255, 255, 255)),
                                                       ui.Bouton(500, 210, 150, 50, 2, None, "Tirer", (170, 170, 170), police, (255, 255, 255))]))#BN Play

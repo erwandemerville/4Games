@@ -1,7 +1,7 @@
 import pygame
-from src import SubMenu
-from src import Data as da
-from src import BatailleNavale
+import SubMenu
+import Data as da
+import BatailleNavale
 
 class BN_Place_Boats(SubMenu.Menu_G):
     "Menu de placement des bateau de la bataille Navale"

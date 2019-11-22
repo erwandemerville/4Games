@@ -5,12 +5,10 @@
 # Écrit en septembre 2019 par Lucas Raulier
 
 import pygame
-from pygame.locals import *
 import math
 
-from src.Grille import Loto_Case
-from src.Grille import Sudoku_Case
-from src.Grille import Bataille_Navale_Case
+from Grille import Loto_Case
+from Grille import Bataille_Navale_Case
 
 
 class Grille:

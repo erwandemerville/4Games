@@ -1,10 +1,7 @@
 import pygame
 from pygame.locals import *
-from src import Data as da
-from src import UiPygame as ui
-from src import SubMenu as sb
+import Data as da
 import os,sys,time
-from src.BatailleNavale import testJeuCmd
 
 #Corriger bug du bouton Quitter
 
@@ -73,7 +70,6 @@ while(not(data.fin)):
     if mustRedraw and data.particules.mustDraw():
         data.getCurrentMenu().draw(frame)
     elif mustRedraw and data.mustDraw():
-        print(data.partie, data.getCurrentMenu())
         data.partie.draw(frame, data.getCurrentMenu())
     if time.time()-t > 1:
         if data.partie != None:

@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
-from src import Data as da
-from src import os,sys,time
+import Data as da
+import os,sys,time
 from src.BatailleNavale import testJeuCmd
 
 try:

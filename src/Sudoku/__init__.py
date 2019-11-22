@@ -52,7 +52,7 @@ class PartieG:
             # Afficher le menu de choix du niveau :
             data.setEtat("Sudoku_Diff")
 
-        da.Data.menus[data.etat].draw(frame)
+        data.getCurrentMenu().draw(frame)
 
     def creerGrille(self, niveau):
         self.time = 0

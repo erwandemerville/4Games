@@ -1,14 +1,10 @@
-from src.Grille import Loto_Case
-from src import *
+from src.Grille import Loto_Case, Grille
 from random import *
-
-from src.Grille.Grille import Grille
-
 
 class IA_Loto():
 
     def __init__(self,jeu):
-        self.grilles = [Grille(5, 3, 0, 0, 300, 90, Loto_Case), Grille(5, 3, 0, 0, 300, 90, Loto_Case)]
+        self.grilles = [Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case), Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case)]
         self.nom = "IA"
         self.jeu = jeu
 

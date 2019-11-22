@@ -42,7 +42,7 @@ class Loto_Party():
         return False
     def isOneGrilleWinner(self,grille):
         for i in grille.case:
-            if(not(self.jeu.containsNbInBoulesSorties(i.getNumber()))):
+            if(not(self.containsNbInBoulesSorties(i.getNumber()))):
                 return False
         return True
     def isMainPlayerWinner(self):
@@ -76,6 +76,7 @@ class Loto_Party():
             self.data.menus[9].titre.text = str(5-self.timer)
         else:
             self.data.menus[9].titre.text = "Une nouvelle boule est sortie !"
+        return 9
 
     def stop(self):
         pass

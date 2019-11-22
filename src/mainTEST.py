@@ -1,10 +1,10 @@
 import pygame
 from pygame.locals import *
-import Data as da
-import UiPygame as ui
-import SubMenu as sb
+from src import Data as da
+from src import UiPygame as ui
+from src import SubMenu as sb
 import os,sys,time
-from BatailleNavale import testJeuCmd
+from src.BatailleNavale import testJeuCmd
 
 #Corriger bug du bouton Quitter
 

@@ -1,13 +1,13 @@
 import pygame
 from pygame.locals import *
-import Sudoku
-import BatailleNavale
+from src import Sudoku
+from src import BatailleNavale
 from abc import ABC, abstractmethod
-from SubMenu import TitleManager
-import Data as da
+from src.SubMenu import TitleManager
+from src import Data as da
 import configparser as cp
-import Poker.Jeu as pk
-import PKR
+import src.Poker.Jeu as pk
+from src import PKR
 import time
 
 class Menu_G(ABC):

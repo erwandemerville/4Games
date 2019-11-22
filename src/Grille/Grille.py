@@ -9,8 +9,8 @@ from pygame.locals import *
 import math
 
 from src.Grille import Loto_Case
-from Grille import Sudoku_Case
-from Grille import Bataille_Navale_Case
+from src.Grille import Sudoku_Case
+from src.Grille import Bataille_Navale_Case
 
 
 class Grille:

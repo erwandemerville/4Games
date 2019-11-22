@@ -1,13 +1,13 @@
 import pygame
 from pygame.locals import *
-import SubMenu as sb
-from BatailleNavale import BN_Menu
-import UiPygame as ui
+from src import SubMenu as sb
+from src.BatailleNavale import BN_Menu
+from src import UiPygame as ui
 from src import LTO
 from src import Sound
 import os
-from Particules import ParticleSystem
-from Classements import Classements
+from src.Particules import ParticleSystem
+from stc.Classements import Classements
 
 class Data:
 

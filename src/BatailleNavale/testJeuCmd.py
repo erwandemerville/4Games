@@ -1,4 +1,4 @@
-import BatailleNavale
+from src import BatailleNavale
 
 class testBN:
 

@@ -2,11 +2,11 @@ import pygame
 from pygame.locals import *
 import pickle
 import os, math, time
-import Data as da
-from Grille import Grille
-from Grille import Bataille_Navale_Case
-from BatailleNavale import IA
-from Particules import FireWorkParticule, Particule
+from src import Data as da
+from src.Grille import Grille
+from src.Grille import Bataille_Navale_Case
+from src.BatailleNavale import IA
+from src.Particules import FireWorkParticule, Particule
 
 class GameBN:
 

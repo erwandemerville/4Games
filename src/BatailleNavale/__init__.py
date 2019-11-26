@@ -292,7 +292,7 @@ class GameBN:
                     da.Data.menus[13].setWin(self.winner)
                     self.currentPlayData[0] = 0
                     self.data.setEtat("BN_End")
-                    self.victoire()
+                    self.victoire(self.data)
                     self.data.partie = None
                     del self
                     return

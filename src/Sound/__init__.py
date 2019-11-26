@@ -15,7 +15,21 @@ class SoundManager():
         self.sound_link = {"rire": Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "rires.wav")),
                            "byebye": Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Au revoir.wav")),
                            "BN_boom" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bataille Navale/boom.wav")),
-                           "BN_plouf" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bataille Navale/plouf.wav"))}
+                           "BN_plouf" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bataille Navale/plouf.wav")),
+                           "1" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "1.wav")),
+                           "2" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "2.wav")),
+                           "3" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "3.wav")),
+                           "Bingo" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bingo.wav")),
+                           "BingoIA" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bingo IA.wav")),
+                           "Boule" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Boule.wav")),
+                           "Clique" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Clique.wav")),
+                           "Hihi" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "hihi.wav")),
+                           "Jeton" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Jeton.wav")),
+                           "Nul" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "T Nul.wav")),
+                           "UI" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "ui.wav")),
+                           "Win" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Win msg.wav")),
+                           "Lose" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Perdu msg.wav"))
+                           }
         self.music_link = {"triste": Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "tristitude.wav"))}
 
     # Joue un son avec sound, un élement de sound_link

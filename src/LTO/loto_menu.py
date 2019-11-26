@@ -15,16 +15,19 @@ class Menu_LotoChoose(SubMenu.Menu_G):
     def __init__(self,data, frame):
         # Constructeur prenant la classe Data définie dans le main.py
         super().__init__(data,
-                         [ui.Bouton(10, frame.get_height()-60, frame.get_width() - 20, 50, 2, (45, 45, 45),
+                         [ui.Bouton(10, frame.get_height()-120, frame.get_width()/2 - 40, 50, 2, (45, 45, 45),
                                     "Jouer avec ces grilles", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
-                          ui.Bouton(50, frame.get_height()-140, frame.get_width() - 120, 50, 2, (45, 45, 45),
-                                    "Changer de grilles", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
+                          ui.Bouton(frame.get_width()/2 + 20, frame.get_height()-120, frame.get_width() /2- 40, 50, 2, (45, 45, 45),
+                                    "Changer de grilles", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
+                          ui.Bouton(10, frame.get_height()-60, frame.get_width()/2 - 40, 50, 2, (45, 45, 45),
+                                    "Ajouter une grille", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
+                          ui.Bouton(frame.get_width()/2 + 20, frame.get_height()-60, frame.get_width()/2 - 40, 50, 2, (45, 45, 45),
+                                    "Retirer une grille", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
         self.police25 = pygame.font.SysFont('Impact',25)
         self.police = pygame.font.SysFont("Impact",27)
-        self.grilleToDraw1 = Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case)
-        self.grilleToDraw2 = Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case)
-        self.generateRandomContenuGrille(self.grilleToDraw1)
-        self.generateRandomContenuGrille(self.grilleToDraw2)
+        self.grillesToDraw = [Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case),Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case)]
+        for grille in self.grillesToDraw:
+            self.generateRandomContenuGrille(grille)
 
     @staticmethod
     def existInList(cont,value):
@@ -45,17 +48,32 @@ class Menu_LotoChoose(SubMenu.Menu_G):
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
             # Cas où il appuie sur "Lancer la partie"
-            self.data.grilleToDraw1 = self.grilleToDraw1
-            self.data.grilleToDraw2 = self.grilleToDraw2
-            self.data.partie.addGrilleToMainPlayer(self.grilleToDraw1,self.grilleToDraw2)
             self.data.setEtat("Loto_Play")
             self.data.partie.start()
+            self.data.partie.addGrillesToMainPlayer(self.grillesToDraw)
             self.data.nbInBoule = 0
         elif self.boutons[1].isCursorInRange():
             # Cas où il appuie sur "Changer de grilles"
-            self.generateRandomContenuGrille(self.grilleToDraw1)
-            self.generateRandomContenuGrille(self.grilleToDraw2)
-
+            for grille in self.grillesToDraw:
+                self.generateRandomContenuGrille(grille)
+        elif self.boutons[2].isCursorInRange():
+            # Cas où on ajoute une grille
+            self.addGrille()
+        elif self.boutons[3].isCursorInRange():
+            # Cas où en retire une grille
+            self.removeLastGrilleAdded()
+    def addGrille(self):
+        if len(self.grillesToDraw) < 6:
+            grille = Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case)
+            self.generateRandomContenuGrille(grille)
+            self.grillesToDraw.append(grille)
+        else:
+            print("[ERROR] Cannot add another grille")
+    def removeGrille(self,last):
+        self.grillesToDraw.remove(last)
+    def removeLastGrilleAdded(self):
+        if len(self.grillesToDraw) > 2:
+            self.grillesToDraw.pop(len(self.grillesToDraw)-1)
     def drawGrille(self,grille,frame,coord):
         surface = pygame.Surface((grille.x2,grille.y2))
         surface.fill((255,255,255))
@@ -68,9 +86,14 @@ class Menu_LotoChoose(SubMenu.Menu_G):
         #pygame.draw.rect(frame, (90, 90, 90), (470, 0, 170, 480))
         self.boutons[0].draw(frame)
         self.boutons[1].draw(frame)
-        self.drawGrille(self.grilleToDraw1,frame,((frame.get_width()/2)-(self.grilleToDraw1.x2/2),50))
-        self.drawGrille(self.grilleToDraw2,frame,((frame.get_width()/2)-(self.grilleToDraw2.x2/2),200))
-        #self.grilleToDraw1.draw(frame, (255, 0, 0))
+        self.boutons[2].draw(frame)
+        self.boutons[3].draw(frame)
+        nb = 0
+        #print(self.grillesToDraw)
+        for grille in self.grillesToDraw:
+            LTO.Loto_Party.removeAllJetonsS(grille)
+            self.drawGrille(grille,frame,((frame.get_width()/2)-(grille.x2/2),10+nb*130))
+            nb = nb + 1
 
 class Menu_LotoPlay(SubMenu.Menu_G):
     "Menu jeu du Loto"
@@ -87,8 +110,6 @@ class Menu_LotoPlay(SubMenu.Menu_G):
         self.police19 = pygame.font.SysFont("Impact",19)
         self.sizeBoule = round(frame.get_height() / 14)
         self.colorBackground = (0,0,0)
-        self.grilleToDraw1 = Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case)
-        self.grilleToDraw2 = Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case)
         self.titre = Title(20,20,frame.get_width()-40,50,2,"Lancement de la partie ...",(12, 12, 251),self.police,(255,255,255))
         self.nbInBoule = 0
         self.frame = frame
@@ -101,33 +122,29 @@ class Menu_LotoPlay(SubMenu.Menu_G):
                         return j*5+i
         return -1
     def click(self, frame):
-        value = self.isCursorInRangeGrilles(self.grilleToDraw1,40,90)
-        if(not(value==-1)):
-            case = self.grilleToDraw1.getCase(value)
-            if not(case==None):
-                if case.jetonIn:
-                    case.jetonIn = False
-                else:
-                    case.jetonIn = True
-        value2 = self.isCursorInRangeGrilles(self.grilleToDraw2,40,200)
-        case2 = self.grilleToDraw2.getCase(value2)
-        if(not(value2==-1)):
-            if not(case2==None):
-                if case2.jetonIn:
-                    case2.jetonIn = False
-                else:
-                    case2.jetonIn = True
-
+        nb = 0
+        for grille in self.data.partie.grilles_mainplayer:
+            value = self.isCursorInRangeGrilles(grille,40,90+110*nb)
+            print("Value : ",value)
+            if(not(value==-1)):
+                case = grille.getCase(value)
+                if not(case==None):
+                    self.data.soundSystem.playSound("Jeton")
+                    if case.jetonIn:
+                        case.jetonIn = False
+                    else:
+                        case.jetonIn = True
+            nb = nb + 1
         if self.boutons[0].isCursorInRange():
             # Cas où il apuuie sur "Abandon"
             self.data.setEtat("Loto_End")
             self.data.partie.stop()
             self.nbInBoule = 0
-            #self.data.soundSystem.playSound("rire")
             self.data.soundSystem.playMusic("triste")
         elif self.boutons[1].isCursorInRange():
             # Cas où il appuie sur bingo
             self.data.setEtat("Loto_End")
+            self.data.soundSystem.playSound("Bingo")
             self.data.menus[10].asWin = self.data.partie.isMainPlayerWinner()
             del self.data.partie
             self.data.partie = None
@@ -167,8 +184,10 @@ class Menu_LotoPlay(SubMenu.Menu_G):
         pygame.draw.rect(frame, self.colorBackground, (0, 0, frame.get_width(), frame.get_height()))
         if(self.nbInBoule>0):
             self.drawBouleSortie(frame,str(self.nbInBoule))
-        self.drawGrille(self.grilleToDraw1,frame,(40,90))
-        self.drawGrille(self.grilleToDraw2,frame,(40,200))
+        first_height = 90;nb = 0;
+        for grille in self.data.partie.grilles_mainplayer:
+            self.drawGrille(grille,frame,(40,first_height+nb*110))
+            nb = nb + 1
         self.boutons[0].draw(frame)
         self.boutons[1].draw(frame)
         self.drawIA(frame,self.data.partie.tab_IA[0],370,200)

@@ -22,9 +22,14 @@ class Menu_LotoChoose(SubMenu.Menu_G):
                           ui.Bouton(10, frame.get_height()-60, frame.get_width()/2 - 40, 50, 2, (45, 45, 45),
                                     "Ajouter une grille", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
                           ui.Bouton(frame.get_width()/2 + 20, frame.get_height()-60, frame.get_width()/2 - 40, 50, 2, (45, 45, 45),
-                                    "Retirer une grille", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
+                                    "Retirer une grille", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
+                          ui.Bouton((frame.get_width()/2)-150, frame.get_height()-185, 40, 40, 2, (45, 45, 45),
+                                    "<", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
+                          ui.Bouton((frame.get_width()/2)+150, frame.get_height()-185, 40, 40, 2, (45, 45, 45),
+                                    ">", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
         self.police25 = pygame.font.SysFont('Impact',25)
         self.police = pygame.font.SysFont("Impact",27)
+        self.pageGridToDraw = 0
         self.grillesToDraw = []
         self.addGrille();self.addGrille()
         for grille in self.grillesToDraw:
@@ -54,6 +59,12 @@ class Menu_LotoChoose(SubMenu.Menu_G):
         elif self.boutons[3].isCursorInRange():
             # Cas où en retire une grille
             self.removeLastGrilleAdded()
+        elif self.boutons[4].isCursorInRange():
+            # Cas où il appuie sur <
+            self.pageGridToDraw = (self.pageGridToDraw-1)%(round(len(self.grillesToDraw)/2))
+        elif self.boutons[5].isCursorInRange():
+            # Cas où il appuie sur >
+            self.pageGridToDraw = (self.pageGridToDraw+1)%(round(len(self.grillesToDraw)/2))
     def addGrille(self):
         if len(self.grillesToDraw) < 6:
             grille = Grille.Grille(9, 3, 0, 0, 300, 90, Loto_Case)
@@ -66,6 +77,8 @@ class Menu_LotoChoose(SubMenu.Menu_G):
     def removeLastGrilleAdded(self):
         if len(self.grillesToDraw) > 2:
             self.grillesToDraw.pop(len(self.grillesToDraw)-1)
+            if (len(self.grillesToDraw) % 2 == 0) and (len(self.grillesToDraw) < (self.pageGridToDraw+1)*2):
+                self.pageGridToDraw = self.pageGridToDraw - 1
     def drawGrille(self,grille,frame,coord):
         surface = pygame.Surface((grille.x2,grille.y2))
         surface.fill((255,255,255))
@@ -80,11 +93,16 @@ class Menu_LotoChoose(SubMenu.Menu_G):
         self.boutons[1].draw(frame)
         self.boutons[2].draw(frame)
         self.boutons[3].draw(frame)
+        if len(self.grillesToDraw) > 2:
+            self.boutons[4].draw(frame)
+            self.boutons[5].draw(frame)
         nb = 0
-        #print(self.grillesToDraw)
-        for grille in self.grillesToDraw:
+        buffer = [self.grillesToDraw[self.pageGridToDraw*2]]
+        if(len(self.grillesToDraw) >= (self.pageGridToDraw+1)*2):
+            buffer.append(self.grillesToDraw[self.pageGridToDraw*2+1])
+        for grille in buffer:
             LTO.Loto_Party.removeAllJetonsS(grille)
-            self.drawGrille(grille,frame,((frame.get_width()/2)-(grille.x2/2),10+nb*130))
+            self.drawGrille(grille,frame,((frame.get_width()/2)-130,45+nb*130))
             nb = nb + 1
 
 class Menu_LotoPlay(SubMenu.Menu_G):
@@ -96,7 +114,11 @@ class Menu_LotoPlay(SubMenu.Menu_G):
                          [ui.Bouton(10, frame.get_height()-60, frame.get_width() - 20, 50, 2, (45, 45, 45),
                                     "Abandonner", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
                           ui.Bouton(10, frame.get_height()-130, frame.get_width() - 20, 50, 2, (45, 45, 45),
-                                    "Bingo !", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
+                                    "Bingo !", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
+                          ui.Bouton(50, frame.get_height()-185, 40, 40, 2, (45, 45, 45),
+                                    "<", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
+                          ui.Bouton(280, frame.get_height()-185, 40, 40, 2, (45, 45, 45),
+                                    ">", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
         self.police25 = pygame.font.SysFont('Impact',25)
         self.police = pygame.font.SysFont("Impact",27)
         self.police19 = pygame.font.SysFont("Impact",19)
@@ -105,6 +127,7 @@ class Menu_LotoPlay(SubMenu.Menu_G):
         self.titre = Title(20,20,frame.get_width()-40,50,2,"Lancement de la partie ...",(12, 12, 251),self.police,(255,255,255))
         self.nbInBoule = 0
         self.frame = frame
+        self.pageGridToDraw = 0
     def isCursorInRangeGrilles(self,grille,x,y):
         pos = pygame.mouse.get_pos();footX = 33;footY = 30
         for i in range(0,9):
@@ -115,9 +138,11 @@ class Menu_LotoPlay(SubMenu.Menu_G):
         return -1
     def click(self, frame):
         nb = 0
-        for grille in self.data.partie.grilles_mainplayer:
+        buffer = [self.data.partie.grilles_mainplayer[self.pageGridToDraw*2]]
+        if(len(self.data.partie.grilles_mainplayer) >= (self.pageGridToDraw+1)*2):
+            buffer.append(self.data.partie.grilles_mainplayer[self.pageGridToDraw*2+1])
+        for grille in buffer:
             value = self.isCursorInRangeGrilles(grille,40,90+110*nb)
-            print("Clique : ",value)
             if(not(value==-1)):
                 case = grille.getCase(value)
                 if not(case==None):
@@ -144,6 +169,12 @@ class Menu_LotoPlay(SubMenu.Menu_G):
             if(not(self.data.getCurrentMenu().asWin)):
                 self.data.soundSystem.playMusic("triste")
             self.nbInBoule = 0
+        elif self.boutons[2].isCursorInRange():
+            # Cas où il appuie sur <
+            self.pageGridToDraw = (self.pageGridToDraw-1)%(round(len(self.data.partie.grilles_mainplayer)/2))
+        elif self.boutons[3].isCursorInRange():
+            # Cas où il appuie sur >
+            self.pageGridToDraw = (self.pageGridToDraw+1)%(round(len(self.data.partie.grilles_mainplayer)/2))
 
     def drawIA(self,frame,ia,x,y):
         surface = pygame.Surface((100,100))
@@ -177,12 +208,15 @@ class Menu_LotoPlay(SubMenu.Menu_G):
         pygame.draw.rect(frame, self.colorBackground, (0, 0, frame.get_width(), frame.get_height()))
         if(self.nbInBoule>0):
             self.drawBouleSortie(frame,str(self.nbInBoule))
-        first_height = 90;nb = 0;
-        for grille in self.data.partie.grilles_mainplayer:
-            self.drawGrille(grille,frame,(40,first_height+nb*110))
-            nb = nb + 1
+        self.drawGrille(self.data.partie.grilles_mainplayer[self.pageGridToDraw*2],frame,(40,90))
+        if(len(self.data.partie.grilles_mainplayer) >= (self.pageGridToDraw+1)*2):
+            self.drawGrille(self.data.partie.grilles_mainplayer[self.pageGridToDraw*2+1],frame,(40,200))
+
         self.boutons[0].draw(frame)
         self.boutons[1].draw(frame)
+        if len(self.data.partie.grilles_mainplayer) > 2:
+            self.boutons[2].draw(frame)
+            self.boutons[3].draw(frame)
         self.drawIA(frame,self.data.partie.tab_IA[0],370,200)
         self.titre.draw(frame)
 

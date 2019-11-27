@@ -100,7 +100,6 @@ class Loto_Party():
                 # appel à après les 5 s
                 self.timer = 0
                 self.data.menus[9].nbInBoule = self.sortirUneBoule()
-                self.printStateGame()
             if self.timer > 2 and (self.asWinnerInIA()):
                 self.stop()
                 self.data.setEtat("Loto_End")
@@ -122,12 +121,8 @@ class Loto_Party():
 
     # Fonction pour afficher l'état du jeu dans la console
     def printStateGame(self):
+        print("--- Etat du jeu ---")
         print("Boules sorties : ",self.boules_sorties)
-        print("Nombre de cases restantes du perso principal sur : grilleA=",
-              self.nbCasesLeft(self.grille1_mainplayer),
-              " et grilleB=",self.nbCasesLeft(self.grille2_mainplayer))
-        print("GrilleA : ",self.grille1_mainplayer.getListeNumeros())
-        print("GrilleB : ",self.grille2_mainplayer.getListeNumeros())
         print("List Grilles : ",self.grilles_mainplayer)
         for ia in self.tab_IA:
             print("Nombre de cases restantes de ",ia.nom," sur : grille1=",

@@ -2,8 +2,9 @@ from random import *
 
 from Grille import Grille, Loto_Case
 from LTO import ia_loto
+from LTO.ia_loto import IA_Loto
 
-
+# Classe permettant de gérer une partie de loto
 class Loto_Party():
     "Classe de lancement de partie de loto"
     def __init__(self,frame,data):
@@ -18,6 +19,32 @@ class Loto_Party():
         self.reset()
         self.isStarted = False
 
+    # Vérifie si une valeur value est dans cont
+    @staticmethod
+    def existInList(cont,value):
+        for j in cont:
+            if(j == value):
+                return True
+        return False
+
+    # Génère à partir d'une grille donnée, une nouvelle grille
+    @staticmethod
+    def generateRandomContenuGrille(grille):
+        cont = []
+        for ligne in range(3):
+            nb_none = 0
+            for p in range(9):
+                if (nb_none >= 4) or ((randint(0,1)==1) and not(nb_none <= p-4)):
+                    val = randint(0, 9) + p*10
+                    while Loto_Party.existInList(cont, val):
+                        val = randint(0, 9) + p*10
+                    cont.append(val)
+                else:
+                    cont.append(-1)
+                    nb_none = nb_none + 1
+        grille.fillByListNumeros(cont)
+
+    # Retourne le nombre de numéros manquants pour faire un bingo
     def nbCasesLeft(self,grille):
         nb = len(grille.getListeNumeros())
         for i in grille.getListeNumeros():
@@ -61,9 +88,10 @@ class Loto_Party():
         for grille in self.grilles_mainplayer:
             Loto_Party.removeAllJetonsS(grille)
 
-
+    # Fonction qui affiche la fenetre
     def draw(self,frame,state):
         self.data.menus[9].draw(frame)
+    # Fonction appelée toutes les secondes
     def timerTick(self):
         if self.isStarted:
             # Appelée à chaque seconde
@@ -108,6 +136,7 @@ class Loto_Party():
             print("Grille 0 : ",ia.grilles[0].getListeNumeros())
             print("Grille 1 : ",ia.grilles[1].getListeNumeros())
 
+    # Fonction appelée pour sortir une boule
     def sortirUneBoule(self):
         boule = choice(self.boules_in_game)
         self.boules_in_game.remove(boule)
@@ -121,5 +150,6 @@ class Loto_Party():
         for i in range(1,90):
             self.boules_in_game.append(i)
         for ia in self.tab_IA:
-            ia.reset()
+            for grille in ia.grilles:
+                Loto_Party.generateRandomContenuGrille(grille)
 

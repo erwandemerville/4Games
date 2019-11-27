@@ -25,9 +25,10 @@ class Menu_LotoChoose(SubMenu.Menu_G):
                                     "Retirer une grille", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255))])
         self.police25 = pygame.font.SysFont('Impact',25)
         self.police = pygame.font.SysFont("Impact",27)
-        self.grillesToDraw = [Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case),Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case)]
+        self.grillesToDraw = []
+        self.addGrille();self.addGrille()
         for grille in self.grillesToDraw:
-            self.generateRandomContenuGrille(grille)
+            LTO.Loto_Party.generateRandomContenuGrille(grille)
 
     @staticmethod
     def existInList(cont,value):
@@ -35,15 +36,6 @@ class Menu_LotoChoose(SubMenu.Menu_G):
             if(j == value):
                 return True
         return False
-    @staticmethod
-    def generateRandomContenuGrille(grille):
-        cont = [randint(1, 90)]
-        for i in range(14):
-            val = randint(1,90)
-            while Menu_LotoChoose.existInList(cont, val):
-                val = randint(1,90)
-            cont.append(val)
-        grille.fillByListNumeros(cont)
 
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
@@ -55,7 +47,7 @@ class Menu_LotoChoose(SubMenu.Menu_G):
         elif self.boutons[1].isCursorInRange():
             # Cas où il appuie sur "Changer de grilles"
             for grille in self.grillesToDraw:
-                self.generateRandomContenuGrille(grille)
+                LTO.Loto_Party.generateRandomContenuGrille(grille)
         elif self.boutons[2].isCursorInRange():
             # Cas où on ajoute une grille
             self.addGrille()
@@ -64,8 +56,8 @@ class Menu_LotoChoose(SubMenu.Menu_G):
             self.removeLastGrilleAdded()
     def addGrille(self):
         if len(self.grillesToDraw) < 6:
-            grille = Grille.Grille(5, 3, 0, 0, 300, 90, Loto_Case)
-            self.generateRandomContenuGrille(grille)
+            grille = Grille.Grille(9, 3, 0, 0, 300, 90, Loto_Case)
+            LTO.Loto_Party.generateRandomContenuGrille(grille)
             self.grillesToDraw.append(grille)
         else:
             print("[ERROR] Cannot add another grille")
@@ -114,26 +106,27 @@ class Menu_LotoPlay(SubMenu.Menu_G):
         self.nbInBoule = 0
         self.frame = frame
     def isCursorInRangeGrilles(self,grille,x,y):
-        pos = pygame.mouse.get_pos();footX = 60;footY = 30
-        for i in range(0,5):
+        pos = pygame.mouse.get_pos();footX = 33;footY = 30
+        for i in range(0,9):
             for j in range(0,3):
                 if(x+grille.x+i*footX <= pos[0] <= x+grille.x+footX+i*footX):
                     if(y+grille.y+j*footY <= pos[1] <= y+grille.y+footY+j*footY):
-                        return j*5+i
+                        return j*9+i
         return -1
     def click(self, frame):
         nb = 0
         for grille in self.data.partie.grilles_mainplayer:
             value = self.isCursorInRangeGrilles(grille,40,90+110*nb)
-            print("Value : ",value)
+            print("Clique : ",value)
             if(not(value==-1)):
                 case = grille.getCase(value)
                 if not(case==None):
-                    self.data.soundSystem.playSound("Jeton")
-                    if case.jetonIn:
-                        case.jetonIn = False
-                    else:
-                        case.jetonIn = True
+                    if case.number > 0:
+                        self.data.soundSystem.playSound("Jeton")
+                        if case.jetonIn:
+                            case.jetonIn = False
+                        else:
+                            case.jetonIn = True
             nb = nb + 1
         if self.boutons[0].isCursorInRange():
             # Cas où il apuuie sur "Abandon"

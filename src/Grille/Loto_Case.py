@@ -111,7 +111,7 @@ class Case(Case.Case):
         elif self.isHovered():
             pygame.draw.rect(surface, hoverFill, (x, y, width, height))
 
-        if self.number != 0:
+        if self.number > 0:
             fontSize = height-6;
             if self.number > 9:
                 fontSize -= 6;

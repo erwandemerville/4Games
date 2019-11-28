@@ -79,5 +79,8 @@ class Classement:
         self.values.append(valueObj)
     def removeScore(self,valueObj):
         self.values.remove(valueObj)
-    def getScore(self,id):
-        return
+    def getScore(self,nom_joueur):
+        for element in self.values:
+            if element[0] == nom_joueur:
+                return element
+        return 0

@@ -168,16 +168,22 @@ class Menu_LotoPlay(SubMenu.Menu_G):
             self.data.partie.stop()
             self.nbInBoule = 0
             self.data.soundSystem.playMusic("triste")
+            self.data.partie.classements(False)
+            del self.data.partie
+            self.data.partie = None
         elif self.boutons[1].isCursorInRange():
             # Cas où il appuie sur bingo
             self.data.setEtat("Loto_End")
             self.data.soundSystem.playSound("Bingo")
             self.data.menus[10].asWin = self.data.partie.isMainPlayerWinner()
-            del self.data.partie
-            self.data.partie = None
             if(not(self.data.getCurrentMenu().asWin)):
                 self.data.soundSystem.playMusic("triste")
+                self.data.partie.classements(False)
+            else:
+                self.data.partie.classements(True)
             self.nbInBoule = 0
+            del self.data.partie
+            self.data.partie = None
         elif self.boutons[2].isCursorInRange():
             # Cas où il appuie sur <
             self.pageGridToDraw = (self.pageGridToDraw-1)%(round(len(self.data.partie.grilles_mainplayer)/2))

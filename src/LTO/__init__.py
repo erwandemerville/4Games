@@ -45,7 +45,7 @@ class Loto_Party():
 
     # Retourne le nombre de numéros manquants pour faire un bingo
     def nbCasesLeft(self,grille):
-        nb = len(grille.getListeNumeros())
+        nb = 15
         for i in grille.getListeNumeros():
             if(self.containsNbInBoulesSorties(i)):
                 nb = nb - 1
@@ -60,7 +60,7 @@ class Loto_Party():
         return False
     def isOneGrilleWinner(self,grille):
         for i in grille.case:
-            if(not(self.containsNbInBoulesSorties(i.getNumber()))):
+            if not(self.containsNbInBoulesSorties(i.getNumber())) and not(i.getNumber()==-1):
                 return False
         return True
     def isMainPlayerWinner(self):
@@ -97,6 +97,7 @@ class Loto_Party():
             self.timer = self.timer + 1
             if(self.timer >= 5):
                 # appel à après les 5 s
+                #self.printStateGame()
                 self.timer = 0
                 self.data.menus[9].nbInBoule = self.sortirUneBoule()
             if self.timer > 2 and (self.asWinnerInIA()):
@@ -105,6 +106,7 @@ class Loto_Party():
                 self.data.soundSystem.playSound("BingoIA")
                 self.data.soundSystem.playMusic("triste")
                 self.data.menus[10].asWin = False
+                self.classements(False)
             if(self.data.menus[9].nbInBoule==0):
                 self.data.menus[9].titre.text = "Début de partie"
             elif(self.timer > 1):
@@ -121,14 +123,14 @@ class Loto_Party():
     # Fonction pour afficher l'état du jeu dans la console
     def printStateGame(self):
         print("--- Etat du jeu ---")
-        print("Boules sorties : ",self.boules_sorties)
-        print("List Grilles : ",self.grilles_mainplayer)
+        print(len(self.boules_sorties)," Boules sorties : ",self.boules_sorties)
+        print("Liste des Grilles : ")
+        for grille in self.grilles_mainplayer:
+            print("Reste ",self.nbCasesLeft(grille)," numéros dans ",grille)
         for ia in self.tab_IA:
-            print("Nombre de cases restantes de ",ia.nom," sur : grille1=",
-                  self.nbCasesLeft(ia.grilles[0])," et grille2=",
-                  self.nbCasesLeft(ia.grilles[1]))
-            print("Grille 0 : ",ia.grilles[0].getListeNumeros())
-            print("Grille 1 : ",ia.grilles[1].getListeNumeros())
+            print("Pour l'IA ",ia.nom," generalWin?",ia.isWinner())
+            for grille in ia.grilles:
+                print("Reste ",self.nbCasesLeft(grille)," numéros dans ",grille," win?",ia.isOneGrilleWinner(grille))
 
     # Fonction appelée pour sortir une boule
     def sortirUneBoule(self):
@@ -146,4 +148,24 @@ class Loto_Party():
         for ia in self.tab_IA:
             for grille in ia.grilles:
                 Loto_Party.generateRandomContenuGrille(grille)
+
+    def classements(self,asWin):
+        joueur = "No joueur"
+        score = self.data.classements[2].getScore(joueur)
+        if score == 0:
+            if asWin:
+                self.data.classements[2].ajouterScore((joueur,"1/0","100%"))
+            else:
+                self.data.classements[2].ajouterScore((joueur,"0/1","0%"))
+        else:
+            self.data.classements[2].removeScore(score)
+            wins = int(score[1].split("/")[0]);loses = int(score[1].split("/")[1])
+            if asWin:
+                avg = str(((wins+1)*100) / (wins+loses+1))+"%"
+                self.data.classements[2].ajouterScore((joueur,str(wins+1)+"/"+str(loses),avg))
+            else:
+                avg = str((wins*100) / (wins+loses+1))+"%"
+                self.data.classements[2].ajouterScore((joueur,str(wins)+"/"+str(loses+1),avg))
+        #self.data.classements[2].sort(self.compare)
+        self.data.classements[2].save("Classements_Loto.yolo")
 

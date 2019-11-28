@@ -27,7 +27,7 @@ class IA_Loto():
     # Détermine si la grille entrée en paramètre est gagnante
     def isOneGrilleWinner(self,grille):
         for i in grille.case:
-            if not(self.jeu.containsNbInBoulesSorties(i.getNumber())) and not(i.getNumber== -1):
+            if not(self.jeu.containsNbInBoulesSorties(i.getNumber())) and not(i.getNumber()== -1):
                 return False
         return True
     # Détermine si l'IA a gagné

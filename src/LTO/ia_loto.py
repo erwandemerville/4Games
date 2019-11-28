@@ -1,14 +1,20 @@
 from Grille import Loto_Case, Grille
+import random
 
 # Classe gérant une IA
 
 
 class IA_Loto():
+    ID = 0
+    ListName = ["IA","Genie45","Marco_du_64","BabyCar"]
 
     def __init__(self,jeu):
         self.grilles = [Grille.Grille(9, 3, 0, 0, 300, 90, Loto_Case), Grille.Grille(9, 3, 0, 0, 300, 90, Loto_Case)]
-        self.nom = "IA"
+        self.nom = random.choice(IA_Loto.ListName)
+        IA_Loto.ListName.remove(self.nom)
         self.jeu = jeu
+        self.id = IA_Loto.ID
+        IA_Loto.ID = IA_Loto.ID + 1
 
     # Vérifie si une valeur value est dans cont
     @staticmethod

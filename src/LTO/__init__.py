@@ -10,11 +10,10 @@ class Loto_Party():
     def __init__(self,frame,data):
         self.frame = frame
         self.data = data
-        #self.main_player = 0
         self.grilles_mainplayer = []
         self.boules_in_game = []
         self.boules_sorties = []
-        self.tab_IA = [ia_loto.IA_Loto(self)]
+        self.tab_IA = [ia_loto.IA_Loto(self),ia_loto.IA_Loto(self)]
         self.timer = 0
         self.reset()
         self.isStarted = False

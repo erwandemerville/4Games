@@ -12,7 +12,7 @@ class Classement:
             l = len(self.names)
             l2 = 1.0/l
             for i in range(0, l):
-                self.drawCoords.append(l2)
+                self.drawCoords.append(l2+l2*i)
 
     def save(self, filepath):
         try:
@@ -77,3 +77,7 @@ class Classement:
 
     def ajouterScore(self, valueObj):
         self.values.append(valueObj)
+    def removeScore(self,valueObj):
+        self.values.remove(valueObj)
+    def getScore(self,id):
+        return

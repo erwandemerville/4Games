@@ -41,19 +41,21 @@ class Data:
             #
             self.etat = 0
             # Cette variable représente la partie au cas ou on en aurait besoin.
-            self.partie = None;
+            self.partie = None
             self.joueur = None
 
             # Ces variables permettent d'activer et désactiver le son/musique
-            self.sound_active = True;
-            self.music_active = True;
+            self.sound_active = True
+            self.music_active = True
             self.soundSystem = Sound.SoundManager(self)
             self.fin = False
             self.fond = pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "background_menu.jpg")).convert()
             frame.blit(self.fond, (0,0))
             self.particules = ParticleSystem.ParticleSystem()
-            self.classements = [Classements.Classement(["Profil", "Temps", "Erreurs"], [0.5, 0.75]), None, None, None]
+            self.classements = [Classements.Classement(["Profil", "Temps", "Erreurs"], [0.5, 0.75]), None,
+                                Classements.Classement(["Profil", "Victoire/Defaite","Taux réussite"], [0.2,0.6]), None]
             self.classements[0].load("Classements_Sudoku.yolo")
+            self.classements[2].load("Classements_Loto.yolo")
 
         @staticmethod
         def init(frame, data):

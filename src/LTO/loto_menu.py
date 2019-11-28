@@ -1,3 +1,4 @@
+import os
 from random import randint
 
 import pygame
@@ -113,7 +114,7 @@ class Menu_LotoPlay(SubMenu.Menu_G):
         super().__init__(data,
                          [ui.Bouton(10, frame.get_height()-60, frame.get_width() - 20, 50, 2, (45, 45, 45),
                                     "Abandonner", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
-                          ui.Bouton(10, frame.get_height()-130, frame.get_width() - 20, 50, 2, (45, 45, 45),
+                          ui.Bouton(10, frame.get_height()-120, frame.get_width() - 20, 50, 2, (45, 45, 45),
                                     "Bingo !", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
                           ui.Bouton(50, frame.get_height()-185, 40, 40, 2, (45, 45, 45),
                                     "<", (170, 170, 170), pygame.font.SysFont("Impact",27),(255,255,255)),
@@ -122,12 +123,20 @@ class Menu_LotoPlay(SubMenu.Menu_G):
         self.police25 = pygame.font.SysFont('Impact',25)
         self.police = pygame.font.SysFont("Impact",27)
         self.police19 = pygame.font.SysFont("Impact",19)
+        self.police14 = pygame.font.SysFont("Impact",14)
         self.sizeBoule = round(frame.get_height() / 14)
         self.colorBackground = (0,0,0)
-        self.titre = Title(20,20,frame.get_width()-40,50,2,"Lancement de la partie ...",(12, 12, 251),self.police,(255,255,255))
+        self.titre = Title(20,5,frame.get_width()-40,45,2,"Lancement de la partie ...",(12, 12, 251),self.police25,(255,255,255))
         self.nbInBoule = 0
         self.frame = frame
         self.pageGridToDraw = 0
+        self.linkImg = [(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets/loto/", "1.jpg")),
+                        (os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets/loto/", "2.jpg")),
+                        (os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets/loto/", "3.jpg")),
+                        (os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets/loto/", "4.jpg"))]
+        self.img = []
+        for img in self.linkImg:
+            self.img.append(pygame.image.load(img))
     def isCursorInRangeGrilles(self,grille,x,y):
         pos = pygame.mouse.get_pos();footX = 33;footY = 30
         for i in range(0,9):
@@ -177,15 +186,15 @@ class Menu_LotoPlay(SubMenu.Menu_G):
             self.pageGridToDraw = (self.pageGridToDraw+1)%(round(len(self.data.partie.grilles_mainplayer)/2))
 
     def drawIA(self,frame,ia,x,y):
-        surface = pygame.Surface((100,100))
-        surface.fill(self.colorBackground)
-        if(ia.isWinner()):
-            text_on = self.police19.render("Bingo!",True,(255,255,255))
+        surface = pygame.Surface((102,122))
+        surface.fill((255,0,0))
+        if ia.isWinner():
+            text_on = self.police14.render("Bingo !",True,(12,255,12))
         else:
-            text_on = self.police19.render(ia.nom,True,(255,255,255))
-        pygame.draw.circle(surface,(100,100,100),(50,20),20)
-        pygame.draw.rect(surface,(12,12,45),(0,70,100,100))
-        surface.blit(text_on,(50 - text_on.get_width()/2,80))
+            text_on = self.police14.render(ia.nom,True,(255,255,255))
+        surface.blit(self.img[ia.id], (1, 1, 100, 100))
+        pygame.draw.rect(surface,(12,12,45),(1,101,100,120))
+        surface.blit(text_on,(50 - text_on.get_width()/2 ,101))
         frame.blit(surface,(x,y))
 
     def drawBouleSortie(self,frame,value):
@@ -214,10 +223,15 @@ class Menu_LotoPlay(SubMenu.Menu_G):
 
         self.boutons[0].draw(frame)
         self.boutons[1].draw(frame)
+        frame.blit(self.police14.render("Vos grilles", True, (255,255,255)),
+                   (160,65))
         if len(self.data.partie.grilles_mainplayer) > 2:
             self.boutons[2].draw(frame)
             self.boutons[3].draw(frame)
-        self.drawIA(frame,self.data.partie.tab_IA[0],370,200)
+        frame.blit(self.police14.render("Adversaires", True, (255,255,255)),
+                   (386,65))
+        self.drawIA(frame,self.data.partie.tab_IA[0],370,90)
+        self.drawIA(frame,self.data.partie.tab_IA[1],370,220)
         self.titre.draw(frame)
 
 

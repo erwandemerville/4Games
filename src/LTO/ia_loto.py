@@ -6,12 +6,11 @@ import random
 
 class IA_Loto():
     ID = 0
-    ListName = ["IA","Genie45","Marco_du_64","BabyCar"]
+    ListName = ["IA","Genie45","Marco_du_64","BabyCar","Rabie","Gégé62","LuluDu22"]
 
     def __init__(self,jeu):
         self.grilles = [Grille.Grille(9, 3, 0, 0, 300, 90, Loto_Case), Grille.Grille(9, 3, 0, 0, 300, 90, Loto_Case)]
         self.nom = random.choice(IA_Loto.ListName)
-        IA_Loto.ListName.remove(self.nom)
         self.jeu = jeu
         self.id = IA_Loto.ID
         IA_Loto.ID = IA_Loto.ID + 1

@@ -161,10 +161,10 @@ class Loto_Party():
             self.data.classements[2].removeScore(score)
             wins = int(score[1].split("/")[0]);loses = int(score[1].split("/")[1])
             if asWin:
-                avg = str(((wins+1)*100) / (wins+loses+1))+"%"
+                avg = str(round(((wins+1)*100) / (wins+loses+1)))+"%"
                 self.data.classements[2].ajouterScore((joueur,str(wins+1)+"/"+str(loses),avg))
             else:
-                avg = str((wins*100) / (wins+loses+1))+"%"
+                avg = str(round((wins*100) / (wins+loses+1)))+"%"
                 self.data.classements[2].ajouterScore((joueur,str(wins)+"/"+str(loses+1),avg))
         #self.data.classements[2].sort(self.compare)
         self.data.classements[2].save("Classements_Loto.yolo")

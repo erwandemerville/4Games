@@ -198,7 +198,7 @@ class Menu_LotoPlay(SubMenu.Menu_G):
             text_on = self.police14.render("Bingo !",True,(12,255,12))
         else:
             text_on = self.police14.render(ia.nom,True,(255,255,255))
-        surface.blit(self.img[ia.id], (1, 1, 100, 100))
+        surface.blit(self.img[ia.id%4], (1, 1, 100, 100))
         pygame.draw.rect(surface,(12,12,45),(1,101,100,120))
         surface.blit(text_on,(50 - text_on.get_width()/2 ,101))
         frame.blit(surface,(x,y))

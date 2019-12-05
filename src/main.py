@@ -87,8 +87,8 @@ try:
 
 except Exception as e:
     pygame.quit()
-    #exc_type, exc_obj, exc_tb = sys.exc_info()
-    #fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-    #print("Type : ",exc_type," dans ",fname," ligne : ",exc_tb.tb_lineno)
-    #print(e)
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    print("Type : ",exc_type," dans ",fname," ligne : ",exc_tb.tb_lineno)
+    print(e)
 pygame.quit()

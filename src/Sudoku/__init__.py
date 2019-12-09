@@ -183,7 +183,7 @@ class PartieG:
                     if self.liste_numeros_init[case[1]] == 0:
                         case[0].setNumber(0)
                         for l in range(81):
-                            if not(grilleGenerator.verifierNombre(self.grille_jeu, (l%self.grille_jeu.largeur, math.floor(l/self.grille_jeu.largeur)))):
+                            if not(PartieG.verifierNombre(self.grille_jeu, (l%self.grille_jeu.largeur, math.floor(l/self.grille_jeu.largeur)))):
                                 self.wrongCase[l] = 1
                             else:
                                 self.wrongCase[l] = 0
@@ -193,10 +193,10 @@ class PartieG:
                 if case[0] != None:
                     if case[0].estVide() and self.liste_numeros_init[case[1]] == 0:
                         case[0].setNumber(k)
-                        if not(grilleGenerator.verifierNombre(self.grille_jeu, (case[1]%self.grille_jeu.largeur, math.floor(case[1]/self.grille_jeu.largeur)))):
+                        if not(PartieG.verifierNombre(self.grille_jeu, (case[1]%self.grille_jeu.largeur, math.floor(case[1]/self.grille_jeu.largeur)))):
                             self.erreur = self.erreur+1
                         for l in range(81):
-                            if not(grilleGenerator.verifierNombre(self.grille_jeu, (l%self.grille_jeu.largeur, math.floor(l/self.grille_jeu.largeur)))):
+                            if not(PartieG.verifierNombre(self.grille_jeu, (l%self.grille_jeu.largeur, math.floor(l/self.grille_jeu.largeur)))):
                                 self.wrongCase[l] = 1
                             else:
                                 self.wrongCase[l] = 0
@@ -299,6 +299,57 @@ class PartieG:
     #
     def getNbErreurs(self):
         return self.erreur
+
+    # Fonction getSousGrille
+    #
+    # grille : la grille sur laquelle vérifier.
+    # point : tuple représentant les coordonnées du nombre a vérifier. ex (x, y)
+    #
+    # Cette fonction retourne une liste de tuples representant les coordonnées relatives au point passé en argument et
+    # representant, en combinant la liste retounée et l'argument "point", une sous-grille de taille 3x3 tirée de la grille
+    # passée en argument.
+    #
+    @staticmethod
+    def getSousGrille(grille, point):
+        tab = []
+        nx = round((point[0]-point[0]%3)/3)
+        ny = round((point[1]-point[1]%3)/3)
+
+        for x in range(0,3):
+            for y in range(0,3):
+                tab.append(((nx*3)+x, (ny*3)+y))
+
+        tab.remove(point)
+        return tab
+
+    # Fonction verifierNombre
+    #
+    # grille : la grille sur laquelle vérifier.
+    # point : tuple représentant les coordonnées du nombre a vérifier. ex (x, y)
+    #
+    # Cette méthode vérifie si un nombre placé sur la grille est correctement placé et respecte les règles du sudoku.
+    #
+    @staticmethod
+    def verifierNombre(grille, point):
+        for x in range(grille.largeur):
+            if (x == point[0]):
+                continue
+            if (grille.getCaseByCoords(x, point[1]).getNumber() == grille.getCaseByCoords(point[0], point[1]).getNumber()):
+                return False
+
+        for y in range(grille.hauteur):
+            if (y == point[1]):
+                continue
+            if (grille.getCaseByCoords(point[0], y).getNumber() == grille.getCaseByCoords(point[0], point[1]).getNumber()):
+                return False
+
+        tab = PartieG.getSousGrille(grille, point)
+
+        for pt in tab:
+            if (grille.getCaseByCoords(pt[0], pt[1]).getNumber() == grille.getCaseByCoords(point[0], point[1]).getNumber()):
+                return False
+
+        return True
 
     # Fonction draw
     #

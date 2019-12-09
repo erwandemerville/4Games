@@ -46,9 +46,14 @@ class Grille:
             else:
                 self.case.append(module.Case())
 
+    # Fonction getListeNumeros
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Cette fonction retourne une liste composée des numéros contenus dans chaque case de la grille.
+    # Fonction utilisée pour la sauvegarde d'une grille de Sudoku
+    #
     def getListeNumeros(self):
-        """Fonction récupérant le numéro de chaque case pour en constituer une liste.
-        Retourne cette liste."""
 
         listenumeros = []
         for i in range(self.largeur * self.hauteur):
@@ -56,6 +61,14 @@ class Grille:
 
         return listenumeros
 
+    # Fonction fillByListNumeros
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    # list : liste de numéro avec laquelle remplir la grille
+    #
+    # Cette fonction rempli les cases de la grille avec les numéros contenus dans la liste "list"
+    # Fonctio utilisée au chargement de la partie de Sudoku
+    #
     def fillByListNumeros(self, list):
         for i in range(len(list)):
             self.case[i].setNumber(list[i])
@@ -166,6 +179,13 @@ class Grille:
                     return False
         return True
 
+    # Fonction getSelectedCase
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Fonction retournant la case de la grille marquée comme séléctionée et son index sous forme
+    # (case, index), si aucune case n'est séléctionée a l'appel de cette fonction, retourne (None, -1)
+    #
     def getSelectedCase(self):
         for i in range(len(self.case)):
             if self.case[i].isSelected():
@@ -185,9 +205,6 @@ class Grille:
                 if self.getCase(j, i).contient(X):
                     return True
         return False
-
-    def getBoundingBox(self):
-        return (self.x, self.y, self.x2, self.y2)
 
     # Fonction showShip
     #
@@ -290,6 +307,39 @@ class Grille:
             nx = x + (case_Largeur * i)
             pygame.draw.line(surface, couleur, (nx, y), (nx, y + hauteur))
 
+    # Fonction drawForSudoku
+    #
+    # ARGUMENTS OBLIGATOIRES :
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    # surface : surface sur laquelle dessiner la grille, doit être la surface représentant la fenêtre entière.
+    # couleur : tuple représentant la couleur avec laquelle les lignes de la grille doivent être déssinées.
+    # casesBase : tableau contenant une valeur par case de la grille indaiquant si cette case contient un nombre
+    # initial de la partie de sudoku dans laquelle cette grille est contenue
+    # casesErr : tableau contenant une valeur par case de la grille indaiquant si cette case contient une erreur
+    # de la partie de sudoku dans laquelle cette grille est contenue
+    #
+    # ARGUMENTS OPTIONELS :
+    #
+    # x : coordonnée horizontale du point le plus en haut a gauche de la zone ou dessiner la grille.
+    # y : coordonnée verticale du point le plus en haut a gauche de la zone ou dessiner la grille.
+    # x2 : coordonnée horizontale du point le plus en bas a droite de la zone ou dessiner la grille.
+    # y2 : coordonnée verticale du point le plus en bas a droite de la zone ou dessiner la grille.
+    #
+    # Si une ou plusieurs des coordonnées ne sont pas précisées, les points de la grille seront
+    # pris comme référence pour les points non précisés.
+    # Les tailles de la grille et des cases sont déterminées en fontion des points utilisés.
+    #
+    # caseSelectColor : couleur appliquée sur une case marquée comme sélectionée.
+    # caseHoverColor : couleur appliquée sur une case marquée comme hovered (Le pointeur de la souris se trouve sur la case).
+    # caseSelectHoverColor : couleur appliquée sur une case marquée comme sélectionée et hovered.
+    # errColor : couleur appliquée sur le contenu d'une case marquée comme contenant une erreur
+    # notBaseColor : couleur appliquée sur le contenu d'une case marquée comme contenant un chiffre n'étant pas un
+    # chiffre de base de la partie dans laquelle se trouve la case
+    #
+    # Si une ou plusieurs des couleurs ne sont pas précisées,
+    # elles seront calculées en utilisant l'argument couleur comme base.
+    #
     def drawForSudoku(self, surface, couleur, casesBase, casesErr, caseSelectColor=None, caseHoverColor=None,
              caseSelectHoverColor=None, errColor=(184, 3, 3), notBaseColor=(60, 139, 204)):
         x = self.x

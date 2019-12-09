@@ -10,11 +10,19 @@ from Particules import FireWorkParticule, Particule
 
 class GameBN:
 
+    # Constructeur de la classe GameBN
+    #
+    # self : instance crée par le constructeur, ne doit pas être mis en argument.
+    # data : instance de la classe Data
+    #
     def __init__(self, data):
         self.data = data
+        # Création des grilles
         self.grille_J1 = Grille.Grille(10, 10, 145, 100, 495, 450, Bataille_Navale_Case)
         self.grille_J2 = Grille.Grille(10, 10, 145, -450, 495, -100, Bataille_Navale_Case)
+        # On indique que la grille du joueur 2 ne doit pas montrer les bateaux
         self.grille_J2.unshowShip()
+        # Ajout des images des bateaux + redimension de ces images
         self.bateauStr = {"Porte-Avion": [pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bataille Navale/Porte-avions_1.png")).convert_alpha(), (35, 35)),
                                           pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bataille Navale/Porte-avions_2.png")).convert_alpha(), (35, 35)),
                                           pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bataille Navale/Porte-avions_3.png")).convert_alpha(), (35, 35)),
@@ -33,6 +41,8 @@ class GameBN:
                      "Torpilleur": [pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bataille Navale/torpilleur_1.png")).convert_alpha(), (35, 35)),
                                     pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bataille Navale/torpilleur_2.png")).convert_alpha(), (35, 35))]}
 
+        # Ajout des images des bateaux + redimension de ces images + rotation a 90 degrés des images
+        # Sert pour l'affichage des bateau tournés
         self.bateauStr_H = {"Porte-Avion": [pygame.transform.rotate(self.bateauStr["Porte-Avion"][0], 90),
                                           pygame.transform.rotate(self.bateauStr["Porte-Avion"][1], 90),
                                           pygame.transform.rotate(self.bateauStr["Porte-Avion"][2], 90),
@@ -50,26 +60,57 @@ class GameBN:
                                     pygame.transform.rotate(self.bateauStr["Sous-marin"][2], 90)],
                      "Torpilleur": [pygame.transform.rotate(self.bateauStr["Torpilleur"][0], 90),
                                     pygame.transform.rotate(self.bateauStr["Torpilleur"][1], 90)]}
+        # Données de placements sous forme [(bx1, by1), (bx2, by2), (bx3, by3), (bx4, by4), (bx5, by5), ...]
         self.placeData = [(10, 150), (52, 150), (10, 330), (52, 330), (94, 280), 1, -1, ["Verticale", "Verticale", "Verticale", "Verticale", "Verticale"]]
+        # Données de jeu sous forme [tour du joueur n, grille du joueur n montrée]
         self.currentPlayData = [1, 1]
+        # texture de l'animation de tir
         self.tirTexture = pygame.transform.scale(pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Bataille Navale/tir.png")).convert_alpha(), (35, 35))
         self.tirData = [-1, -1]
+        # Timer pour l'animation de tir
         self.tirTimer = 0;
+        # Variable indiquant le gagnant de la partie
         self.winner = 0
+        # Variable contenant l'IA
         self.IA = None
 
+    # Fonction createIA
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Fonction servant a jaouter une IA au jeu
+    #
     def createIA(self):
         self.IA = IA.BN_IA(self.grille_J2, self)
         self.IA.generateGrille()
 
+    # Fonction mustDraw
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction indiquant si la parite doit être redessinée ou non
+    #
     def mustDraw(self):
         return self.tirTimer >= 0 or (self.currentPlayData[0] == 2 and self.IA != None)
 
+    # Fonction timerTick
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction appellée toute les secondes pour performer des actions
+    #
     def timerTick(self):
         if self.currentPlayData[0] == 2 and self.IA != None:
             self.IA.timerTick()
         return 12
 
+    # Fonction invert_Grilles_Pos
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction servant a intervertir les 2 grilles de la partie de place.
+    # Appellée au changement de tour ou a l'appui sur le bouton de changement de grille
+    #
     def invert_Grilles_Pos(self):
         if self.grille_J1.y < 0:
             self.grille_J1.y = 100
@@ -82,6 +123,16 @@ class GameBN:
             self.grille_J1.y = -450
             self.grille_J1.y2 = -100
 
+    # Fonction ajouter_Bateau
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # grille : grille dans laquelle ajouter le bateau
+    # direction : direction du bateau a ajouter
+    # position : position du bateau a ajouter
+    # type : type du bateau a ajouter
+    #
+    # Cette fonction sert a ajouter un bateau dans la grille "grille"
+    #
     def ajouter_Bateau(self, grille, direction, position, type):
         l = len(self.bateauStr[type])
         if direction == 'Horizontale':
@@ -104,6 +155,16 @@ class GameBN:
 
         return True
 
+    # Fonction peutAjouterBateau
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # grille : grille ou ajouter le bateau
+    # direction : direction du bateau a ajouter
+    # position : position du bateau a ajouter
+    # type : type du bateau a ajouter
+    #
+    # Fonction determinant si un bateau peut être placé a la position "position" sur la grille "grille"
+    #
     def peutAjouterBateau(self, grille, direction, position, type):
         l = len(self.bateauStr[type])
         if direction == 'Horizontale':
@@ -119,6 +180,14 @@ class GameBN:
             pass
         return True
 
+    # Fonction tir
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # grille : grille sur laquelle tirer
+    # position : endroit ou l'on tire
+    #
+    # Fonction permettant de tirer sur la grille "grille"
+    #
     def tir(self, grille, position):
         if position[0] > 10 or position[0] < 1 or position[1] > 10 or position[1] < 1:
             print("Position invalide")
@@ -127,6 +196,13 @@ class GameBN:
             grille.getCaseByCoords(position[0]-1, position[1]-1).shoot()
             return not grille.getCaseByCoords(position[0]-1, position[1]-1).estVide()
 
+    # Fonction checkVictory
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # grille : grille sur laquelle vérifier
+    #
+    # Fonction servant a vérifier si l'un des joueurs gagne la partie
+    #
     def checkVictory(self, grille):
         i = 0
         for y in range(grille.hauteur):
@@ -135,40 +211,13 @@ class GameBN:
                     i = i+1
         return i == 17
 
-    def cmd(self):
-        self.ajouter_Bateau(self.grille_J1, "Horizontale", (1, 1), "Porte-Avion")
-        self.ajouter_Bateau(self.grille_J1, "Horizontale", (1, 2), "Croiseur")
-        self.ajouter_Bateau(self.grille_J1, "Horizontale", (1, 3), "Contre-Torpilleur")
-        self.ajouter_Bateau(self.grille_J1, "Horizontale", (1, 4), "Sous-marin")
-        self.ajouter_Bateau(self.grille_J1, "Horizontale", (1, 5), "Torpilleur")
-
-        self.tir(self.grille_J1, (1, 1))
-        self.tir(self.grille_J1, (2, 1))
-        self.tir(self.grille_J1, (3, 1))
-        self.tir(self.grille_J1, (4, 1))
-        self.tir(self.grille_J1, (5, 1))
-
-        self.tir(self.grille_J1, (1, 2))
-        self.tir(self.grille_J1, (2, 2))
-        self.tir(self.grille_J1, (3, 2))
-        self.tir(self.grille_J1, (4, 2))
-
-        self.tir(self.grille_J1, (1, 3))
-        self.tir(self.grille_J1, (2, 3))
-        self.tir(self.grille_J1, (3, 3))
-
-        self.tir(self.grille_J1, (1, 4))
-        self.tir(self.grille_J1, (2, 4))
-        self.tir(self.grille_J1, (3, 4))
-
-        self.tir(self.grille_J1, (1, 5))
-        self.tir(self.grille_J1, (2, 5))
-
-        """direction = input("Veuillez entrer la direction du porte-avion : ")
-        caseX = int(input("Veuillez selectionner la case(X) sur laquelle placer le porte-avion : "))
-        caseY = int(input("Veuillez selectionner la case(Y) sur laquelle placer le porte-avion : "))
-        self.ajouter_Bateau(self.grille_J1, direction, (caseX, caseY), "Porte-Avion")"""
-
+    # Fonction selectBateau
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction servant a selectionner un bateau
+    # Utilisée quand on clique dans la phase de placement des bateau
+    #
     def selectBateau(self):
         pos = pygame.mouse.get_pos()
         l = len(list(self.bateauStr.keys()))
@@ -211,6 +260,14 @@ class GameBN:
                                 grille.getCaseByCoords(cx+k, cy).setContenu(None)
                             break
 
+    # Fonction placeBateau
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction permettant de placer un bateau sur la grille du joueur 1 ou de deselectionner le bateau
+    # actuellement selectionné si le clic est effectué en dehors de la grille
+    # Appellée quand un clic de souris est effectué pendant la phase de placement des bateau
+    #
     def placeBateau(self):
         pos = pygame.mouse.get_pos()
         grille = self.getGrille()
@@ -223,6 +280,13 @@ class GameBN:
         else:
             self.placeData[6] = -1
 
+    # Fonction TournerBateau
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction permettant de tourner un bateau
+    # Appellée quand un clic droit de souris est effectué pendant la phase de placement des bateau
+    #
     def TournerBateau(self):
         if self.placeData[6] > -1:
             if self.placeData[7][self.placeData[6]] == "Verticale":
@@ -230,12 +294,31 @@ class GameBN:
             else:
                 self.placeData[7][self.placeData[6]] = "Verticale"
 
+    # Fonction getGrille
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction permettant de retourner la grille actuellement montrée a l'écran
+    #
     def getGrille(self):
         if self.data.etat == 11:
             return self.grille_J1 if self.placeData[5] == 1 else self.grille_J2
         elif self.data.etat == 12:
             return self.grille_J1 if self.currentPlayData[1] == 1 else self.grille_J2
 
+    # Fonction playTir
+    #
+    # ARGUMENTS OBLIGATOIRES :
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # ARGUMENTS OPTIONNELS :
+    #
+    # case : case sur laquelle tirer, si non précisé, effecuera un tir sur la case sélectionnée de la grille
+    # actuellement montrée a l'écran
+    #
+    # Fonction enclenchant l'aimation de tir
+    #
     def playTir(self, case=(-1, -1)):
         grille = self.getGrille()
         caseT = grille.getSelectedCase()
@@ -246,16 +329,43 @@ class GameBN:
         if self.currentPlayData[0] == 1 and self.IA != None:
             self.currentPlayData[0] = 2
 
+    # Fonction allBoatsPlaced
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction verifiant si les 5 bateaux sont placés sur la grille
+    # Appellée uniquement quand le boutons Valider est pressé pendant la phase de placement des bateaux
+    #
     def allBoatsPlaced(self):
         for i in range(5):
             if self.placeData[i][0] > 0 or self.placeData[i][1] > 0:
                 return False
         return True
 
+    # Fonction victoire
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # data : instance de la classe data
+    #
+    # Fonction activant les feux d'artifices de victoires et ajoutant le score au classement (a Faire)
+    #
     def victoire(self,data):
         rayon = 4
         data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(0, 235, 0), (0, 100, 0)], rayon, 60, (320, 480), (0, -4) , 0, 2))
 
+    # Fonction draw
+    #
+    # ARGUMENTS OBLIGATOIRES :
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # frame : instance de la fenêtre
+    #
+    # ARGUMENTS OPTIONNELS :
+    #
+    # menu : menu a dessiner par dessus le jeu
+    #
+    # Fonction permettant de dessiner le jeu
+    #
     def draw(self, frame, menu=None):
         frame.fill((1, 80, 172))
         if self.currentPlayData[0] != self.currentPlayData[1] or self.tirTimer > 0:

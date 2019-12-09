@@ -19,8 +19,8 @@ class Case(Case.Case):
     #
     def __init__(self):
         super().__init__();
-        self.contenu = None;
-        self.shot = False;
+        self.contenu = None; # Sert a contenir l'image de la partie du bateau a dessiner dans cette case
+        self.shot = False; # Booleen indiquant que cette case a déjà été tirée dessus ou non
 
     # Fonction shoot
     #
@@ -109,7 +109,6 @@ class Case(Case.Case):
     # Si bothFill n'est pas précisé, bothFill sera rouge.
     #
     def draw(self, surface, x, y, width, height, selectFill=(0,0,255), hoverFill=(0,255,0), bothFill=(255,0,0), showShip=False):
-        #TODO : Ajouter l'affichage de pinned et showShip quand les images seront faites.
         if self.isSelected() and self.isHovered():
             pygame.draw.rect(surface, bothFill, (x, y, width, height))
         elif self.isSelected():
@@ -117,16 +116,14 @@ class Case(Case.Case):
         elif self.isHovered():
             pygame.draw.rect(surface, hoverFill, (x, y, width, height))
 
+        # On determine si on doit dessiner le contenu de l'image et on le dessine si oui
         if self.contenu != None and showShip:
             surface.blit(self.contenu, (x, y, width, height))
 
+        # On determine quoi dessiner si la case est marquée comme "tirée"
         if self.shot:
-            if self.estVide():
+            if self.estVide(): # On dessiner un cercle bleu foncée
                 pygame.draw.circle(surface, (1, 20, 60), (math.ceil(x+width/2), math.ceil(y + height/2)), 12)
-            else:
+            else: # On dessine une croix
                 pygame.draw.line(surface, (145, 30, 50), (x+1, y+1), (x+width-1, y+height-1), 4)
                 pygame.draw.line(surface, (145, 30, 50), (x+width-1, y+1), (x-1, y+height-1), 4)
-
-    def drawBoat(self, surface, x, y, width, height):
-        surface.blit(self.contenu, (x, y), (0, 0, width, height))
-        pass

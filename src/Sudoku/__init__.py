@@ -2,7 +2,6 @@
 # -*-coding:Utf-8 -*
 
 """Fichier d'initialisation du module Sudoku.
-
 Ce fichier contient la classe Partie qui initialise une partie de Sudoku.
 La classe est adaptée à la fois pour une utilisation sur interface en lignes de commandes,
 et pour une utilisation sur interface graphique.
@@ -22,42 +21,53 @@ from Particules import FireWorkParticule, Particule
 
 class PartieG:
     """Classe principal du module Sudoku, permet de lancer le jeu.
-
     Pour démarrer une partie de sudoku, simplement saisir 'PartieG()'.
-
     Une partie pourra être sauvegardée pour être reprise plus tard.
     La grille sera alors sauvegardée dans un fichier grilleEnCours
-
     Cette classe sera utilisée pour les applications graphiques
-
     Attributs :
     niveau = 1 (facile), 2 (intermédiaire) ou 3 (hardcore)
     grille_jeu (Attribut de type Grille contenant la grille de jeu)
     etat_partie (1 = Partie en cours, 2 = Partie gagnée, 3 = Partie pedue)
     """
 
+    # Constructeur de la classe PartieG
+    #
+    # self : instance crée par le constructeur, ne doit pas être mis en argument.
+    # frame : instance de la fenetre
+    # data : instance de la classe data
+    #
+    # Permet d'instancier et d'initialiser une partie de sudoku avec affichage graphique
+    #
     def __init__(self, frame, data):
         """CONSTRUCTEUR : Fonction qui gère le déroulement général du jeu 'Sudoku'.
         Pour passer d'un affichage en lignes de commandes à un affichage graphique,
         remplacer 'cmd' dans les noms de fonctions par 'gui'"""
 
-        #varaible du chronomètre
-        self.time = 0
-        self.diff = 1
-        self.erreur = 0
+        self.time = 0 #variable du chronomètre
+        self.diff = 1 #variable de diffculté
+        self.erreur = 0 #variable du nombre d'erreurs
         # Vérifie si une grille est en cours.
         if self.charger_grille():
             data.setEtat("Sudoku_Saved")
         else:
-            # Afficher le menu de choix du niveau :
+            # Affiche le menu de choix du niveau :
             data.setEtat("Sudoku_Diff")
 
         data.getCurrentMenu().draw(frame)
 
+    # Fonction creerGrille
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # niveau : niveau de difficulté de la grille, allant de 1 (inclus) à 3 (inclus)
+    #
+    # Fonction servant a créer la grille et a l'ajouter dans la partie.
+    # Cette fonction initialise aussi toutes les cases de la grille comme étant correctes.
+    #
     def creerGrille(self, niveau):
-        self.time = 0
+        self.time = 0 # Défini le chromètre sur 0
         self.diff = niveau
-        self.erreur = 0
+        self.erreur = 0 # Défini le nombre d'erreur sur 0
         self.grille_jeu = Grille(9, 9, 50, 65, 400, 405, Sudoku_Case)
         self.liste_numeros_init = GrillesDeJeu.get_grille(niveau, self.grille_jeu).getListeNumeros()
         self.wrongCase = []
@@ -65,6 +75,12 @@ class PartieG:
             self.wrongCase.append(0)
         #self.liste_numeros_init = grilleGenerator.generer(self.grille_jeu, niveau)
 
+    # Fonction charger_grille
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Cette fonction charge une partie de sudoku depuis le fichier grilleEnCours
+    #
     def charger_grille(self):
         try:
             with open('grilleEnCours', 'rb') as fichier:
@@ -93,6 +109,12 @@ class PartieG:
                         self.wrongCase.append(0)
                 return True
 
+    # Fonction sauvegarder_grille
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Cette fonction sauvegarde une partie de sudoku dans le fichier grilleEnCours
+    #
     def sauvegarder_grille(self):
         """Fonction sauvegardant la grille afin de pouvoir la reprendre plus tard."""
         liste_grilles = self.grille_jeu.getListeNumeros() + self.liste_numeros_init
@@ -110,10 +132,24 @@ class PartieG:
         else:
             return 1
 
+    # Fonction effacer_sauvegarde
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Cette fonction efface le fichier grilleEnCours, ce qui a pour effet d'effacer la sauvegarde actuelle du sudoku.
+    #
     def effacer_sauvegarde(self):
         if(self.charger_grille()):
             os.remove('grilleEnCours')
 
+    # Function verifier_numero_init
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # position : position ou on doit vérifier
+    #
+    # Cette Fonction verifie si le nombre dans la grille a la position "position" est un nombre
+    # se trouvant dans la grille depuis le début de la partie.
+    #
     def verifier_numero_init(self, position):
         """Fonction permettant de vérifier si le joueur ne tente pas de modifier un des numéros
         présents initialement sur la grille de jeu."""
@@ -123,6 +159,14 @@ class PartieG:
         else :
             return 1
 
+    # Fonction keyPressed
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # key : tableau contenant les touches du clavier
+    # data : instance de la classe Data
+    #
+    # Cette fonction determine quoi faire en fonction des valeurs de tab
+    #
     def keyPressed(self, key, data):
         k = -1
         for i in range(len(key)-1):
@@ -163,62 +207,61 @@ class PartieG:
                         da.Data.menus[5].draw(frame)
             return True
 
+    # Fonction partieFinie
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction qui renvoie True si la partie est gagné, sinon renvoie False.
+    #
     def partieFinie(self):
         for i in range(len(self.grille_jeu.case)):
             case = self.grille_jeu.getCase(i)
-            if case.getNumber() == 0 or self.verifier_numero_cl(i, case.getNumber()) == 0:
+            if case.getNumber() == 0 or GrillesDeJeu.verifierNombre(i, case.getNumber()) == 0:
                 return False
         return True
 
-    def compareTimes(self, a, b, c, d):
-        tA = time.strptime(a, "%M:%S")
-        tB = time.strptime(b, "%M:%S")
-        return tA.tm_min*60+tA.tm_sec+c*60>tB.tm_min*60+tB.tm_sec+d*60
+    # Fonction compareTimes
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # tab : tableau contenant les scores sous la forme : [temps1, temps2, erreurs1, erreurs2]
+    #
+    # Fonction comparant 2 scores et retourne True si le premier score est le meilleur, sinon retourne False
+    #
+    def compareTimes(self, tab):
+        tA = time.strptime(tab[0], "%M:%S")
+        tB = time.strptime(tab[1], "%M:%S")
+        return tA.tm_min*60+tA.tm_sec+tab[2]*60>tB.tm_min*60+tB.tm_sec+tab[3]*60
 
+    # Fonction victoire
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # data : instance de la classe Data
+    #
+    # Fonction appellée en cas de victoire qui ajouter le score au classement et active les
+    # feux d'artifices de victoire
+    #
     def victoire(self,data):
         data.classements[0].ajouterScore(("TEST", self.getStringTime(), self.erreur))
-        #data.classements[0].sort(lambda a,b,c,d : print(str(a)+"_:_"+str(b)+"_:_"+str(c)+"_:_"+str(d)))
         data.classements[0].sort(self.compareTimes)
         data.classements[0].save("Classements_Sudoku.yolo")
         rayon = 4
         data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(235, 0, 0), (0, 0, 0)], rayon, 60, (320, 480), (0, -4) , 0, 2))
 
-    def verifier_numero_cl(self, position, number):
-        """Cette fonction vérifie si le numéro entré n'est pas présent sur la même ligne ou colonne."""
-
-        ok = True
-        n = 0
-        i = 0
-        while i <= 80:
-            i += 9
-            if n <= position < i:
-                for j in range(n, i):
-                    if position != j:
-                        if number == self.grille_jeu.case[j].getNumber():
-                            ok = False
-            n += 9
-
-        if ok:
-            u = position
-            while not (0 <= u <= 8):
-                u -= 9
-
-            k = u
-            while k in range(u, (u+9*8)+1):
-                if position != k:
-                    if number == self.grille_jeu.case[k].getNumber():
-                        ok = False
-
-                k += 9
-
-        if not ok:
-            return 0
-        else:
-            return 1
-
+    # Fonction getDiff
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction retournant la difficulté de la partie sous forme de nombre
+    #
     def getDiff(self):
         return self.diff
 
+    # Fonction getDiffStr
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction retournant la difficulté de la partie sous forme de string
+    #
     def getDiffStr(self):
         if self.diff == 1:
             return "Facile"
@@ -229,16 +272,47 @@ class PartieG:
         else:
             return "Inconnu"
 
+    # Fonction timerTick
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction appellée toute les secondes pour performer des actions
+    #
     def timerTick(self):
         self.time = self.time+1
         return 4
 
+    # Fonction getStringTime
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction retournant la durée de la partie sous forme de string
+    #
     def getStringTime(self):
         return time.strftime('%M:%S', time.gmtime(self.time))
 
+    # Fonction getDiff
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction retournant le nombre d'erreurs de la partie sous forme de nombre
+    #
     def getNbErreurs(self):
         return self.erreur
 
+    # Fonction draw
+    #
+    # ARGUMENTS OBLIGATOIRES :
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # frame : instance de la fenetre
+    #
+    # ARGUMENTS OPTIONELS :
+    #
+    # menu : menu a dessiner par dessus la partie
+    #
+    # Fonction servant a dessiner la partie
+    #
     def draw(self, frame, menu=None):
         frame.fill((0,0,0))
         self.grille_jeu.drawForSudoku(frame, (190,190,190), self.liste_numeros_init, self.wrongCase, (104,104,104), (92,92,92), (73,73,73))

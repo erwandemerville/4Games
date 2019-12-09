@@ -4,6 +4,12 @@ import math
 class BN_IA:
     "classe definissant l'IA jouant a la bataille navale"
 
+    # Constructeur de la classe IA
+    #
+    # self : instance crée par le constructeur, ne doit pas être mis en argument.
+    # grille : grille de l'IA
+    # partie : instance de la partie ou se trouve l'IA
+    #
     def __init__(self, grille, partie):
         self.tirs = []
         len_tirs = grille.largeur * grille.hauteur
@@ -13,15 +19,33 @@ class BN_IA:
             self.tirs.append(i)
         self.played = False
 
+    # Fonction determinerTirCase
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Fonction servant a determiner ou tirer. A noter que l'IA ne tirera jamias 2 fois au même endroit
+    #
     def determinerTirCase(self):
         case = random.randint(0, len(self.tirs)-1)
         return self.tirs[case]
 
+    # Fonction tirer
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Fonction servant a l'IA pour tirer
+    #
     def tirer(self):
         case = self.determinerTirCase()
         self.tirs.remove(case)
         self.partie.playTir(case=(case%self.grille.largeur, math.floor(case/self.grille.largeur)))
 
+    # Fonction generateGrille
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Fonction plaçant les bateaux dans la grille de l'IA
+    #
     def generateGrille(self):
         l = list(self.partie.bateauStr.values())
         k = 0
@@ -44,6 +68,12 @@ class BN_IA:
             self.partie.ajouter_Bateau(self.grille, direction, (x, y), list(self.partie.bateauStr.keys())[k])
             k = k + 1
 
+    # Fonction play
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
+    # Fonction permettant a l'IA de jouer
+    #
     def play(self):
         if not self.played:
             self.partie.invert_Grilles_Pos()

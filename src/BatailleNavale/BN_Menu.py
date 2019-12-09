@@ -6,9 +6,11 @@ import BatailleNavale
 class BN_Place_Boats(SubMenu.Menu_G):
     "Menu de placement des bateau de la bataille Navale"
 
+    # Constructeur
     def __init__(self, data, boutons):
         super().__init__(data, boutons)
 
+    # Fonction click
     def click(self, frame):
         if pygame.mouse.get_pressed()[2]:
             self.data.partie.TournerBateau()
@@ -32,9 +34,11 @@ class BN_Place_Boats(SubMenu.Menu_G):
 class BN_Jouer(SubMenu.Menu_G):
     "Menu de jeu de la bataille Navale"
 
+    # Constructeur
     def __init__(self, data, boutons):
         super().__init__(data, boutons)
 
+    # Fonction click
     def click(self, frame):
         if self.data.partie.currentPlayData[0] == 1:
             if self.boutons[0].isCursorInRange():
@@ -54,10 +58,12 @@ class BN_Jouer(SubMenu.Menu_G):
 class BN_GGAGNER(SubMenu.Menu_G):
     "Menu de victoire/défaite de la bataille navale."
 
+    # Constructeur
     def __init__(self, data, boutons):
         super().__init__(data, boutons)
         self.win = True
 
+    # Fonction click
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
             del self.data.partie
@@ -73,9 +79,15 @@ class BN_GGAGNER(SubMenu.Menu_G):
             self.data.particules.clear()
         pass
 
+    #Fonction setWin
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    # win : index du gagnant
+    #
     def setWin(self, win):
         self.win = win
 
+    # Fonction draw
     def draw(self, frame):
         frame.fill((10,10,10))
         super().draw(frame)

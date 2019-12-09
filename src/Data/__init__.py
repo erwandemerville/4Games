@@ -10,7 +10,9 @@ from Classements import Classements
 
 class Data:
 
+        # Sert a contenir tous les menus du jeu
         menus = []
+        # Tous les états possibles se trouvent dans ce tableau, utilisé car plus de lisibilité.
         etatsStr = {"main": 0,
                     "options": 1,
                     "Sudoku_Saved": 2,
@@ -25,23 +27,19 @@ class Data:
                     "BN_Place":11,
                     "BN_Play":12,
                     "BN_End":13,
-                    "BN_PlaceIA":14,
-                    "profil":15}
+                    "profil":14}
 
+        # Constructeur de la classe Data
+        #
+        # self : instance crée par le constructeur, ne doit pas être mis en argument.
+        # frame : instance de la fenêtre
+        #
         def __init__(self, frame):
             # Cette variable représente les différents états dans lequel le jeu peut se trouver.
-            #
-            # 0 - Menu principal
-            # 1 - options
-            # 2 - demande si on reprend la grille du Sudoku
-            # 3 - choix du niveau de difficulté au Sudoku (peut être généralisé si tout les mini-jeux possèdent exactement 3 niveaux de difficulté)
-            # 4 - En partie de Sudoku
-            # 5 - Gain de la partie du Sudoku
-            # 6 - Partie de Sudoku en Pause
-            #
             self.etat = 0
             # Cette variable représente la partie au cas ou on en aurait besoin.
             self.partie = None
+            # Cette variable représente le joueur au cas ou on en aurait besoin.
             self.joueur = None
 
             # Ces variables permettent d'activer et désactiver le son/musique
@@ -57,12 +55,20 @@ class Data:
             self.classements[0].load("Classements_Sudoku.yolo")
             self.classements[2].load("Classements_Loto.yolo")
 
+        # Fonction init
+        #
+        # frame : instance de la fenêtre
+        # data : instance de la classe Data
+        #
+        # Fonction servant a initialiser les menus et a lire la configuration des options
+        #
         @staticmethod
         def init(frame, data):
             police20 = pygame.font.SysFont('Impact',20)
             police = pygame.font.SysFont('Impact',25)
             color_boutons = (170,170,170);color_boutons_change = (45,45,45);color_f = (255,255,255);
             width_b = 400;x_btn = (frame.get_width()/2) - (width_b/2);y_btn_start = 160
+            # Initialisation des menus
             Data.menus.append(sb.Main_Menu(data, [ui.Bouton(x_btn,y_btn_start-50,width_b,50,2,color_boutons_change,"Sudoku",color_boutons,police,color_f),
                         ui.Bouton(x_btn,y_btn_start+10,width_b,50,2,color_boutons_change,"Loto",color_boutons,police,color_f),
                         ui.Bouton(x_btn,y_btn_start+70,width_b,50,2,color_boutons_change,"Bataille navale",color_boutons,police,color_f),
@@ -73,11 +79,11 @@ class Data:
                         ui.Bouton((frame.get_width()/2)+10,frame.get_height()-60,280,50,2,color_boutons_change,"Quitter",color_boutons,police,color_f)]))
 
             Data.menus.append(sb.Menu_Optn(data,
-                                           [    ui.Bouton(50,frame.get_height()-60,200,50,2,color_boutons_change,"Sauvegarder",color_boutons,police,color_f),
-                                                ui.Bouton(frame.get_width()-50-200,frame.get_height()-60,200,50,2,color_boutons_change,"Retour",color_boutons,police,color_f),
-                                                ui.Bouton(75,200,frame.get_width()-150,50,2,color_boutons_change,"Désactiver la musique",color_boutons,police,color_f),
-                                                ui.Bouton(75,300,frame.get_width()-150,50,2,color_boutons_change,"Activer les bruitages",color_boutons,police,color_f)
-                                                ] ,
+                                           [ui.Bouton(50,frame.get_height()-60,200,50,2,color_boutons_change,"Sauvegarder",color_boutons,police,color_f),
+                                            ui.Bouton(frame.get_width()-50-200,frame.get_height()-60,200,50,2,color_boutons_change,"Retour",color_boutons,police,color_f),
+                                            ui.Bouton(75,200,frame.get_width()-150,50,2,color_boutons_change,"Désactiver la musique",color_boutons,police,color_f),
+                                            ui.Bouton(75,300,frame.get_width()-150,50,2,color_boutons_change,"Activer les bruitages",color_boutons,police,color_f)
+                                            ],
                                            [ui.Title(50,50,(frame.get_width()-100),60,3,"OPTIONS",(152,152,152),police,(255,255,255))]
 
                                            ))
@@ -110,9 +116,8 @@ class Data:
                                                       ui.Bouton(500, 210, 150, 50, 2, None, "Tirer", (170, 170, 170), police, (255, 255, 255))]))#BN Play
             Data.menus.append(BN_Menu.BN_GGAGNER(data, [ui.Bouton(160, 290, 320, 50, 2, (45, 45, 45), "Rejouer", (170, 170, 170), police, (255, 255, 255)),
                                                         ui.Bouton(160, 390, 320, 50, 2, (45, 45, 45), "Retour au menu", (170, 170, 170), police, (255, 255, 255))]))#BN End
-            Data.menus.append(None)#BN PlaceIA
             Data.menus.append(None)#Profil
-            Data.menus[1].readCfg()
+            Data.menus[1].readCfg() # Lecture des options depuis le fichier de config
             pass
 
         # Fonction getCurrentMenu
@@ -157,7 +162,7 @@ class Data:
 
         # Fonction haveTimerTick
         #
-        # permet de déterminer la partie contenue dans cette instance de la classe utilise la boucle
+        # Permet de déterminer si la partie contenue dans cette instance de la classe utilise la boucle
         # du chronomètre du main
         #
         def haveTimerTick(self):
@@ -180,7 +185,7 @@ class Data:
 
         # Fonction mustDraw
         #
-        # permet de déterminer la partie contenue dans cette instance de la classe doit être redéssinée a chaque
+        # Permet de déterminer si la partie contenue dans cette instance de la classe doit être redéssinée a chaque
         # itération de la boucle principale
         #
         def mustDraw(self):

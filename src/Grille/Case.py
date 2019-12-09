@@ -92,12 +92,23 @@ class Case:
     #
     def contient(self, X):
         return False;
+
     # Fonction getNumber
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    #
     # retourne la valeur de l'attribut number
+    #
     def getNumber(self):
         return self.number
+
     # Fonction setNumber
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    # valeur : nouvelle valeur contenue dans l'attribut number de la case
+    #
     # change la valeur de l'attribut number par la valeur donnée en entrée
+    #
     def setNumber(self,valeur):
         self.number = valeur
 

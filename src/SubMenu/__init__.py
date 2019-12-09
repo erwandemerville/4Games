@@ -12,21 +12,48 @@ import time
 class Menu_G(ABC):
     "Classe générale représentant un menu"
 
+    # Contructeur de la classe de base des Menu
+    #
+    # self : instance crée par le constructeur, ne doit pas être mis en argument.
+    # data : instance de la classe Data
+    # boutons : tableaux de boutons contenant les boutons du menu
+    #
     def __init__(self,data,boutons):
         # Constructeur prenant la classe Data définie dans le main.py
 
         self.data = data
         self.boutons = boutons
 
+    # Fonction click
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    # frame : instance de la fenêtre
+    #
+    # Fonction gérant les clicks de souris
+    #
     @abstractmethod
     def click(self, frame):
         #indique comment le menu doit réagir quand un clic de souris est effectué
         pass
 
+    # Fonction hover
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    # frame : instance de la fenêtre
+    #
+    # Fonction gérant les movements de souris
+    #
     def hover(self, frame):
         for b in self.boutons:
             b.update(frame)
 
+    # Fonction draw
+    #
+    # self : instance de la classe, ne doit pas être mis en argument.
+    # frame : instance de la fenêtre
+    #
+    # Fonction permettant de dessiner le menu
+    #
     def draw(self, frame):
         for i in self.boutons:
             i.draw(frame)

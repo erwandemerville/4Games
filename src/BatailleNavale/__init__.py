@@ -386,7 +386,8 @@ class GameBN:
     # Fonction comparant 2 scores et retourne True si le premier score est le meilleur, sinon retourne False
     #
     def compareFunc(self, tab):
-        pass
+        donnees = [tab[0].split("/"), tab[1].split("/")]
+        return int(donnees[0][0])/int(donnees[0][1]) + tab[2] > int(donnees[1][0])/int(donnees[1][1]) + tab[3]
 
     # Fonction victoire
     #

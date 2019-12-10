@@ -63,6 +63,7 @@ try:
                         data.getCurrentMenu().draw(frame)
                     elif(keys[K_LSHIFT]==1 and keys[K_p]==1):
                         data.partie.winner = 2
+                        data.partie.defaite(data)
                         data.soundSystem.playMusic("triste")
                         data.setEtat("BN_End")
                         data.getCurrentMenu().draw(frame)

@@ -61,6 +61,12 @@ while(not(data.fin)):
                     data.setEtat("BN_End")
                     data.partie.victoire(data)
                     data.getCurrentMenu().draw(frame)
+                elif(keys[K_LSHIFT]==1 and keys[K_p]==1):
+                        data.partie.winner = 2
+                        data.partie.defaite(data)
+                        data.soundSystem.playMusic("triste")
+                        data.setEtat("BN_End")
+                        data.getCurrentMenu().draw(frame)
             elif(data.etat == 0):
                 if(keys[K_LSHIFT]==1 and keys[K_s]==1):
                     print("Sound_active = ",data.sound_active," | Music active = ",data.music_active)

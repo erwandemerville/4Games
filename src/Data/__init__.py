@@ -52,9 +52,11 @@ class Data:
             frame.blit(self.fond, (0,0))
             self.particules = ParticleSystem.ParticleSystem()
             self.classements = [Classements.Classement(["Profil", "Temps", "Erreurs"], [0.5, 0.75]), None,
-                                Classements.Classement(["Profil", "Gagné/Perdu","Taux réussite"], [0.3,0.7]), None]
+                                Classements.Classement(["Profil", "Gagné/Perdu","Taux réussite"], [0.3,0.7]),
+                                Classements.Classement(["Profil", "Gagné/Perdu", "précision"], [0.35,0.75])]
             self.classements[0].load("Classements_Sudoku.yolo")
             self.classements[2].load("Classements_Loto.yolo")
+            self.classements[3].load("Classements_Bataille_Navale.yolo")
 
         # Fonction init
         #

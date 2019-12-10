@@ -378,16 +378,50 @@ class GameBN:
                 return False
         return True
 
+    #Fonction compareFunc
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # tab :tableau contenant les scores sous la forme : [ratioVD1, ratioVD2, precision1, precision2]
+    #
+    # Fonction comparant 2 scores et retourne True si le premier score est le meilleur, sinon retourne False
+    #
+    def compareFunc(self, tab):
+        pass
+
     # Fonction victoire
     #
     # self : instance de la partie, ne pas mettre en argument
     # data : instance de la classe data
     #
-    # Fonction activant les feux d'artifices de victoires et ajoutant le score au classement (a Faire)
+    # Fonction activant les feux d'artifices de victoires et ajoutant le score au classement
     #
     def victoire(self,data):
+        joueur = "TEST"
+        score = data.classements[3].getScore(joueur)
+        if score == 0:
+            self.data.classements[3].ajouterScore((joueur,"1/0",str(self.precision(0))))
+        else:
+            self.data.classements[3].removeScore(score)
+            donnees = score[1].split("/")
+            Nprec = (int(score[2]) * (int(donnees[0])+int(donnees[1])) + self.precision(0)) / (int(donnees[0])+int(donnees[1])+1)
+            self.data.classements[3].ajouterScore((joueur,str(int(donnees[0])+1)+"/"+str(donnees[1]),Nprec))
+        data.classements[3].sort(self.compareFunc)
+        data.classements[3].save("Classements_Bataille_Navale.yolo")
         rayon = 4
         data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(0, 235, 0), (0, 100, 0)], rayon, 60, (320, 480), (0, -4) , 0, 2))
+
+    def defaite(self, data):
+        joueur = "TEST"
+        score = data.classements[3].getScore(joueur)
+        if score == 0:
+            self.data.classements[3].ajouterScore((joueur,"0/1",str(self.precision(0))))
+        else:
+            self.data.classements[3].removeScore(score)
+            donnees = score[1].split("/")
+            Nprec = (int(score[2]) * (int(donnees[0])+int(donnees[1])) + self.precision(0)) / (int(donnees[0])+int(donnees[1])+1)
+            self.data.classements[3].ajouterScore((joueur,donnees[0]+"/"+str(int(donnees[1])+1),Nprec))
+        data.classements[3].sort(self.compareFunc)
+        data.classements[3].save("Classements_Bataille_Navale.yolo")
 
     # Fonction draw
     #
@@ -440,6 +474,7 @@ class GameBN:
                     if self.winner == 1:
                         self.victoire(self.data)
                     else:
+                        self.defaite(self.data)
                         self.data.soundSystem.playMusic("triste")
                     self.data.setEtat("BN_End")
                     self.data.partie = None

@@ -181,9 +181,10 @@ class Menu_LotoPlay(SubMenu.Menu_G):
                 self.data.partie.classements(False)
             else:
                 self.data.partie.classements(True)
+                self.data.partie.victoire()
             self.nbInBoule = 0
-            del self.data.partie
             self.data.partie = None
+            del self
         elif self.boutons[2].isCursorInRange():
             # Cas où il appuie sur <
             self.pageGridToDraw = (self.pageGridToDraw-1)%(round(len(self.data.partie.grilles_mainplayer)/2))
@@ -261,11 +262,13 @@ class Menu_LotoEnd(SubMenu.Menu_G):
         if self.boutons[0].isCursorInRange():
             # Cas où il appuie sur "Go to main"
             self.data.soundSystem.stopMusic("triste")
+            self.data.particules.clear()
             self.data.setEtat("main")
         elif self.boutons[1].isCursorInRange():
             # Cas où il apupuie sur "Rejouer"
             self.data.partie = LTO.Loto_Party(frame, self.data)
             self.data.soundSystem.stopMusic("triste")
+            self.data.particules.clear()
             self.data.setEtat("Loto_Choose")
             self.data.menus[9].nbInBoule = 0
 

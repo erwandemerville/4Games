@@ -67,7 +67,8 @@ class Main_Menu(Menu_G):
         super().__init__(data,boutons)
 
     def click(self, frame):
-        self.data.soundSystem.playSound("Clique")
+        if not self.boutons[7].isCursorInRange():
+            self.data.soundSystem.playSound("Clique")
         if self.boutons[0].isCursorInRange():
             self.data.partie = Sudoku.PartieG(frame, self.data)
         elif self.boutons[1].isCursorInRange():
@@ -342,8 +343,8 @@ class Menu_SudokuP(Menu_G):
 
     def click(self, frame):
         if self.boutons[0].isCursorInRange():
-            self.data.partie.draw(frame, da.Data.menus[4])
             self.data.setEtat("Sudoku_Game")
+            self.data.partie.draw(frame, da.Data.getCurrentMenu())
         elif (self.boutons[1].isCursorInRange() or self.boutons[2].isCursorInRange()):
 
             if self.boutons[1].isCursorInRange():

@@ -71,6 +71,12 @@ class GameBN:
         self.tirTimer = 0;
         # Variable indiquant le gagnant de la partie
         self.winner = 0
+
+        # Variables dont ont se sert pour la précision
+        self.tirTouche = [0, 0]
+        self.tirCoule = [0, 0]
+        self.tirs = [0, 0]
+        self.time = 0
         # Variable contenant l'IA
         self.IA = None
 
@@ -170,12 +176,12 @@ class GameBN:
         if direction == 'Horizontale':
             for i in range(l):
                 if not grille.getCaseByCoords(position[0]+i-1, position[1]-1).estVide():
-                    print("2 bateaux se superposent : ", end="")
+                    print("2 bateaux se superposent : ")
                     return False
         elif direction == 'Verticale':
             for i in range(l):
                 if not grille.getCaseByCoords(position[0]-1, position[1]+i-1).estVide():
-                    print("2 bateaux se superposent : ", end="")
+                    print("2 bateaux se superposent : ")
                     return False
             pass
         return True
@@ -193,8 +199,26 @@ class GameBN:
             print("Position invalide")
             return None
         else:
-            grille.getCaseByCoords(position[0]-1, position[1]-1).shoot()
-            return not grille.getCaseByCoords(position[0]-1, position[1]-1).estVide()
+            case = grille.getCaseByCoords(position[0]-1, position[1]-1)
+            case.shoot()
+            joueur = 2-self.currentPlayData[1]
+            self.tirs[joueur] = self.tirs[joueur] + 1
+            print(self.tirs, joueur, self.currentPlayData)
+            if case.estVide():
+                self.tirCoule[joueur] = self.tirCoule[joueur]+1
+            else:
+                self.tirTouche[joueur] = self.tirTouche[joueur]+1
+            return not case.estVide()
+
+    # Fonction timerTick
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    #
+    # Fonction appellée toute les secondes pour performer des actions
+    #
+    def timerTick(self):
+        self.time = self.time + 1
+        return 12
 
     # Fonction checkVictory
     #
@@ -210,6 +234,18 @@ class GameBN:
                 if not grille.getCaseByCoords(x, y).estVide() and grille.getCaseByCoords(x, y).isShot():
                     i = i+1
         return i == 17
+
+    # Fonction precision
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # joueur : joueur dont on veut la précision
+    #
+    # Permet de retourner la précision en pourcentage du joueur durant cette partie
+    #
+    def precision(self, joueur):
+        if self.tirs[joueur] == 0:
+            return 100
+        return (self.tirTouche[joueur]/self.tirs[joueur]) * 100
 
     # Fonction selectBateau
     #
@@ -364,7 +400,7 @@ class GameBN:
     #
     # menu : menu a dessiner par dessus le jeu
     #
-    # Fonction permettant de dessiner le jeu
+    # Fonction permettant de dessiner le jeu (et accesoirement gère l'animation de tir)
     #
     def draw(self, frame, menu=None):
         frame.fill((1, 80, 172))
@@ -401,8 +437,11 @@ class GameBN:
                     self.winner = self.currentPlayData[0]
                     da.Data.menus[13].setWin(self.winner)
                     self.currentPlayData[0] = 0
+                    if self.winner == 1:
+                        self.victoire(self.data)
+                    else:
+                        self.data.soundSystem.playMusic("triste")
                     self.data.setEtat("BN_End")
-                    self.victoire(self.data)
                     self.data.partie = None
                     del self
                     return
@@ -415,6 +454,7 @@ class GameBN:
                             self.IA.play()
                     else:
                         self.currentPlayData[0] = 1 if self.currentPlayData[0] == 2 else 2
+                    self.data.getCurrentMenu().boutons[1].rgb_when_change = (185, 75, 75) if self.currentPlayData[1] == self.currentPlayData[0] or self.currentPlayData[0] == 2 else (45, 45, 45)
             frame.blit(self.tirTexture, (grille.x + self.tirData[0] * case_Largeur, grille.y + self.tirData[1] * case_Hauteur))
             self.tirTimer = self.tirTimer-1
         else:

@@ -57,8 +57,23 @@ try:
                     mustRedraw = False
                 elif(data.etat == 12):
                     if(keys[K_LSHIFT]==1 and keys[K_g]==1):
+                        data.partie.winner = 1
                         data.setEtat("BN_End")
                         data.partie.victoire(data)
+                        data.getCurrentMenu().draw(frame)
+                    elif(keys[K_LSHIFT]==1 and keys[K_p]==1):
+                        data.partie.winner = 2
+                        data.soundSystem.playMusic("triste")
+                        data.setEtat("BN_End")
+                        data.getCurrentMenu().draw(frame)
+                elif(data.etat == 9):
+                    if(keys[K_LSHIFT]==1 and keys[K_g]==1):
+                        data.setEtat("Loto_End")
+                        data.partie.classements(True)
+                        data.getCurrentMenu().asWin = True
+                        data.partie.victoire(data)
+                        del data.partie
+                        data.partie = None
                         data.getCurrentMenu().draw(frame)
                 elif(data.etat == 0):
                     if(keys[K_LSHIFT]==1 and keys[K_s]==1):

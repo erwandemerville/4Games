@@ -27,7 +27,8 @@ class Data:
                     "BN_Place":11,
                     "BN_Play":12,
                     "BN_End":13,
-                    "profil":14}
+                    "BN_Pause":14,
+                    "profil":15}
 
         # Constructeur de la classe Data
         #
@@ -111,11 +112,15 @@ class Data:
             Data.menus.append(lm.Menu_LotoChoose(data,frame))#Loto choose
             Data.menus.append(lm.Menu_LotoPlay(data,frame))#Loto Play
             Data.menus.append(lm.Menu_LotoEnd(data,frame))#Loto End
-            Data.menus.append(BN_Menu.BN_Place_Boats(data, [ui.Bouton(frame.get_width()/2 - frame.get_width()/8, 20, frame.get_width()/4, 50, 2, (45, 45, 45), "Valider", (170, 170, 170), police, (255, 255, 255))]))#BN Place
+            Data.menus.append(BN_Menu.BN_Place_Boats(data, [ui.Bouton(frame.get_width()/2 - frame.get_width()/3, 20, frame.get_width()/4, 50, 2, (45, 45, 45), "Valider", (170, 170, 170), police, (255, 255, 255)),
+                                                            ui.Bouton(frame.get_width()/2 + frame.get_width()/3 - frame.get_width()/4, 20, frame.get_width()/4, 50, 2, (45, 45, 45), "Retour au menu", (170, 170, 170), police20, (255, 255, 255))]))#BN Place
             Data.menus.append(BN_Menu.BN_Jouer(data, [ui.Bouton(500, 110, 150, 50, 2, (45, 45, 45), "voir la grille de l'adversaire", (170, 170, 170), pygame.font.SysFont('Impact',12), (255, 255, 255)),
-                                                      ui.Bouton(500, 210, 150, 50, 2, None, "Tirer", (170, 170, 170), police, (255, 255, 255))]))#BN Play
+                                                      ui.Bouton(500, 210, 150, 50, 2, (185, 75, 75), "Tirer", (170, 170, 170), police, (255, 255, 255)),
+                                                      ui.Bouton(500, 410, 150, 50, 2, (45, 45, 45), "Pause", (170, 170, 170), police, (255, 255, 255))]))#BN Play
             Data.menus.append(BN_Menu.BN_GGAGNER(data, [ui.Bouton(160, 290, 320, 50, 2, (45, 45, 45), "Rejouer", (170, 170, 170), police, (255, 255, 255)),
                                                         ui.Bouton(160, 390, 320, 50, 2, (45, 45, 45), "Retour au menu", (170, 170, 170), police, (255, 255, 255))]))#BN End
+            Data.menus.append(BN_Menu.BN_Pause(data, [ui.Bouton(245,165,150,50,2,(120,120,120),"Reprendre",(152,152,152),police,(255,255,255)),
+                                                      ui.Bouton(245,235,150,50,2,(120,120,120),"Quitter",(152,152,152),police,(255,255,255))]))#BN Pause
             Data.menus.append(None)#Profil
             Data.menus[1].readCfg() # Lecture des options depuis le fichier de config
             pass

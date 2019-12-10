@@ -3,6 +3,7 @@ from random import *
 from Grille import Grille, Loto_Case
 from LTO import ia_loto
 from LTO.ia_loto import IA_Loto
+from Particules import FireWorkParticule, Particule
 
 # Classe permettant de gérer une partie de loto
 class Loto_Party():
@@ -100,7 +101,7 @@ class Loto_Party():
                 #self.printStateGame()
                 self.timer = 0
                 self.data.menus[9].nbInBoule = self.sortirUneBoule()
-            if self.timer > 2 and (self.asWinnerInIA()):
+            if self.timer > 2 and self.asWinnerInIA():
                 self.stop()
                 self.data.setEtat("Loto_End")
                 self.data.soundSystem.playSound("BingoIA")
@@ -169,3 +170,13 @@ class Loto_Party():
         #self.data.classements[2].sort(self.compare)
         self.data.classements[2].save("Classements_Loto.yolo")
 
+    # Fonction victoire
+    #
+    # self : instance de la partie, ne pas mettre en argument
+    # data : instance de la classe data
+    #
+    # Fonction activant les feux d'artifices de victoires et ajoutant le score au classement (a Faire)
+    #
+    def victoire(self,data):
+        rayon = 4
+        data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (60, 60, 230))], [(10, 10, 235), (1, 1, 50)], rayon, 60, (320, 480), (0, -4) , 0, 2))

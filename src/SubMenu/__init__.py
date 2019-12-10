@@ -90,7 +90,7 @@ class Main_Menu(Menu_G):
             self.data.getCurrentMenu().draw(frame)
         elif self.boutons[5].isCursorInRange():
             # Lancement du profil
-            self.data.setEtat("profil")
+            self.data.setEtat("Profil_Main")
         elif self.boutons[6].isCursorInRange():
             self.data.setEtat("Classements")
             self.data.getCurrentMenu().draw(frame)

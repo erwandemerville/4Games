@@ -1,4 +1,6 @@
 import pygame
+
+import Profil
 import SubMenu as sb
 from BatailleNavale import BN_Menu
 import UiPygame as ui
@@ -28,7 +30,10 @@ class Data:
                     "BN_Play":12,
                     "BN_End":13,
                     "BN_Pause":14,
-                    "profil":15}
+                    "Profil_Main":15,
+                    "Profil_Ins":16,
+                    "Profil_Co":17,
+                    "Credits":18}
 
         # Constructeur de la classe Data
         #
@@ -121,7 +126,10 @@ class Data:
                                                         ui.Bouton(160, 390, 320, 50, 2, (45, 45, 45), "Retour au menu", (170, 170, 170), police, (255, 255, 255))]))#BN End
             Data.menus.append(BN_Menu.BN_Pause(data, [ui.Bouton(245,165,150,50,2,(120,120,120),"Reprendre",(152,152,152),police,(255,255,255)),
                                                       ui.Bouton(245,235,150,50,2,(120,120,120),"Quitter",(152,152,152),police,(255,255,255))]))#BN Pause
-            Data.menus.append(None)#Profil
+            Data.menus.append(Profil.Menu_ProfilM(data, frame))
+            Data.menus.append(Profil.Menu_ProfilIns(data, frame))
+            Data.menus.append(Profil.Menu_ProfilCo(data, frame))
+            Data.menus.append(None) #Crédits
             Data.menus[1].readCfg() # Lecture des options depuis le fichier de config
             pass
 

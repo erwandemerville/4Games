@@ -32,11 +32,11 @@ try:
                 mustRedraw = False
             elif (event.type == MOUSEMOTION):
                 # Quand la souris est en mouvement
-                if data.etat == 4:
+                if data.etat == 4: # Si une partie de Sudoku est en cours alors
                     pos = pygame.mouse.get_pos()
                     data.partie.grille_jeu.hoverCase(pos[0], pos[1])
                     data.partie.draw(frame, da.Data.menus[data.etat])
-                elif data.etat == 11 or data.etat == 12:
+                elif data.etat == 11 or data.etat == 12: # Si une partie de Bataille Navale est en cours alors
                     pos = pygame.mouse.get_pos()
                     if data.etat == 11 or (data.etat == 12 and data.partie.currentPlayData[0] == 1):
                         data.partie.getGrille().hoverCase(pos[0], pos[1])
@@ -46,8 +46,8 @@ try:
                 mustRedraw = False
             elif event.type == pygame.KEYDOWN:
                 keys = pygame.key.get_pressed()
-                if (data.etat == 4):
-                    if(keys[K_LSHIFT]==1 and keys[K_g]==1):
+                if (data.etat == 4): # Si une partie de Sudoku est en cours alors
+                    if(keys[K_LSHIFT]==1 and keys[K_g]==1): # Cheat code donnant la victoire instantanément
                         data.setEtat("Sudoku_Win")
                         data.partie.effacer_sauvegarde()
                         data.partie.victoire(data)
@@ -55,20 +55,20 @@ try:
                     data.partie.keyPressed(keys[K_1:K_COLON]+keys[K_KP1:K_KP_PERIOD]+(keys[K_BACKSPACE],0), data)
                     data.partie.draw(frame, da.Data.menus[data.etat])
                     mustRedraw = False
-                elif(data.etat == 12):
-                    if(keys[K_LSHIFT]==1 and keys[K_g]==1):
+                elif(data.etat == 12): # Si une partie de Bataille Navale est en cours alors
+                    if(keys[K_LSHIFT]==1 and keys[K_g]==1): # Cheat code donnant la victoire instantanément
                         data.partie.winner = 1
                         data.setEtat("BN_End")
                         data.partie.victoire(data)
                         data.getCurrentMenu().draw(frame)
-                    elif(keys[K_LSHIFT]==1 and keys[K_p]==1):
+                    elif(keys[K_LSHIFT]==1 and keys[K_p]==1): # Cheat code donnant la défaite instantanément
                         data.partie.winner = 2
                         data.partie.defaite(data)
                         data.soundSystem.playMusic("triste")
                         data.setEtat("BN_End")
                         data.getCurrentMenu().draw(frame)
-                elif(data.etat == 9):
-                    if(keys[K_LSHIFT]==1 and keys[K_g]==1):
+                elif(data.etat == 9): # Si une partie de Loto est en cours alors
+                    if(keys[K_LSHIFT]==1 and keys[K_g]==1): # Cheat code donnant la victoire instantanément
                         data.setEtat("Loto_End")
                         data.partie.classements(True)
                         data.getCurrentMenu().asWin = True
@@ -76,12 +76,16 @@ try:
                         del data.partie
                         data.partie = None
                         data.getCurrentMenu().draw(frame)
-                elif(data.etat == 0):
-                    if(keys[K_LSHIFT]==1 and keys[K_s]==1):
-                        print("Sound_active = ",data.sound_active," | Music active = ",data.music_active)
+                elif data.getCurrentMenu().haveTextBox():
+                    data.getCurrentMenu().keyDown(keys)
+                    data.getCurrentMenu().draw(frame)
+                    mustRedraw = False
                 else:
                     da.Data.menus[data.etat].draw(frame)
                     mustRedraw = False
+            elif event.type == pygame.KEYUP:
+                if data.getCurrentMenu().haveTextBox():
+                    data.getCurrentMenu().keyUp()
         if mustRedraw and data.particules.mustDraw():
             data.getCurrentMenu().draw(frame)
         elif mustRedraw and data.mustDraw():
@@ -89,16 +93,18 @@ try:
         if time.time()-t > 1:
             if data.partie != None:
                 if data.haveTimerTick():
-                    data.partie.draw(frame, da.Data.menus[data.etat])
+                    data.partie.draw(frame, data.getCurrentMenu())
             t = t+1
         data.particules.tick()
         data.particules.draw(frame)
+        # -------------- Fonction d'itération de la boucle ---------------------#
         currentTime = time.time()
         sleepTime = 1./FPS - (currentTime - lastFrameTime)
         lastFrameTime = currentTime + sleepTime
         pygame.display.flip()
         if sleepTime > 0:
             time.sleep(sleepTime)
+        # -----------  Fin Fonction d'itération de la boucle -----------------#
         mustRedraw = True
 
 except Exception as e:

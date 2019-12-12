@@ -1,6 +1,6 @@
 import pygame
 
-import Profil
+import Profil, Profil.Handler
 import SubMenu as sb
 from BatailleNavale import BN_Menu
 import UiPygame as ui
@@ -46,7 +46,8 @@ class Data:
             # Cette variable représente la partie au cas ou on en aurait besoin.
             self.partie = None
             # Cette variable représente le joueur au cas ou on en aurait besoin.
-            self.joueur = None
+            self.profilHandler = Profil.Handler.Handler(self)
+            self.profilHandler.load("profilsData.data")
 
             # Ces variables permettent d'activer et désactiver le son/musique
             self.sound_active = True
@@ -119,8 +120,8 @@ class Data:
             Data.menus.append(lm.Menu_LotoChoose(data,frame))#Loto choose
             Data.menus.append(lm.Menu_LotoPlay(data,frame))#Loto Play
             Data.menus.append(lm.Menu_LotoEnd(data,frame))#Loto End
-            Data.menus.append(BN_Menu.BN_Place_Boats(data, [ui.Bouton(frame.get_width()/2 - frame.get_width()/3, 20, frame.get_width()/4, 50, 2, (45, 45, 45), "Valider", (170, 170, 170), police, (255, 255, 255)),
-                                                            ui.Bouton(frame.get_width()/2 + frame.get_width()/3 - frame.get_width()/4, 20, frame.get_width()/4, 50, 2, (45, 45, 45), "Retour au menu", (170, 170, 170), police20, (255, 255, 255))]))#BN Place
+            Data.menus.append(BN_Menu.BN_Place_Boats(data, [ui.Bouton(frame.get_width()/2 - frame.get_width()/3.75, 20, frame.get_width()/4, 50, 2, (45, 45, 45), "Valider", (170, 170, 170), police, (255, 255, 255)),
+                                                            ui.Bouton(frame.get_width()/2 + frame.get_width()/3.75 - frame.get_width()/4, 20, frame.get_width()/4, 50, 2, (45, 45, 45), "Retour au menu", (170, 170, 170), police20, (255, 255, 255))]))#BN Place
             Data.menus.append(BN_Menu.BN_Jouer(data, [ui.Bouton(500, 110, 150, 50, 2, (45, 45, 45), "voir la grille de l'adversaire", (170, 170, 170), pygame.font.SysFont('Impact',12), (255, 255, 255)),
                                                       ui.Bouton(500, 210, 150, 50, 2, (185, 75, 75), "Tirer", (170, 170, 170), police, (255, 255, 255)),
                                                       ui.Bouton(500, 410, 150, 50, 2, (45, 45, 45), "Pause", (170, 170, 170), police, (255, 255, 255))]))#BN Play
@@ -128,9 +129,9 @@ class Data:
                                                         ui.Bouton(160, 390, 320, 50, 2, (45, 45, 45), "Retour au menu", (170, 170, 170), police, (255, 255, 255))]))#BN End
             Data.menus.append(BN_Menu.BN_Pause(data, [ui.Bouton(245,165,150,50,2,(120,120,120),"Reprendre",(152,152,152),police,(255,255,255)),
                                                       ui.Bouton(245,235,150,50,2,(120,120,120),"Quitter",(152,152,152),police,(255,255,255))]))#BN Pause
-            Data.menus.append(Profil.Menu_ProfilM(data, frame))
-            Data.menus.append(Profil.Menu_ProfilIns(data, frame))
-            Data.menus.append(Profil.Menu_ProfilCo(data, frame))
+            Data.menus.append(Profil.Menu_ProfilM(data, frame)) #Profil Main
+            Data.menus.append(Profil.Menu_ProfilIns(data, frame)) #Profil Inscription
+            Data.menus.append(Profil.Menu_ProfilCo(data, frame)) #Profil Connection
             Data.menus.append(None) #Crédits
             Data.menus[1].readCfg() # Lecture des options depuis le fichier de config
             pass

@@ -60,7 +60,7 @@ class GameBN:
                                     pygame.transform.rotate(self.bateauStr["Sous-marin"][2], 90)],
                      "Torpilleur": [pygame.transform.rotate(self.bateauStr["Torpilleur"][0], 90),
                                     pygame.transform.rotate(self.bateauStr["Torpilleur"][1], 90)]}
-        # Données de placements sous forme [(bx1, by1), (bx2, by2), (bx3, by3), (bx4, by4), (bx5, by5), ...]
+        # Données de placements sous forme [(bx1, by1), (bx2, by2), (bx3, by3), (bx4, by4), (bx5, by5), grille du joueur n montrée, ID bateau sélectionné, [dirBateau1, dirBateau2, dirBateau3, dirBateau4, dirBateau5]]
         self.placeData = [(10, 150), (52, 150), (10, 330), (52, 330), (94, 280), 1, -1, ["Verticale", "Verticale", "Verticale", "Verticale", "Verticale"]]
         # Données de jeu sous forme [tour du joueur n, grille du joueur n montrée]
         self.currentPlayData = [1, 1]
@@ -256,7 +256,7 @@ class GameBN:
     #
     def selectBateau(self):
         pos = pygame.mouse.get_pos()
-        l = len(list(self.bateauStr.keys()))
+        l = len(list(self.bateauStr.keys())) # On récupère tous les types de bateaux
         for i in range(l):
             if self.placeData[7][i] == "Verticale":
                 if pos[0] > self.placeData[i][0] and pos[0] < self.placeData[i][0] + 32 and pos[1] > self.placeData[i][1] and pos[1] < self.placeData[i][1] + l*32:
@@ -271,21 +271,23 @@ class GameBN:
         if self.placeData[5] == 1:
             grille = self.grille_J1
 
-        if grille.getCaseByClick(pos[0], pos[1]) != None:
+        if grille.getCaseByClick(pos[0], pos[1]) != None: # Si on clique sur une case de la grille
+            # On récupère la case sur laquelle on a cliqué
             cx = int(math.floor((pos[0] - grille.x) / ((abs(grille.x2 - grille.x) / grille.largeur))))
             cy = int(math.floor((pos[1] - grille.y) / ((abs(grille.y2 - grille.y) / grille.hauteur))))
             case = grille.getCaseByCoords(cx, cy)
-            if case.getcontenu() != None:
-                l = list(self.bateauStr.values())
-                for i in range(len(l)):
-                    for j in range(len(l[i])):
-                        if case.contient(l[i][j]):
-                            self.placeData[6] = i
+            if case.getcontenu() != None: # Si la case n'est pas vide
+                l = list(self.bateauStr.values()) # on récupère tous les bateaux
+                for i in range(len(l)): # on récupère toutes les parties du bateau a placer
+                    for j in range(len(l[i])): # on récupère toutes les parties du bateau a placer
+                        if case.contient(l[i][j]): # Si la case contient la partie j du bateau i
+                            self.placeData[6] = i # On sélectionne le bateau i
                             cy = cy-j
-                            for k in range(len(list(l[i]))):
+                            for k in range(len(list(l[i]))): # On enlève toutes les parties du bateau i de la grille
                                 grille.getCaseByCoords(cx, cy+k).setContenu(None)
                             break
 
+                # On teste la même chose mais avec les bateaux horizontaux
                 l = list(self.bateauStr_H.values())
                 for i in range(len(l)):
                     for j in range(len(l[i])):
@@ -307,9 +309,11 @@ class GameBN:
     def placeBateau(self):
         pos = pygame.mouse.get_pos()
         grille = self.getGrille()
-        if grille.getCaseByClick(pos[0], pos[1]) != None:
+        if grille.getCaseByClick(pos[0], pos[1]) != None: # On vérifie que le joueur a clique sur une case
+            # On récupère la case sur laquelle on a cliqué
             cx = int(math.floor((pos[0] - grille.x) / ((abs(grille.x2 - grille.x) / grille.largeur))))
             cy = int(math.floor((pos[1] - grille.y) / ((abs(grille.y2 - grille.y) / grille.hauteur))))
+            # Ajout du bateau
             if self.ajouter_Bateau(grille, self.placeData[7][self.placeData[6]], (cx+1, cy+1), list(self.bateauStr.keys())[self.placeData[6]]):
                 self.placeData[self.placeData[6]] = (-self.placeData[self.placeData[6]][0], -self.placeData[self.placeData[6]][1])
                 self.placeData[6] = -1
@@ -357,10 +361,10 @@ class GameBN:
     #
     def playTir(self, case=(-1, -1)):
         grille = self.getGrille()
-        caseT = grille.getSelectedCase()
+        caseT = grille.getSelectedCase() # On tir sur la case actuellement séléctionnée (pour le joueur)
         if caseT[0] == None and not(self.currentPlayData[0] == 2 and self.IA != None):
             return None
-        self.tirTimer = 60
+        self.tirTimer = 60 # On attend 60 ticks
         self.tirData = [caseT[1]%grille.largeur, math.floor(caseT[1]/grille.largeur)] if case[0] < 0 or case[1] < 0 else [case[0], case[1]]
         if self.currentPlayData[0] == 1 and self.IA != None:
             self.currentPlayData[0] = 2
@@ -387,7 +391,13 @@ class GameBN:
     #
     def compareFunc(self, tab):
         donnees = [tab[0].split("/"), tab[1].split("/")]
-        return int(donnees[0][0])/int(donnees[0][1]) + tab[2] > int(donnees[1][0])/int(donnees[1][1]) + tab[3]
+        if int(donnees[0][1]) == 0:
+            donnees[0][1] = "1"
+            return int(donnees[1][1]) > 0
+        elif int(donnees[1][1]) == 0:
+            donnees[1][1] = "1"
+            return int(donnees[0][1]) > 0
+        return int(donnees[0][0])/int(donnees[0][1]) + int(tab[2][:-1]) > int(donnees[1][0])/int(donnees[1][1]) + int(tab[3][:-1])
 
     # Fonction victoire
     #
@@ -397,30 +407,45 @@ class GameBN:
     # Fonction activant les feux d'artifices de victoires et ajoutant le score au classement
     #
     def victoire(self,data):
-        joueur = "TEST"
-        score = data.classements[3].getScore(joueur)
-        if score == 0:
-            self.data.classements[3].ajouterScore((joueur,"1/0",str(self.precision(0))))
+        joueur = data.profilHandler.getcurrentProfil()
+        if joueur != None:
+            joueur = joueur._getPseudo()
+        else:
+            joueur = "Anonyme"
+        score = data.classements[3].getScore(joueur) # On récupère le score du joueur
+        if score == 0: # Si il n'y a aucun score
+            self.data.classements[3].ajouterScore((joueur,"1/0",str(self.precision(0))[:5]+"%")) #On ajoute une score tout neuf
         else:
             self.data.classements[3].removeScore(score)
             donnees = score[1].split("/")
-            Nprec = (int(score[2]) * (int(donnees[0])+int(donnees[1])) + self.precision(0)) / (int(donnees[0])+int(donnees[1])+1)
-            self.data.classements[3].ajouterScore((joueur,str(int(donnees[0])+1)+"/"+str(donnees[1]),Nprec))
+            pt = score[2][:3]
+            if pt[-1] == ".":
+                pt = pt[:-1]
+            print(pt)
+            Nprec = (int(pt) * (int(donnees[0])+int(donnees[1])) + self.precision(0)) / (int(donnees[0])+int(donnees[1])+1)
+            self.data.classements[3].ajouterScore((joueur,str(int(donnees[0])+1)+"/"+str(donnees[1]),str(Nprec)[:5]+"%"))
         data.classements[3].sort(self.compareFunc)
         data.classements[3].save("Classements_Bataille_Navale.yolo")
         rayon = 4
         data.particules.addEmitter(FireWorkParticule.FireworkEmitter(data.particules, [Particule.Particule((100,100), 60, (230, 60, 60))], [(0, 235, 0), (0, 100, 0)], rayon, 60, (320, 480), (0, -4) , 0, 2))
 
     def defaite(self, data):
-        joueur = "TEST"
-        score = data.classements[3].getScore(joueur)
-        if score == 0:
-            self.data.classements[3].ajouterScore((joueur,"0/1",str(self.precision(0))))
+        joueur = data.profilHandler.getcurrentProfil()
+        if joueur != None:
+            joueur = joueur._getPseudo()
+        else:
+            joueur = "Anonyme"
+        score = data.classements[3].getScore(joueur) # On récupère le score du joueur
+        if score == 0: # Si il n'y a aucun score
+            self.data.classements[3].ajouterScore((joueur,"0/1",str(self.precision(0))[:5]+"%")) #On ajoute une score tout neuf
         else:
             self.data.classements[3].removeScore(score)
             donnees = score[1].split("/")
-            Nprec = (int(score[2]) * (int(donnees[0])+int(donnees[1])) + self.precision(0)) / (int(donnees[0])+int(donnees[1])+1)
-            self.data.classements[3].ajouterScore((joueur,donnees[0]+"/"+str(int(donnees[1])+1),Nprec))
+            pt = score[2][:3]
+            if pt[-1] == ".":
+                pt = pt[:-1]
+            Nprec = (int(pt) * (int(donnees[0])+int(donnees[1])) + self.precision(0)) / (int(donnees[0])+int(donnees[1])+1)
+            self.data.classements[3].ajouterScore((joueur,donnees[0]+"/"+str(int(donnees[1])+1),str(Nprec)+"%"))
         data.classements[3].sort(self.compareFunc)
         data.classements[3].save("Classements_Bataille_Navale.yolo")
 

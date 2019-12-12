@@ -67,12 +67,16 @@ while(not(data.fin)):
                         data.soundSystem.playMusic("triste")
                         data.setEtat("BN_End")
                         data.getCurrentMenu().draw(frame)
-            elif(data.etat == 0):
-                if(keys[K_LSHIFT]==1 and keys[K_s]==1):
-                    print("Sound_active = ",data.sound_active," | Music active = ",data.music_active)
+            elif data.getCurrentMenu().haveTextBox():
+                data.getCurrentMenu().keyDown(keys)
+                data.getCurrentMenu().draw(frame)
+                mustRedraw = False
             else:
                 da.Data.menus[data.etat].draw(frame)
                 mustRedraw = False
+        elif event.type == pygame.KEYUP:
+            if data.getCurrentMenu().haveTextBox():
+                data.getCurrentMenu().keyUp()
     if mustRedraw and data.particules.mustDraw():
         data.getCurrentMenu().draw(frame)
     elif mustRedraw and data.mustDraw():

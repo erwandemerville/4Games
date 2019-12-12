@@ -6,7 +6,7 @@ class Joueur:
     - des crédits (pour le poker)"""
 
     _nbJoueurs = 0
-    def __init__(self, pseudo, dateNaissance, email, mdp):
+    def __init__(self, pseudo, mdp):
         #Constructeur de la classe Joueur
         self._pseudo = pseudo
         self._id = Joueur._nbJoueurs

@@ -105,6 +105,7 @@ class Menu_LotoChoose(SubMenu.Menu_G):
             LTO.Loto_Party.removeAllJetonsS(grille)
             self.drawGrille(grille,frame,((frame.get_width()/2)-130,45+nb*130))
             nb = nb + 1
+        self.draw_Profil(frame)
 
 class Menu_LotoPlay(SubMenu.Menu_G):
     "Menu jeu du Loto"

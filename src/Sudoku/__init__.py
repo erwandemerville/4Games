@@ -89,6 +89,8 @@ class PartieG:
                 fichier.close()
         except FileNotFoundError:
             return False
+        except EOFError:
+            return False
         else:
             if not grille_recup:
                 return False
@@ -103,7 +105,7 @@ class PartieG:
                 self.erreur = grille_recup[-1]
                 self.wrongCase = []
                 for i in range(81):
-                    if not(grilleGenerator.verifierNombre(self.grille_jeu, (i%self.grille_jeu.largeur, math.floor(i/self.grille_jeu.largeur)))):
+                    if not(PartieG.verifierNombre(self.grille_jeu, (i%self.grille_jeu.largeur, math.floor(i/self.grille_jeu.largeur)))):
                         self.wrongCase.append(1)
                     else:
                         self.wrongCase.append(0)
@@ -169,7 +171,7 @@ class PartieG:
     #
     def keyPressed(self, key, data):
         k = -1
-        for i in range(len(key)-1):
+        for i in range(len(key)-1): # Récupère la première key pressée.
             if key[i] == 1:
                 k = i
                 break
@@ -177,7 +179,7 @@ class PartieG:
         if k == -1:
             return False
         else:
-            if k == 18:
+            if k == 18: # Si la key BACKSPACE est pressée, alors on enlève le chiffre contenu dans la case selectionnée de la grille
                 case = self.grille_jeu.getSelectedCase()
                 if case[0] != None:
                     if self.liste_numeros_init[case[1]] == 0:
@@ -187,7 +189,7 @@ class PartieG:
                                 self.wrongCase[l] = 1
                             else:
                                 self.wrongCase[l] = 0
-            else:
+            else: # Sinon on ajouter un chiffre dans la case selectionnée de la grille en fonction de la key pressée
                 k = (k+1+(math.floor(k/9))) %10
                 case = self.grille_jeu.getSelectedCase()
                 if case[0] != None:
@@ -241,7 +243,12 @@ class PartieG:
     # feux d'artifices de victoire
     #
     def victoire(self,data):
-        data.classements[0].ajouterScore(("TEST", self.getStringTime(), self.erreur))
+        joueur = data.profilHandler.getcurrentProfil()
+        if joueur != None:
+            joueur = joueur._getPseudo()
+        else:
+            joueur = "Anonyme"
+        data.classements[0].ajouterScore((joueur, self.getStringTime(), self.erreur))
         data.classements[0].sort(self.compareTimes)
         data.classements[0].save("Classements_Sudoku.yolo")
         rayon = 4
@@ -331,13 +338,13 @@ class PartieG:
     #
     @staticmethod
     def verifierNombre(grille, point):
-        for x in range(grille.largeur):
+        for x in range(grille.largeur): # On vérifie que le nombre ne se trouve pas sur la même ligne
             if (x == point[0]):
                 continue
             if (grille.getCaseByCoords(x, point[1]).getNumber() == grille.getCaseByCoords(point[0], point[1]).getNumber()):
                 return False
 
-        for y in range(grille.hauteur):
+        for y in range(grille.hauteur): # On vérifie que le nombre ne se trouve pas sur la même colonne
             if (y == point[1]):
                 continue
             if (grille.getCaseByCoords(point[0], y).getNumber() == grille.getCaseByCoords(point[0], point[1]).getNumber()):
@@ -345,7 +352,7 @@ class PartieG:
 
         tab = PartieG.getSousGrille(grille, point)
 
-        for pt in tab:
+        for pt in tab: # On vérifie que le nombre ne se trouve pas dans la même sous-grille
             if (grille.getCaseByCoords(pt[0], pt[1]).getNumber() == grille.getCaseByCoords(point[0], point[1]).getNumber()):
                 return False
 

@@ -203,7 +203,6 @@ class GameBN:
             case.shoot()
             joueur = 2-self.currentPlayData[1]
             self.tirs[joueur] = self.tirs[joueur] + 1
-            print(self.tirs, joueur, self.currentPlayData)
             if case.estVide():
                 self.tirCoule[joueur] = self.tirCoule[joueur]+1
             else:
@@ -396,8 +395,20 @@ class GameBN:
             return int(donnees[1][1]) > 0
         elif int(donnees[1][1]) == 0:
             donnees[1][1] = "1"
-            return int(donnees[0][1]) > 0
-        return int(donnees[0][0])/int(donnees[0][1]) + int(tab[2][:-1]) > int(donnees[1][0])/int(donnees[1][1]) + int(tab[3][:-1])
+            return False
+
+        pt = tab[2][:3]
+        if pt[-1] == ".":
+            pt = pt[:-1]
+        if pt[-2] == ".":
+            pt = pt[:-2]
+
+        pt2 = tab[3][:3]
+        if pt2[-1] == ".":
+            pt2 = pt2[:-1]
+        if pt2[-2] == ".":
+            pt2 = pt2[:-2]
+        return int(donnees[0][0])/int(donnees[0][1]) + int(pt) > int(donnees[1][0])/int(donnees[1][1]) + int(pt2)
 
     # Fonction victoire
     #
@@ -414,7 +425,12 @@ class GameBN:
             joueur = "Anonyme"
         score = data.classements[3].getScore(joueur) # On récupère le score du joueur
         if score == 0: # Si il n'y a aucun score
-            self.data.classements[3].ajouterScore((joueur,"1/0",str(self.precision(0))[:5]+"%")) #On ajoute une score tout neuf
+            Nprec = self.precision(0)
+            if len(str(Nprec)) > 5:
+                Nprec = str(Nprec)[:5]
+            else:
+                Nprec = str(Nprec)
+            self.data.classements[3].ajouterScore((joueur,"1/0",Nprec+"%")) #On ajoute une score tout neuf
         else:
             self.data.classements[3].removeScore(score)
             donnees = score[1].split("/")
@@ -424,7 +440,11 @@ class GameBN:
             if pt[-2] == ".":
                 pt = pt[:-2]
             Nprec = (int(pt) * (int(donnees[0])+int(donnees[1])) + self.precision(0)) / (int(donnees[0])+int(donnees[1])+1)
-            self.data.classements[3].ajouterScore((joueur,str(int(donnees[0])+1)+"/"+str(donnees[1]),str(Nprec)[:5]+"%"))
+            if len(str(Nprec)) > 5:
+                Nprec = str(Nprec)[:5]
+            else:
+                Nprec = str(Nprec)
+            self.data.classements[3].ajouterScore((joueur,str(int(donnees[0])+1)+"/"+str(donnees[1]),Nprec+"%"))
         data.classements[3].sort(self.compareFunc)
         data.classements[3].save("Classements_Bataille_Navale.yolo")
         rayon = 4
@@ -438,7 +458,12 @@ class GameBN:
             joueur = "Anonyme"
         score = data.classements[3].getScore(joueur) # On récupère le score du joueur
         if score == 0: # Si il n'y a aucun score
-            self.data.classements[3].ajouterScore((joueur,"0/1",str(self.precision(0))[:5]+"%")) #On ajoute une score tout neuf
+            Nprec = self.precision(0)
+            if len(str(Nprec)) > 5:
+                Nprec = str(Nprec)[:5]
+            else:
+                Nprec = str(Nprec)
+            self.data.classements[3].ajouterScore((joueur,"1/0",Nprec+"%")) #On ajoute une score tout neuf
         else:
             self.data.classements[3].removeScore(score)
             donnees = score[1].split("/")
@@ -448,7 +473,11 @@ class GameBN:
             if pt[-2] == ".":
                 pt = pt[:-2]
             Nprec = (int(pt) * (int(donnees[0])+int(donnees[1])) + self.precision(0)) / (int(donnees[0])+int(donnees[1])+1)
-            self.data.classements[3].ajouterScore((joueur,donnees[0]+"/"+str(int(donnees[1])+1),str(Nprec)[:5]+"%"))
+            if len(str(Nprec)) > 5:
+                Nprec = str(Nprec)[:5]
+            else:
+                Nprec = str(Nprec)
+            self.data.classements[3].ajouterScore((joueur,str(int(donnees[0])+1)+"/"+str(donnees[1]),Nprec+"%"))
         data.classements[3].sort(self.compareFunc)
         data.classements[3].save("Classements_Bataille_Navale.yolo")
 

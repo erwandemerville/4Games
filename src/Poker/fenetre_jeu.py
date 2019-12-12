@@ -1,6 +1,8 @@
+import pygame as pygame
 from pygame import *
 from Poker.Jeu import Jeu
 from Poker.affichage import *
+import os
 
 width = 756
 height = 475
@@ -22,10 +24,10 @@ DARK_GRAY = (96, 96, 96)
 LIGHT_BLACK = (32, 32, 32)
 CYAN = (0, 255, 255)
 
-table_de_jeu = pygame.image.load('Poker/images/table_poker.jpg')
+table_de_jeu = pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)),'images/table_poker.jpg')
 table_de_jeu = pygame.transform.scale(table_de_jeu, (width, height))
-LISTE_IMAGES_CARTES = []
-carte_vide = pygame.image.load('Poker/images/images-cartes/b2fv.png')
+LISTE_IMAGES_CARTES = [];
+carte_vide = pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)),'images/images-cartes/b2fv.png')
 carte_vide = pygame.transform.scale(carte_vide, (54, 72))
 
 donnees_position_joueurs = {3: [(160, 40), (500, 40), (355, 360), ],
@@ -36,7 +38,7 @@ nb_joueurs = 0  # Initialiser nombre de joueurs à 0
 
 
 def Recuperer_Images_Cartes():
-    chemin = 'Poker/images/images-cartes/'
+    chemin = 'images/images-cartes/'
     j = 0
 
     for symbole in range(4):

@@ -421,7 +421,8 @@ class GameBN:
             pt = score[2][:3]
             if pt[-1] == ".":
                 pt = pt[:-1]
-            print(pt)
+            if pt[-2] == ".":
+                pt = pt[:-2]
             Nprec = (int(pt) * (int(donnees[0])+int(donnees[1])) + self.precision(0)) / (int(donnees[0])+int(donnees[1])+1)
             self.data.classements[3].ajouterScore((joueur,str(int(donnees[0])+1)+"/"+str(donnees[1]),str(Nprec)[:5]+"%"))
         data.classements[3].sort(self.compareFunc)
@@ -444,6 +445,8 @@ class GameBN:
             pt = score[2][:3]
             if pt[-1] == ".":
                 pt = pt[:-1]
+            if pt[-2] == ".":
+                pt = pt[:-2]
             Nprec = (int(pt) * (int(donnees[0])+int(donnees[1])) + self.precision(0)) / (int(donnees[0])+int(donnees[1])+1)
             self.data.classements[3].ajouterScore((joueur,donnees[0]+"/"+str(int(donnees[1])+1),str(Nprec)[:5]+"%"))
         data.classements[3].sort(self.compareFunc)

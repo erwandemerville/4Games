@@ -1,5 +1,7 @@
-from random import *
+# Crée par BendoTV en 2019 pour le projet d'algorithmique et développement
 
+from random import *
+import time
 from Grille import Grille, Loto_Case
 from LTO import ia_loto
 from LTO.ia_loto import IA_Loto
@@ -52,28 +54,34 @@ class Loto_Party():
                 nb = nb - 1
         return nb
 
+    #Ajout la liste de grilles au joueur principal
     def addGrillesToMainPlayer(self,list):
         self.grilles_mainplayer.extend(list)
+    # Détermine le nombre nb est sorti
     def containsNbInBoulesSorties(self,nb):
         for i in self.boules_sorties:
             if(i == nb):
                 return True
         return False
+    # Détermine si une grille donnée est gagnante
     def isOneGrilleWinner(self,grille):
         for i in grille.case:
             if not(self.containsNbInBoulesSorties(i.getNumber())) and not(i.getNumber()==-1):
                 return False
         return True
+    # Détermine si le joueur principal à gagné
     def isMainPlayerWinner(self):
         for grille in self.grilles_mainplayer:
             if self.isOneGrilleWinner(grille):
                 return True
         return False
+    # Détermine si une IA a gagné
     def asWinnerInIA(self):
         for ia in self.tab_IA:
             if(ia.isWinner()):
                 return True
         return False
+    # Permet de lancer le jeu
     def start(self):
         self.reset()
         self.isStarted = True
@@ -150,8 +158,29 @@ class Loto_Party():
             for grille in ia.grilles:
                 Loto_Party.generateRandomContenuGrille(grille)
 
+        # Fonction compareTimes
+        #
+        # self : instance de la partie, ne pas mettre en argument
+        # tab : tableau contenant les scores sous la forme : [temps1, temps2, erreurs1, erreurs2]
+        #
+        # Fonction comparant 2 scores et retourne True si le premier score est le meilleur, sinon retourne False
+        #
+    def compare(self, tab):
+        ratioA = int(tab[2].replace('%',''));ratioB = int(tab[3].replace('%',''))
+        if ratioA == ratioB:
+            nbWinA = int(tab[0].split("/")[0]);nbWinB = int(tab[1].split("/")[0])
+            if nbWinA == nbWinB:
+                nbLoseA = int(tab[0].split("/")[1]);nbLoseB = int(tab[1].split("/")[1])
+                return nbLoseA > nbLoseB
+            return nbWinA < nbWinB
+        return ratioA < ratioB
+     # Fonction de gestion des classements
     def classements(self,asWin):
-        joueur = "No joueur"
+        joueur = self.data.profilHandler.getcurrentProfil()
+        if joueur != None:
+            joueur = joueur._getPseudo()
+        else:
+            joueur = "Anonyme"
         score = self.data.classements[2].getScore(joueur)
         if score == 0:
             if asWin:
@@ -167,7 +196,7 @@ class Loto_Party():
             else:
                 avg = str(round((wins*100) / (wins+loses+1)))+"%"
                 self.data.classements[2].ajouterScore((joueur,str(wins)+"/"+str(loses+1),avg))
-        #self.data.classements[2].sort(self.compare)
+        self.data.classements[2].sort(self.compare)
         self.data.classements[2].save("Classements_Loto.yolo")
 
     # Fonction victoire

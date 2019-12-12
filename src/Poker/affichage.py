@@ -33,13 +33,13 @@ class joueur(object):
     def set_myturn(self):
         self.Ismyturn = True
 
-    def set_dealer(self, bDealer):
+    def maj_estDonneur(self, bDealer):
         self.estDonneur = bDealer
 
-    def set_sblind(self, bSBlind):
+    def maj_estPblinde(self, bSBlind):
         self.estPetiteBlinde = bSBlind
 
-    def set_bblind(self, bBBlind):
+    def maj_estGblinde(self, bBBlind):
         self.estGrosseBlinde = bBBlind
 
     def maj_nom(self, name):

@@ -3,7 +3,9 @@
 
 import random
 import time
+from definir_gagnant import PokerHelper
 
+nb_joueurs = 0
 
 class Carte:
     # Classe représentant une carte. Une carte possède un symbole (0 à 3, pique, carreau, coeur ou trèfle) et une
@@ -100,8 +102,9 @@ class Joueur:
     def obtenir_resultat_main(self, cartes_communes):
         # Obtenir un résultat contenant le score de la main du joueur en comparaison avec les cartes communes.
         liste_cartes = self.liste_cartes + cartes_communes
-        # resultat = A FAIRE
-        # self.resultat_manche = resultat
+        resultat = PokerHelper.GetBestChoise(liste_cartes)
+        # resultat = valueHand(cartes_communes, self.liste_cartes)
+        self.resultat_manche = resultat
 
     def retirer_argent(self, quantite):
         # Retire une quantité d'argent donnée à ce que possède le joueur.
@@ -117,7 +120,8 @@ class Joueur:
         self.argent += quantite
 
     def definir_derniere_mise(self, derniere_action_mise, argent_mise):
-        # Change la valeur actuelle d'une mise
+        # Change la valeur de la dernière mise, à savoir l'action effectuée et la valeur de la mise
+
         self.derniere_action_mise = derniere_action_mise
         self.valeur_derniere_mise = argent_mise
 
@@ -158,9 +162,11 @@ class Joueur:
 
 
 class Jeu:
-    NOMBRE_JOUEURS_REQUIS = 3
+    def __init__(self, nb_j):
+        global nb_joueurs
+        self.NOMBRE_JOUEURS_REQUIS = nb_j
+        nb_joueurs = nb_j
 
-    def __init__(self):
         self.liste_joueurs = []
         self.cartes_communes = []
 
@@ -207,10 +213,19 @@ class Jeu:
         self.devoilement_cartes_compteur = 0
         self.CompteurFinTours = 0
 
+        # Pour le tour "pré-flop", permet de ne pas mettre fin au tour sans que la grosse blinde n'ait pu parler
+        self.grosseBlindeAparle = 0
+
+        self.joueurs_cartes = {}
+
     @staticmethod
     def AfficherCartes(liste_cartes):
         for carte in liste_cartes:
             print(carte)
+
+    def recuperer_liste_cartes(self):
+        for id_joueur in self.ordre_des_joueurs:
+            self.joueurs_cartes[id_joueur] = self.liste_joueurs[id_joueur].liste_cartes
 
     def repondre_au_client(self):
         # Cette méthode crée un dictionnaire qui contiendra toutes les données relatives à la partie.
@@ -265,8 +280,8 @@ class Jeu:
 
         donnees_joueurs = {}
 
-        if len(self.liste_joueurs) == Jeu.NOMBRE_JOUEURS_REQUIS:
-            for id_joueur in range(Jeu.NOMBRE_JOUEURS_REQUIS):
+        if len(self.liste_joueurs) == nb_joueurs:
+            for id_joueur in range(nb_joueurs):
                 donnees_joueurs[id_joueur] = {}
                 joueur = self.liste_joueurs[id_joueur]
                 donnees_joueurs[id_joueur]["nom"] = joueur.nom
@@ -295,8 +310,8 @@ class Jeu:
         joueur = Joueur(str(joueur_nom), id_joueur)
         self.liste_joueurs.append(joueur)
 
-        # S'il y a suffisemment de joueurs, lancement automatique de la partie !
-        if len(self.liste_joueurs) == Jeu.NOMBRE_JOUEURS_REQUIS:
+        # S'il y a suffisamment de joueurs, lancement automatique de la partie !
+        if len(self.liste_joueurs) == nb_joueurs:
             print("LANCEMENT DE LA PARTIE")
             self.etat_jeu = "LancementJeu"
             self.lancerPartie()
@@ -318,7 +333,7 @@ class Jeu:
         elif self.etat_jeu == "LancementJeu":
             self.liste_requetes_lancement_jeu.add(id_joueur)
 
-            if len(self.liste_requetes_lancement_jeu) == Jeu.NOMBRE_JOUEURS_REQUIS:
+            if len(self.liste_requetes_lancement_jeu) == nb_joueurs:
                 print("Accès au premier tour")
 
                 # Eviter problèmes de communication (ajouter délai de 1s)
@@ -357,7 +372,7 @@ class Jeu:
             self.liste_requetes_initialisation_manche.add(id_joueur)
 
             # Si tous les joueurs ont eu accès au tour d'initialisation, passer à la phase Pré-flop
-            if len(self.liste_requetes_initialisation_manche) == Jeu.NOMBRE_JOUEURS_REQUIS:
+            if len(self.liste_requetes_initialisation_manche) == nb_joueurs:
                 # Aller à la phase Pré-flop
                 print("Accès à la phase pré-flop")
 
@@ -459,7 +474,7 @@ class Jeu:
             self.liste_requetes_preflop.add(id_joueur)
 
             # Quand tous les joueurs ont eu accès au pré-flop
-            if len(self.liste_requetes_preflop) == Jeu.NOMBRE_JOUEURS_REQUIS:
+            if len(self.liste_requetes_preflop) == nb_joueurs:
                 print("Accès au flop")
 
                 # to prevent the misorder in communication
@@ -480,7 +495,7 @@ class Jeu:
         elif self.etat_jeu == "Flop" and id_joueur != -1:
             self.liste_requetes_flop.add(id_joueur)
 
-            if len(self.liste_requetes_flop) == Jeu.NOMBRE_JOUEURS_REQUIS:
+            if len(self.liste_requetes_flop) == nb_joueurs:
                 print("Accès au Tournant")
 
                 time.sleep(1)
@@ -500,7 +515,7 @@ class Jeu:
         elif self.etat_jeu == "Tournant" and id_joueur != -1:
             self.liste_requetes_tournant.add(id_joueur)
 
-            if len(self.liste_requetes_tournant) == Jeu.NOMBRE_JOUEURS_REQUIS:
+            if len(self.liste_requetes_tournant) == nb_joueurs:
                 print("Accès à la phase Rivière")
 
                 time.sleep(1)
@@ -519,13 +534,13 @@ class Jeu:
         elif self.etat_jeu == "Riviere" and id_joueur != -1:
             self.liste_requetes_riviere.add(id_joueur)
 
-            if len(self.liste_requetes_riviere) == Jeu.NOMBRE_JOUEURS_REQUIS:
+            if len(self.liste_requetes_riviere) == nb_joueurs:
                 # go to the next step
                 print("Accès au dévoilement des cartes")
 
                 time.sleep(1)
 
-                self.etat_jeu = "devoilement_cartes"
+                self.etat_jeu = "Devoilement"
                 self.devoilement_cartes()
 
     def devoilement_cartes(self, id_joueur=-1):
@@ -534,21 +549,22 @@ class Jeu:
         if id_joueur == -1 and self.devoilement_cartes_compteur == 0:
             # Afficher la main de chaque joueur et calculer leur score
             for joueur in self.liste_joueurs:
-                # joueur.obtenir_score_main(self.cartes_communes)  # Obtenir le score de chaque main
-                self.AfficherCartes(joueur.resultat_manche.mains)  # Afficher chaque main
+                joueur.obtenir_resultat_main(self.cartes_communes)  # Obtenir le score de chaque main
+                PokerHelper.PrintCards(joueur.resultat_manche.hands)
+                # self.AfficherCartes(joueur.resultat_manche.mains)  # Afficher chaque main
 
             # Définir le gagnant
-            # self.gagnant = self.obtenirGagnant()
+            self.gagnant = self.obtenirGagnant()
 
             # Ajouter l'argent du pot commun à l'argent du joueur ayant gagné, et le retirer du pot
-            # self.liste_joueurs[self.gagnant.id].ajouter_argent(self.pot.pot_argent)
-            # self.pot.retirer_argent()
+            self.liste_joueurs[self.gagnant.id].ajouter_argent(self.pot.pot_argent)
+            self.pot.retirer_argent()
 
-        elif self.etat_jeu == "devoilement_cartes" and id_joueur != -1:
+        elif self.etat_jeu == "Devoilement" and id_joueur != -1:
             self.liste_requetes_devoilement_cartes.add(id_joueur)
 
             # Une fois que tout le monde a eu accès au dévoilement des cartes, retour au tour d'initialisation
-            if len(self.liste_requetes_devoilement_cartes) == Jeu.NOMBRE_JOUEURS_REQUIS:
+            if len(self.liste_requetes_devoilement_cartes) == nb_joueurs:
                 print("Retour au tour d'initialisation")
 
                 self.clear_round()
@@ -563,15 +579,15 @@ class Jeu:
             print("Fin anticipée de la manche")
 
             # Définir le gagnant
-            # self.gagnant = self.obtenirGagnant_mancheQuittee()
+            self.gagnant = self.obtenirGagnant_mancheQuittee()
 
-            # self.liste_joueurs[self.gagnant.id].ajouter_argent(self.pot.pot_argent)
-            # self.pot.retirer_argent()
+            self.liste_joueurs[self.gagnant.id].ajouter_argent(self.pot.pot_argent)
+            self.pot.retirer_argent()
 
         elif self.etat_jeu == "MancheQuittee" and id_joueur != -1:
             self.liste_requetes_fin_tour.add(id_joueur)
 
-            if len(self.liste_requetes_fin_tour) == Jeu.NOMBRE_JOUEURS_REQUIS:
+            if len(self.liste_requetes_fin_tour) == nb_joueurs:
                 print("Retour au tour d'initialisation")
 
                 time.sleep(3)
@@ -591,18 +607,20 @@ class Jeu:
             if not joueur.estCouche:
                 liste_joueurs_nonCouches.append(joueur)
 
-        # liste_joueurs_classes = A FAIRE
+        liste_joueurs_classes = sorted(liste_joueurs_nonCouches,
+                                       key=PokerHelper.cmp_to_key(PokerHelper.CompareTwoPlayerHands),
+                                       reverse=True)
 
-        # print('--------------------- Joueurs classés ---------------------')
-        # for joueur in liste_joueurs_classes:
-        #    print(joueur.nom)
-        #    print(joueur.resultat_manche)
+        print('--------------------- Joueurs classés ---------------------')
+        for joueur in liste_joueurs_classes:
+            print(joueur.nom)
+            print(joueur.resultat_manche)
 
-        # gagnant = liste_joueurs_classes[0]
+        gagnant = liste_joueurs_classes[0]
 
-        # print(gagnant.resultat_manche)
+        print(gagnant.resultat_manche)
 
-        # return gagnant
+        return gagnant
 
     def obtenirGagnant_mancheQuittee(self):
         # Fonction retournant le seul joueur n'étant pas couché.
@@ -638,7 +656,7 @@ class Jeu:
             self.liste_id_joueurs_couches.append(id_joueur)
 
             # Si tous les joueurs sont couchés, la manche est terminée
-            if len(self.liste_id_joueurs_couches) == Jeu.NOMBRE_JOUEURS_REQUIS - 1:
+            if len(self.liste_id_joueurs_couches) == nb_joueurs - 1:
                 print("Fin de la manche")
                 self.etat_jeu = "MancheQuittee"
                 self.quitter_la_manche()
@@ -686,16 +704,23 @@ class Jeu:
                     self.maj_valeur_suivre(valeur_mise)
                     self.maj_valeur_relance(round(valeur_mise * self.ratio_relance))
 
+                # En cas de All_In, changer la valeur de la prochaine mise à effectuer, calculer le nouveau ratio
+                # pour la prochaine relance, et indiquer que le joueur est couché
+                if type_mise == "All_In":
+                    self.maj_valeur_suivre(valeur_mise)
+                    self.maj_valeur_relance(round(valeur_mise * self.ratio_relance))
+                    joueur.aAll_In = True
+
                 time.sleep(1)
 
-                joueur.definir_derniere_mise(type_mise, valeur_mise)
+                joueur.definir_derniere_mise(type_mise, valeur_mise)  # Définir dernière mise (classe Joueur)
                 joueur.retirer_argent(valeur_mise)
                 self.pot.ajouter_argent(valeur_mise)
-                self.definir_derniere_action_mise_joueur(type_mise)
+                self.definir_derniere_action_mise_joueur(type_mise)  # Définir dernière action (classe Jeu)
                 self.definir_prochain_joueur_a_miser()
 
     def maj_valeur_suivre(self, valeur_suivre):
-        # Méthode permettant de mettre à jour la valeur d'une mise
+        # Méthode permettant de mettre à jour la valeur d'une mise lorsque le joueur choisit de "Suivre"
 
         self.valeur_Suivre = valeur_suivre
 
@@ -704,11 +729,11 @@ class Jeu:
 
     def definir_derniere_action_mise_joueur(self, derniere_action_mise):
         # Défini la dernière action du joueur en train de jouer.
-        # S'il y a eu relance, défini l'ID du dernier joueur à avoir relancé
+        # S'il y a eu relance ou All_In, redéfinie l'ID du dernier joueur à avoir relancé
 
         self.liste_dernieres_actions[self.id_joueur_enTrainDe_jouer] = derniere_action_mise
 
-        if derniere_action_mise == "Relance":
+        if derniere_action_mise == "Relance" or derniere_action_mise == "All_In":
             self.id_dernier_joueur_relance = self.id_joueur_enTrainDe_jouer
 
     def maj_autorisation_check(self):
@@ -745,6 +770,7 @@ class Jeu:
                 if derniere_action_mise == "Check" or derniere_action_mise == "Couche":
                     compteur_Check_Couche += 1
 
+            # Si tout le monde s'est couché ou a checké
             if compteur_Check_Couche == len(self.liste_dernieres_actions):
                 return True
 
@@ -762,7 +788,26 @@ class Jeu:
 
             # Si le prochain joueur devant jouer est celui qui a relancé, alors le tour de mise est terminé.
             if self.id_dernier_joueur_relance == id_prochain_joueur:
-                return True
+                if self.etat_jeu == "PreFlop":
+                    if self.liste_joueurs[id_prochain_joueur].estGrosseBlinde and not self.grosseBlindeAparle:
+                        self.grosseBlindeAparle = True
+
+                        # On modifie l'ID du dernier joueur ayant relancé pour que le tour de mise s'arrête
+                        # si le joueur étant la grosse blinde décide de checker ou de se coucher.
+                        index = self.ordre_des_joueurs.index(id_prochain_joueur)
+                        if index + 1 == len(self.ordre_des_joueurs):
+                            self.id_dernier_joueur_relance = self.ordre_des_joueurs[0]
+                        else:
+                            self.id_dernier_joueur_relance = self.ordre_des_joueurs[index + 1]
+                        # ---------------------------------------------------------------------------------
+
+                        self.estSuivreAutorise = False  # La grosse blinde ne peut pas se suivre elle-même
+                        self.estCheckAutorise = True  # La grosse blinde peut checker
+                        return False
+                    else:
+                        return True
+                else:
+                    return True
             else:
                 return False
 

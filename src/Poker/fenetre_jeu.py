@@ -1,5 +1,4 @@
 from pygame import *
-from network import Network
 from Jeu import Jeu
 from affichage import *
 
@@ -33,6 +32,8 @@ donnees_position_joueurs = {3: [(160, 40), (500, 40), (355, 360), ],
                             4: [(160, 40), (510, 40), (520, 320), (180, 320), ],
                             5: [(160, 40), (510, 40), (570, 320), (350, 320), (140, 320), ]}
 
+nb_joueurs = 0  # Initialiser nombre de joueurs à 0
+
 
 def Recuperer_Images_Cartes():
     chemin = 'images/images-cartes/'
@@ -47,24 +48,26 @@ def Recuperer_Images_Cartes():
 
 
 def creer_liste_ID(mon_ID):
+    global nb_joueurs
     liste_ID = []
 
     if mon_ID == 0:
-        liste_id_NbJoueursRequis = list(range(Jeu.NOMBRE_JOUEURS_REQUIS))
+        liste_id_NbJoueursRequis = list(range(nb_joueurs))
     else:
-        liste_id_NbJoueursRequis = list(range(mon_ID, Jeu.NOMBRE_JOUEURS_REQUIS)) + list(range(mon_ID))
+        liste_id_NbJoueursRequis = list(range(mon_ID, nb_joueurs)) + list(range(mon_ID))
 
-    if Jeu.NOMBRE_JOUEURS_REQUIS == 3:
+    if nb_joueurs == 3:
         liste_ID = liste_id_NbJoueursRequis[1:] + liste_id_NbJoueursRequis[0:1]
-    elif Jeu.NOMBRE_JOUEURS_REQUIS == 4:
+    elif nb_joueurs == 4:
         liste_ID = liste_id_NbJoueursRequis[2:] + liste_id_NbJoueursRequis[0:2]
-    elif Jeu.NOMBRE_JOUEURS_REQUIS == 5:
+    elif nb_joueurs == 5:
         liste_ID = liste_id_NbJoueursRequis[2:] + liste_id_NbJoueursRequis[0:2]
 
     return liste_ID
 
 
 def drawFenetre():
+    global nb_joueurs
     win.blit(table_de_jeu, (0, 0))
 
     texte_attente.draw(win)
@@ -77,7 +80,7 @@ def drawFenetre():
         joueur.draw(win)
 
     # Dessiner cartes
-    for id_joueur in range(Jeu.NOMBRE_JOUEURS_REQUIS):
+    for id_joueur in range(nb_joueurs):
         for carte in joueurs_cartes_screen[id_joueur]:
             carte.draw(win)
 
@@ -109,11 +112,13 @@ def drawFenetre():
 
 
 def dessiner_mains_joueurs(joueur_cartes, pid, liste_ID):
-    for id_joueur in range(Jeu.NOMBRE_JOUEURS_REQUIS):
+    global nb_joueurs
+    # Fonction affichant la main de chaque joueur lors du dévoilement des cartes
+    for id_joueur in range(nb_joueurs):
         screen_id = liste_ID.index(id_joueur)
 
         if id_joueur != pid:
-            joueur_carte = joueur_cartes[id_joueur]
+            joueur_carte = joueur_cartes[id_joueur]  # Récupérer les cartes du joueur dont l'ID est id_joueur
 
             carte1 = joueur_carte[0]
             carte2 = joueur_carte[1]
@@ -134,15 +139,57 @@ def dessiner_mains_joueurs(joueur_cartes, pid, liste_ID):
     drawFenetre()
 
 
+def dessiner_main(joueur_cartes, liste_ID, id_joueur_doitJouer):
+    # Fonction affichant la main d'un joueur.
+    # La fonction remplace les images utilisée pour représenter les cartes par celles appropriées.
+
+    screen_id = liste_ID.index(id_joueur_doitJouer)
+
+    joueur_carte = joueur_cartes[id_joueur_doitJouer]  # Récupérer les cartes du joueur dont l'ID est id_joueur
+
+    carte1 = joueur_carte[0]
+    carte2 = joueur_carte[1]
+
+    joueur_carte1 = joueurs_cartes_screen[screen_id][0]
+    joueur_carte1.set_image(LISTE_IMAGES_CARTES[(13 * carte1.symbole) + carte1.valeur])
+    joueur_carte1.set_joueur_carte(True)
+
+    joueur_carte2 = joueurs_cartes_screen[screen_id][1]
+    joueur_carte2.set_image(LISTE_IMAGES_CARTES[(13 * carte2.symbole) + carte2.valeur])
+    joueur_carte2.set_joueur_carte(True)
+
+    drawFenetre()
+
+
+def cacher_main(joueur_cartes, liste_ID, id_joueur_doitJouer):
+    # Fonction cachant la main d'un joueur.
+    # La fonction remplace les images utilisée pour représenter les cartes par celles appropriées.
+    global carte_vide
+
+    screen_id = liste_ID.index(id_joueur_doitJouer)
+
+    joueur_carte = joueur_cartes[id_joueur_doitJouer]  # Récupérer les cartes du joueur dont l'ID est id_joueur
+
+    joueur_carte1 = joueurs_cartes_screen[screen_id][0]
+    joueur_carte1.set_image(carte_vide)
+    joueur_carte1.set_joueur_carte(True)
+
+    joueur_carte2 = joueurs_cartes_screen[screen_id][1]
+    joueur_carte2.set_image(carte_vide)
+    joueur_carte2.set_joueur_carte(True)
+
+    drawFenetre()
+
+
 def dessiner_resultat_gagnant(gagnant):
     nom_gagnant = gagnant.nom
     id_joueur_gagnant = gagnant.id
-    resultat_gagnant = gagnant.round_result
+    resultat_gagnant = gagnant.resultat_manche
 
     # Dessiner résultat du gagnant
-    result_text = "Gagnant: " + nom_gagnant + "(" + str(id_joueur_gagnant) + ") , " + resultat_gagnant.result_nom + \
+    result_text = "Gagnant: " + nom_gagnant + "(" + str(id_joueur_gagnant) + ") , " + resultat_gagnant.result_name + \
                   ', (' + str(
-        resultat_gagnant.high_symbole) + ', ' + str(resultat_gagnant.high_valeur) + ')'
+        resultat_gagnant.high_suit) + ', ' + str(resultat_gagnant.high_rank) + ')'
     result_cartes = resultat_gagnant.hands
 
     img_list = []
@@ -172,11 +219,12 @@ def dessiner_resultat_gagnant_forfait(gagnant):
         drawFenetre()
 
 
-def initialiser_mises(joueurs_info_dict, liste_ID):
-    for id_joueur in range(Jeu.NOMBRE_JOUEURS_REQUIS):
+def initialiser_mises(joueurs_dico_donnees, liste_ID):
+    global nb_joueurs
+    for id_joueur in range(nb_joueurs):
         pid_ecran = liste_ID.index(id_joueur)
 
-        if joueurs_info_dict[id_joueur]["estCouche"]:
+        if joueurs_dico_donnees[id_joueur]["estCouche"]:
             joueur_rect = joueurs[pid_ecran].get_rect()
 
             if joueur_rect[1] < height // 2:  # Partie haute
@@ -190,7 +238,7 @@ def initialiser_mises(joueurs_info_dict, liste_ID):
             mises[pid_ecran].set_visible(False)
 
 
-def dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID, joueurs_info_dict, miseTerminee):
+def dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID, joueurs_dico_donnees, miseTerminee):
     pid_ecran = liste_ID.index(id_joueur_doitJouer)
 
     joueur_rect = joueurs[pid_ecran].get_rect()
@@ -208,9 +256,9 @@ def dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID,
 
     # to draw mise & jeton when it has changed id_joueur_doitJouer
     if (not id_dernier_ayant_joue == -1 and id_dernier_ayant_joue != id_joueur_doitJouer) or miseTerminee:
-        joueur_from_game = joueurs_info_dict[id_dernier_ayant_joue]
-        derniere_action_mise = joueur_from_game["derniere_action_mise"]
-        valeur_derniere_mise = joueur_from_game["valeur_derniere_mise"]
+        joueur_dans_partie = joueurs_dico_donnees[id_dernier_ayant_joue]
+        derniere_action_mise = joueur_dans_partie["derniere_action_mise"]
+        valeur_derniere_mise = joueur_dans_partie["valeur_derniere_mise"]
 
         pid_ecran = liste_ID.index(id_dernier_ayant_joue)
         joueur_rect = joueurs[pid_ecran].get_rect()
@@ -277,6 +325,7 @@ def dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID,
 
 
 def init_joueur_cartes():
+    global nb_joueurs
     global joueurs_cartes_screen
     global joueur_pos
     global carte_vide
@@ -286,6 +335,8 @@ def init_joueur_cartes():
     id_joueur = 0
 
     for pos in joueur_pos:
+        # Créer des cartes vides et les ajouter aux joueurs.
+        # La position des cartes est également définie ici.
         carte1 = carte(pos[0] - 105, 0, pos[0] - 105, pos[1] - 4, carte_vide)
         joueurs_cartes_screen[id_joueur] = []
         joueurs_cartes_screen[id_joueur].append(carte1)
@@ -302,15 +353,16 @@ texte_jeu = text(180, 190, '', 40, color=(220, 220, 200))
 pot = pot(width - 100, 20)
 
 joueurs = []
+nb_j_max = 5
 
 # Création positions joueurs
-joueur_pos = donnees_position_joueurs[Jeu.NOMBRE_JOUEURS_REQUIS]
+joueur_pos = donnees_position_joueurs[nb_j_max]
 
 for pos in joueur_pos:
     new_joueur = joueur(pos[0], pos[1], "")
     joueurs.append(new_joueur)
 
-id_joueur_courant = round((Jeu.NOMBRE_JOUEURS_REQUIS + 0.1) / 2)
+id_joueur_courant = round((nb_j_max + 0.1) / 2)
 
 # create joueurs_cartes_screen
 joueurs_cartes_screen = {}
@@ -351,16 +403,18 @@ resultat_gagnant_dessiner = resultat_gagnant(width // 2 - 170, height // 2 - 53)
 dessiner_resultat_gagnantforf = resultat_gagnant_forfait(width // 2 - 260, height // 2 - 15)
 
 # Création boutons
+dy = 160
+dx = -300
 btn_pos_x, btn_pos_y = 300, 280
-btn_check = btn('Check', btn_pos_x + 140, btn_pos_y, 30, LIGHT_BLACK, WHITE, LIGHT_YELLOW, BLACK)
-btn_se_coucher = btn('Couche', btn_pos_x + 220, btn_pos_y, 30, RED, WHITE, LIGHT_YELLOW, BLACK)
-mise_btn = btn('Miser', btn_pos_x + 300, btn_pos_y, 30, CYAN, WHITE, LIGHT_YELLOW, BLACK)
+btn_check = btn('Check', btn_pos_x + 140 + dx, btn_pos_y + dy, 30, LIGHT_BLACK, WHITE, LIGHT_YELLOW, BLACK)
+btn_se_coucher = btn('Couche', btn_pos_x + 220 + dx, btn_pos_y + dy, 30, RED, WHITE, LIGHT_YELLOW, BLACK)
+mise_btn = btn('Miser', btn_pos_x + 300 + dx, btn_pos_y + dy, 30, CYAN, WHITE, LIGHT_YELLOW, BLACK)
 
 btns = [btn_check, btn_se_coucher, mise_btn]
 
-btn_Suivre = btn('Suivre', btn_pos_x + 400, btn_pos_y - 70, 30, BLUE, LIGHT_BLUE, LIGHT_GRAY, BLACK)
-btn_Relance = btn('Relance', btn_pos_x + 400, btn_pos_y, 30, RED, PINK, LIGHT_GRAY, BLACK)
-btn_All_In = btn('All_In', btn_pos_x + 400, btn_pos_y + 70, 30, GREEN, LIGHT_YELLOW, LIGHT_GRAY, BLACK)
+btn_Suivre = btn('Suivre', btn_pos_x + 400 + dx, btn_pos_y + dy, 30, BLUE, LIGHT_BLUE, LIGHT_GRAY, BLACK)
+btn_Relance = btn('Relance', btn_pos_x + 400 + 70 + dx, btn_pos_y + dy, 30, RED, PINK, LIGHT_GRAY, BLACK)
+btn_All_In = btn('All_In', btn_pos_x + 400 + 140 + dx, btn_pos_y + dy, 30, GREEN, LIGHT_YELLOW, LIGHT_GRAY, BLACK)
 
 mise_btns = [btn_Suivre, btn_Relance, btn_All_In]
 
@@ -368,24 +422,32 @@ allbtns = btns + mise_btns
 
 arrow1 = arrow(btn_pos_x + 340, btn_pos_y - 10, 20, 0, BLACK)
 
-
-def main(input_text):
+def main(texte_saisi):
     run = True
-    n = Network()
-    p = n.getP()  # joueur no.
+
+    global nb_joueurs
+    jeu = Jeu(nb_joueurs)
 
     win.blit(table_de_jeu, (0, 0))
-    pygame.display.set_caption("Joueur {0}".format(p + 1))
+    pygame.display.set_caption("Poker")
     pygame.display.update()
-
-    joueur_nom = input_text
-    print(joueur_nom)
-
-    game_reply = n.send({"connexion_joueur": joueur_nom})
 
     clock = pygame.time.Clock()
 
-    liste_ID = creer_liste_ID(p)
+    liste_ID = creer_liste_ID(0)
+    jeu.ordre_des_joueurs = liste_ID
+
+    # ------- DEFINIR NOMS DES JOUEURS : ---------
+    joueurs_nom = texte_saisi
+    id_nt = 0
+    for id_joueur in jeu.ordre_des_joueurs:
+        jeu.connexion_joueur(id_joueur, joueurs_nom[id_nt])
+        id_nt += 1
+    # --------------------------------------------
+
+    # Supprimer joueurs en trop :
+    for k in range(nb_joueurs, len(joueurs)):
+        del joueurs[-1]
 
     non_effectue_etape_initialisation = True
     non_effectue_etape_preflop = True
@@ -405,20 +467,36 @@ def main(input_text):
         global jetons
 
         try:
-            game_reply = n.send({"get_game": ""})
-            etat_jeu = game_reply["etat_jeu"]
-            joueurs_info_dict = game_reply["joueurs_info"]
-            id_joueur_doitJouer = game_reply["id_joueur_doitJouer"]
-            miseTerminee = game_reply["miseTerminee"]
-            pot_argent = game_reply["pot_commun"]
+            etat_jeu = jeu.etat_jeu
+            joueurs_dico_donnees = jeu.recuperer_donnees_joueurs()
+            id_joueur_doitJouer = jeu.id_joueur_enTrainDe_jouer
+            miseTerminee = jeu.miseTerminee
+            pot_argent = jeu.pot.pot_argent
 
             # Infos mises
-            init_valeur_mise = game_reply["mise_initiale"]
+            init_valeur_mise = jeu.mise_initiale
 
-            call_amount = game_reply["valeur_Suivre"]
-            is_check_allowable = game_reply["estCheckAutorise"]
-            is_call_allowable = game_reply["estSuivreAutorise"]
-            raise_amount = game_reply["valeur_relance"]
+            valeur_mise_suivre = jeu.valeur_Suivre
+            is_check_allowable = jeu.estCheckAutorise
+            est_suivre_autorise = jeu.estSuivreAutorise
+            raise_amount = jeu.valeur_relance
+
+            if etat_jeu != "LancementJeu" and etat_jeu != "MancheInitialisation":
+                # =============================== Afficher les cartes ====================================
+                jeu.recuperer_liste_cartes()
+
+                # Rendre les cartes visibles :
+                if etat_jeu == "PreFlop":
+                    for id_joueur in range(nb_joueurs):
+                        joueurs_cartes_screen[id_joueur][0].set_visible(True)
+                        joueurs_cartes_screen[id_joueur][1].set_visible(True)
+                # --------------------------------------------------------
+
+                if not petiteBlinde_mise and not grosseBlinde_mise:
+                    if not id_dernier_ayant_joue == id_joueur_doitJouer:
+                        cacher_main(jeu.joueurs_cartes, liste_ID, id_dernier_ayant_joue)
+                        dessiner_main(jeu.joueurs_cartes, liste_ID, id_joueur_doitJouer)
+                # ========================================================================================
 
             if etat_jeu == "LancementJeu":
                 texte_attente.set_visible(False)
@@ -430,7 +508,9 @@ def main(input_text):
 
                 pygame.time.delay(1000)
 
-                game_reply = n.send({"lancer_partie": ""})
+                # Accès à la manche d'initialisation
+                for id_joueur in jeu.ordre_des_joueurs:
+                    jeu.lancerPartie(id_joueur)
 
             elif etat_jeu == "MancheInitialisation":
                 if non_effectue_etape_initialisation:
@@ -441,6 +521,7 @@ def main(input_text):
 
                     petiteBlinde_mise = True
                     grosseBlinde_mise = True
+                    jeu.grosseBlindeAparle = False
 
                     pot.set_visible(True)
 
@@ -465,32 +546,33 @@ def main(input_text):
                     non_effectue_etape_initialisation = False
 
                 tmp_id_joueur = 0
-                for ecran_joueur in joueurs:
+                # Récupérer données sur chaque joueur (nom, argent, statut, etc.)
+                for joueur in joueurs:
                     # new joueur's dict
-                    joueur_from_game = joueurs_info_dict[liste_ID[tmp_id_joueur]]
-                    nom = joueur_from_game["nom"]
-                    argent = joueur_from_game["argent"]
+                    joueur_dans_partie = joueurs_dico_donnees[liste_ID[tmp_id_joueur]]
+                    nom = joueur_dans_partie["nom"]
+                    argent = joueur_dans_partie["argent"]
 
                     tmp_id_joueur += 1
-                    ecran_joueur.maj_nom(nom)
-                    ecran_joueur.maj_argent(argent)
+                    joueur.maj_nom(nom)
+                    joueur.maj_argent(argent)
 
                     # Afficher donneur, petite blinde, grosse blinde
-                    estDonneur = joueur_from_game["estDonneur"]
-                    estPetiteBlinde = joueur_from_game["estPetiteBlinde"]
-                    estGrosseBlinde = joueur_from_game["estGrosseBlinde"]
+                    estDonneur = joueur_dans_partie["estDonneur"]
+                    estPetiteBlinde = joueur_dans_partie["estPetiteBlinde"]
+                    estGrosseBlinde = joueur_dans_partie["estGrosseBlinde"]
 
                     # Effacer les rôles existants
-                    ecran_joueur.set_dealer(False)
-                    ecran_joueur.set_sblind(False)
-                    ecran_joueur.set_bblind(False)
+                    joueur.maj_estDonneur(False)
+                    joueur.maj_estPblinde(False)
+                    joueur.maj_estGblinde(False)
 
                     if estDonneur:
-                        ecran_joueur.set_dealer(True)
+                        joueur.maj_estDonneur(True)
                     if estPetiteBlinde:
-                        ecran_joueur.set_sblind(True)
+                        joueur.maj_estPblinde(True)
                     if estGrosseBlinde:
-                        ecran_joueur.set_bblind(True)
+                        joueur.maj_estGblinde(True)
 
                 # set current joueur visible
                 for j in joueurs:
@@ -500,7 +582,9 @@ def main(input_text):
 
                 pygame.time.delay(1000)
 
-                game_reply = n.send({"manche_initialisation": ""})
+                jeu.etat_jeu = "MancheInitialisation"
+                for id_joueur in jeu.ordre_des_joueurs:
+                    jeu.initialisation_manche(id_joueur)
 
             elif etat_jeu == "PreFlop":
                 if non_effectue_etape_preflop:
@@ -508,45 +592,30 @@ def main(input_text):
 
                     id_dernier_ayant_joue = -1
                     jetons = []
-                    initialiser_mises(joueurs_info_dict, liste_ID)
+                    initialiser_mises(joueurs_dico_donnees, liste_ID)
 
                     non_effectue_etape_preflop = False
 
                 # Envoi d'une requête indiquant la fin du Pré-flop lorsque le tour de mise est terminé
                 if miseTerminee:
-                    game_reply = n.send({"preflop": ""})
+                    for id_joueur in jeu.ordre_des_joueurs:
+                        jeu.preflop(id_joueur)
                     continue
 
-                # Afficher les cartes
-                list_cartes = game_reply["joueurs_cartes"][p]
-
-                carte1 = list_cartes[0]
-                carte2 = list_cartes[1]
-
-                for id_joueur in range(Jeu.NOMBRE_JOUEURS_REQUIS):
-                    joueurs_cartes_screen[id_joueur][0].set_visible(True)
-                    joueurs_cartes_screen[id_joueur][1].set_visible(True)
-
-                joueur_carte1 = joueurs_cartes_screen[id_joueur_courant][0]
-                joueur_carte1.set_image(LISTE_IMAGES_CARTES[(13 * carte1.symbole) + carte1.valeur])
-                joueur_carte1.set_joueur_carte(True)
-
-                joueur_carte2 = joueurs_cartes_screen[id_joueur_courant][1]
-                joueur_carte2.set_image(LISTE_IMAGES_CARTES[(13 * carte2.symbole) + carte2.valeur])
-                joueur_carte2.set_joueur_carte(True)
-
                 # Afficher mises et jetons
-                dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID, joueurs_info_dict,
+                dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID, joueurs_dico_donnees,
                                        miseTerminee)
 
-                # SBlind & BBlind automatically "Relance"
-                if id_joueur_doitJouer == p:
-                    if joueurs_info_dict[p]["estPetiteBlinde"] and petiteBlinde_mise:
-                        game_reply = n.send({"joueur_mise": ("Relance", init_valeur_mise)})
+                # Petite et grosse blindes relancent automatiquement.
+                # Si c'est au tour d'une petite ou grosse blinde de jouer, et que ce client est celui d'un de ces
+                # deux joueurs, la relance s'effectue automatiquement.
+                if True:
+                    if joueurs_dico_donnees[id_joueur_doitJouer]["estPetiteBlinde"] and petiteBlinde_mise:
+                        jeu.joueur_mise(id_joueur_doitJouer, ("Relance", init_valeur_mise))
                         petiteBlinde_mise = False
 
-                    elif joueurs_info_dict[p]["estGrosseBlinde"] and grosseBlinde_mise:
-                        game_reply = n.send({"joueur_mise": ("Relance", raise_amount)})
+                    elif joueurs_dico_donnees[id_joueur_doitJouer]["estGrosseBlinde"] and grosseBlinde_mise:
+                        jeu.joueur_mise(id_joueur_doitJouer, ("Relance", raise_amount))
                         grosseBlinde_mise = False
 
                 id_dernier_ayant_joue = id_joueur_doitJouer
@@ -561,7 +630,7 @@ def main(input_text):
 
                     jetons = []
 
-                    initialiser_mises(joueurs_info_dict, liste_ID)
+                    initialiser_mises(joueurs_dico_donnees, liste_ID)
 
                     for mise_p in mise_pretes:
                         mise_p.set_visible(False)
@@ -575,11 +644,12 @@ def main(input_text):
 
                 # Requête si tour de mise du flop est terminé
                 if miseTerminee:
-                    game_reply = n.send({"flop": ""})
+                    for id_joueur in jeu.ordre_des_joueurs:
+                        jeu.flop(id_joueur)
                     continue
 
                 # Afficher cartes communes
-                list_cartes = game_reply["cartes_communes"]
+                list_cartes = jeu.cartes_communes
 
                 cartes_communes[0].set_image(
                     LISTE_IMAGES_CARTES[(13 * list_cartes[0].symbole) + list_cartes[0].valeur])
@@ -594,7 +664,7 @@ def main(input_text):
                 cartes_communes[2].set_visible(True)
 
                 # to draw mise_pretes, mises, jetons
-                dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID, joueurs_info_dict,
+                dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID, joueurs_dico_donnees,
                                        miseTerminee)
 
                 id_dernier_ayant_joue = id_joueur_doitJouer
@@ -608,7 +678,7 @@ def main(input_text):
                     id_dernier_ayant_joue = -1
 
                     jetons = []
-                    initialiser_mises(joueurs_info_dict, liste_ID)
+                    initialiser_mises(joueurs_dico_donnees, liste_ID)
 
                     for mise_p in mise_pretes:
                         mise_p.set_visible(False)
@@ -622,18 +692,19 @@ def main(input_text):
 
                 # Si la mise est terminée, passer au Tournant
                 if miseTerminee:
-                    game_reply = n.send({"tournant": ""})
+                    for id_joueur in jeu.ordre_des_joueurs:
+                        jeu.tournant(id_joueur)
                     continue
 
                 # Afficher cartes communes
-                list_cartes = game_reply["cartes_communes"]
+                list_cartes = jeu.cartes_communes
 
                 cartes_communes[3].set_image(
                     LISTE_IMAGES_CARTES[(13 * list_cartes[3].symbole) + list_cartes[3].valeur])
                 cartes_communes[3].set_visible(True)
 
                 # to draw mise_pretes, mises, jetons
-                dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID, joueurs_info_dict,
+                dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID, joueurs_dico_donnees,
                                        miseTerminee)
 
                 id_dernier_ayant_joue = id_joueur_doitJouer
@@ -647,7 +718,7 @@ def main(input_text):
                     id_dernier_ayant_joue = -1
 
                     jetons = []
-                    initialiser_mises(joueurs_info_dict, liste_ID)
+                    initialiser_mises(joueurs_dico_donnees, liste_ID)
 
                     for mise_p in mise_pretes:
                         mise_p.set_visible(False)
@@ -660,18 +731,19 @@ def main(input_text):
                     non_effectue_etape_riviere = False
 
                 if miseTerminee:
-                    game_reply = n.send({"riviere": ""})
+                    for id_joueur in jeu.ordre_des_joueurs:
+                        jeu.riviere(id_joueur)
                     continue
 
                 # Afficher cartes communes
-                list_cartes = game_reply["cartes_communes"]
+                list_cartes = jeu.cartes_communes
 
                 cartes_communes[4].set_image(
                     LISTE_IMAGES_CARTES[(13 * list_cartes[4].symbole) + list_cartes[4].valeur])
                 cartes_communes[4].set_visible(True)
 
                 # Dessiner mises pretes, mises, jetons
-                dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID, joueurs_info_dict,
+                dessiner_elements_mise(id_dernier_ayant_joue, id_joueur_doitJouer, liste_ID, joueurs_dico_donnees,
                                        miseTerminee)
 
                 id_dernier_ayant_joue = id_joueur_doitJouer
@@ -679,6 +751,7 @@ def main(input_text):
                 drawFenetre()
 
             elif etat_jeu == "Devoilement":
+                print("ON ENTRE DANS DEVOILEMENT")
                 if non_effectue_etape_devoilement:
                     texte_jeu.set_text("Devoilement")
 
@@ -696,18 +769,19 @@ def main(input_text):
                     non_effectue_etape_devoilement = False
 
                 # Dessiner main de chaque joueur
-                dessiner_mains_joueurs(game_reply["joueurs_cartes"], p, liste_ID)
+                dessiner_mains_joueurs(jeu.joueurs_cartes, id_joueur_doitJouer, liste_ID)
                 drawFenetre()
                 pygame.time.delay(500)
 
                 # Dessiner résultat vainqueur
-                dessiner_resultat_gagnant(game_reply["gagnant"])
+                dessiner_resultat_gagnant(jeu.gagnant)
                 drawFenetre()
                 pygame.time.delay(6000)
 
                 # Pour afficher le résultat du gagnant
                 # Envoyer devoilement à la prochaine requête
-                game_reply = n.send({"devoilement": ""})
+                for id_joueur in jeu.ordre_des_joueurs:
+                    jeu.devoilement_cartes(id_joueur)
 
                 non_effectue_etape_initialisation = True
                 non_effectue_etape_preflop = True
@@ -733,12 +807,13 @@ def main(input_text):
                     non_effectue_etape_abandon_joueurs = False
 
                 # Dessiner résultat vainqueur_quit
-                dessiner_resultat_gagnant_forfait(game_reply["gagnant"])
+                dessiner_resultat_gagnant_forfait(jeu.gagnant)
                 drawFenetre()
                 pygame.time.delay(3000)
 
                 # Envoi requête au serveur
-                game_reply = n.send({"manche_quittee": ""})
+                for id_joueur in jeu.ordre_des_joueurs:
+                    jeu.quitter_la_manche(id_joueur)
 
                 # Réinitialisation des étapes :
                 non_effectue_etape_initialisation = True
@@ -756,26 +831,26 @@ def main(input_text):
 
                 # Afficher joueur
                 tmp_id_joueur = 0
-                for ecran_joueur in joueurs:
+                for joueur in joueurs:
                     # new joueur's dict
-                    joueur_from_game = joueurs_info_dict[liste_ID[tmp_id_joueur]]
-                    nom = joueur_from_game["nom"]
-                    argent = joueur_from_game["argent"]
+                    joueur_dans_partie = joueurs_dico_donnees[liste_ID[tmp_id_joueur]]
+                    nom = joueur_dans_partie["nom"]
+                    argent = joueur_dans_partie["argent"]
 
                     tmp_id_joueur += 1
-                    ecran_joueur.maj_nom(nom)
-                    ecran_joueur.maj_argent(argent)
+                    joueur.maj_nom(nom)
+                    joueur.maj_argent(argent)
 
                 # Afficher pot
                 pot.maj_argent(pot_argent)
 
-                # Dessiner les boutons de mise
-                if id_joueur_doitJouer == p:
+                # Les boutons représentant les actions possibles pour le joueur devant jouer s'affichent.
+                if True:  # Tout le temps vrai car pour chaque joueur on affiche des boutons
                     for butn in btns:
-                        butn.set_visible(True)
+                        butn.set_visible(True)  # Rendre les boutons visibles
 
                         if butn.is_equal("Check"):
-                            if not is_check_allowable:
+                            if not is_check_allowable:  # Ne pas afficher bouton "Check" si action non autorisée
                                 butn.set_visible(False)
 
                     for evenement in pygame.event.get():
@@ -789,40 +864,58 @@ def main(input_text):
 
                             for btn in btns:
                                 if btn.inside_pos(pos):
-                                    if btn.is_equal("Check"):
+                                    if btn.is_equal("Check"):  # SI joueur clique sur "Check"
                                         type_mise = "Check"
-                                    elif btn.is_equal("Couche"):
+                                    elif btn.is_equal("Couche"):  # SI joueur clique sur "Couche"
                                         type_mise = "Couche"
                                         print("\n {}".format(type_mise))
-                                    elif btn.is_equal("Miser"):
-                                        arrow1.toggle_visible()
+                                    elif btn.is_equal("Miser"):  # SI joueur clique sur "Miser"
 
+                                        afficher_bouton = 0
+                                        argent_joueur = joueurs_dico_donnees[id_joueur_doitJouer]["argent"]
+
+                                        # Afficher les boutons de la catégorie "miser"
                                         for item in mise_btns:
-                                            if not item.is_equal(
-                                                    "Suivre"):  # Suivre is visible when it is only call_allowable
-                                                item.toggle_visible()
-                                            else:
-                                                if is_call_allowable:
+                                            if not item.is_equal("Suivre"):  # Si le bouton n'est pas "suivre" :
+                                                if item.is_equal("Relance") and (argent_joueur - raise_amount) >= 0:
+                                                    item.toggle_visible()  # Afficher bouton "relance"
+                                                    afficher_bouton = 1
+                                                if item.is_equal("All_In") and (argent_joueur >= valeur_mise_suivre):
+                                                    item.toggle_visible()  # Afficher bouton All_In
+                                                    afficher_bouton = 1
+                                            else:  # Afficher "Suivre" uniquement si autorisé
+                                                if est_suivre_autorise and (argent_joueur -
+                                                                            valeur_mise_suivre) >= 0:
                                                     item.toggle_visible()
+                                                    afficher_bouton = 1
+
+                                        # Cacher la flèche apparaissant à droite du bouton "Miser" si aucune option
+                                        # de mise n'est disponible.
+                                        if afficher_bouton:
+                                            arrow1.toggle_visible()
 
                             for btn in mise_btns:
                                 if btn.inside_pos(pos):
-                                    if btn.is_equal("Suivre"):
+                                    if btn.is_equal("Suivre"):  # SI joueur clique sur "Suivre"
                                         type_mise = "Suivre"
-                                        valeur_mise = call_amount
-                                    elif btn.is_equal("Relance"):
+                                        valeur_mise = valeur_mise_suivre
+                                    elif btn.is_equal("Relance"):  # SI joueur clique sur "Relance"
                                         type_mise = "Relance"
                                         valeur_mise = raise_amount
-                                    elif btn.is_equal("All_In"):
+                                    elif btn.is_equal("All_In"):  # SI joueur clique sur "All_In"
                                         type_mise = "All_In"
-                                        valeur_mise = raise_amount  # should be modified
+                                        valeur_mise = joueurs_dico_donnees[id_joueur_doitJouer]["argent"]
 
                             if type_mise == "Check":
-                                game_reply = n.send({"joueur_check": ""})
+                                jeu.joueur_check(id_joueur_doitJouer)
                             elif type_mise == "Couche":
-                                game_reply = n.send({"joueur_se_couche": ""})
+                                jeu.joueur_se_couche(id_joueur_doitJouer)
                             elif type_mise == "Suivre" or type_mise == "Relance" or type_mise == "All_In":
-                                game_reply = n.send({"joueur_mise": (type_mise, valeur_mise)})
+                                for btn in mise_btns:
+                                    if btn.is_equal("Suivre") or btn.is_equal("Relance") or btn.is_equal("All_In"):
+                                        btn.set_visible(False)
+                                        arrow1.set_visible(False)
+                                jeu.joueur_mise(id_joueur_doitJouer, (type_mise, valeur_mise))
 
                         elif event.type == pygame.MOUSEMOTION:
                             pos = pygame.mouse.get_pos()
@@ -834,10 +927,7 @@ def main(input_text):
                                     btn.set_ismousedown(False)
 
                 else:
-                    arrow1.set_visible(False)
-
-                    for btn in allbtns:
-                        btn.set_visible(False)
+                    pass
 
                 drawFenetre()
 
@@ -845,27 +935,30 @@ def main(input_text):
                 if event.type == pygame.QUIT:
                     run = False
                     pygame.quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE or event.unicode == 'q':
+                        run = False
+                        pygame.quit()
 
         except Exception as e:
             run = False
             print(str(e))
 
+def choix_nb_joueurs():
+    global nb_joueurs
 
-# main()
-
-def menu_screen():
     pos_init_x, pos_init_y = 130, 100
 
-    input_box = pygame.Rect(pos_init_x, pos_init_y + 40, 140, 32)
+    input_box = pygame.Rect(pos_init_x, pos_init_y + 50, 140, 32)
     color_inactive = pygame.Color('LIGHTSKYBLUE')
     color_active = pygame.Color('DODGERBLUE')
     color = color_inactive
-    enter_btn = btn2('Entrer', 'Jeu', pos_init_x + 280, pos_init_y + 40, 33, pygame.Color('DARKBLUE'),
+    continuer_btn = btn2('Valider', 'saisie', pos_init_x + 120, pos_init_y + 60, 33, pygame.Color('DARKBLUE'),
                      pygame.Color('WHITE'), pygame.Color('THISTLE'), pygame.Color('FIREBRICK'))
-    enter_btn.set_visible(True)
+    continuer_btn.set_visible(True)
 
     active = False
-    input_text = ''
+    nombre_joueurs = ''
     done = False
 
     clock = pygame.time.Clock()
@@ -880,9 +973,10 @@ def menu_screen():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
 
-                if enter_btn.inside_pos(pos):
-                    print(input_text)
-                    main(input_text)
+                if continuer_btn.inside_pos(pos):
+                    print(nombre_joueurs)
+                    nb_joueurs = int(nombre_joueurs)
+                    saisir_noms_joueurs()
 
                 # If the user clicked on the input_box rect.
                 if input_box.collidepoint(event.pos):
@@ -896,40 +990,126 @@ def menu_screen():
             elif event.type == pygame.MOUSEMOTION:
                 pos = pygame.mouse.get_pos()
 
-                if enter_btn.inside_pos(pos):
-                    enter_btn.set_ismousedown(True)
+                if continuer_btn.inside_pos(pos):
+                    continuer_btn.set_ismousedown(True)
                 else:
-                    enter_btn.set_ismousedown(False)
+                    continuer_btn.set_ismousedown(False)
 
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
-                        print(input_text)
-                        input_text = ''
+                        print(nombre_joueurs)
+                        nombre_joueurs = ''
                     elif event.key == pygame.K_BACKSPACE:
-                        input_text = input_text[:-1]
+                        nombre_joueurs = nombre_joueurs[:-1]
                     else:
-                        input_text += event.unicode
+                        nombre_joueurs += event.unicode
 
         win.fill((30, 30, 30))
 
         font = pygame.font.Font(None, 28)
-        txt = font.render("Veuillez entrer votre nom", True, (255, 255, 255))
-        win.blit(txt, (pos_init_x, pos_init_y))
+        txt_nbj = font.render("Combien y a-t-il de joueurs ? (3 à 5)", True, (255, 255, 255))
+        win.blit(txt_nbj, (pos_init_x, pos_init_y))
 
         # Render the current text.
-        txt_surface = font.render(input_text, True, color)
+        txt_surface = font.render(nombre_joueurs, True, color)
         # Resize the box if the text is too long.
-        input_box_width = max(220, txt_surface.get_width() + 10)
+        input_box_width = max(60, txt_surface.get_width() + 10)
         input_box.w = input_box_width
         # Blit the text.
         win.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
         # Blit the input_box rect.
         pygame.draw.rect(win, color, input_box, 2)
         # Blit the Btn
-        enter_btn.draw(win)
+        continuer_btn.draw(win)
 
         pygame.display.update()
+
+def saisir_noms_joueurs():
+
+    global nb_joueurs
+    texte_saisi = [0 for i in range(nb_joueurs)]
+    for i in range(nb_joueurs):
+        print("Bonjour")
+        pos_init_x, pos_init_y = 130, 100
+
+        input_box = pygame.Rect(pos_init_x, pos_init_y + 50, 140, 32)
+        color_inactive = pygame.Color('LIGHTSKYBLUE')
+        color_active = pygame.Color('DODGERBLUE')
+        color = color_inactive
+        enter_btn = btn2('Valider', 'Nom', pos_init_x + 300, pos_init_y + 60, 33, pygame.Color('DARKBLUE'),
+                        pygame.Color('WHITE'), pygame.Color('THISTLE'), pygame.Color('FIREBRICK'))
+        enter_btn.set_visible(True)
+
+        active = False
+        texte_saisi[i] = ''
+        done = False
+
+        clock = pygame.time.Clock()
+
+        while not done:
+            clock.tick(30)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    done = True
+                    pygame.quit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+
+                    if enter_btn.inside_pos(pos):
+                        print(texte_saisi[i])
+                        if i == nb_joueurs - 1:
+                            main(texte_saisi)
+                        else:
+                            done = 1
+
+                    # If the user clicked on the input_box rect.
+                    if input_box.collidepoint(event.pos):
+                        # Toggle the active variable.
+                        active = not active
+                    else:
+                        active = False
+                    # Change the current color of the input box.
+                    color = color_active if active else color_inactive
+
+                elif event.type == pygame.MOUSEMOTION:
+                    pos = pygame.mouse.get_pos()
+
+                    if enter_btn.inside_pos(pos):
+                        enter_btn.set_ismousedown(True)
+                    else:
+                        enter_btn.set_ismousedown(False)
+
+                if event.type == pygame.KEYDOWN:
+                    if active:
+                        if event.key == pygame.K_RETURN:
+                            print(texte_saisi[i])
+                            texte_saisi[i] = ''
+                        elif event.key == pygame.K_BACKSPACE:
+                            texte_saisi[i] = texte_saisi[i][:-1]
+                        else:
+                            texte_saisi[i] += event.unicode
+
+            win.fill((30, 30, 30))
+
+            font = pygame.font.Font(None, 28)
+            txt = font.render("Entrez le nom du joueur {}".format(i + 1), True, (255, 255, 255))
+            win.blit(txt, (pos_init_x, pos_init_y))
+
+            # Render the current text.
+            txt_surface = font.render(texte_saisi[i], True, color)
+            # Resize the box if the text is too long.
+            input_box_width = max(250, txt_surface.get_width() + 10)
+            input_box.w = input_box_width
+            # Blit the text.
+            win.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
+            # Blit the input_box rect.
+            pygame.draw.rect(win, color, input_box, 2)
+            # Blit the Btn
+            enter_btn.draw(win)
+
+            pygame.display.update()
 
 
 pygame.init()
@@ -937,4 +1117,4 @@ win = pygame.display.set_mode((width, height))
 pygame.display.update()
 
 while True:
-    menu_screen()
+    choix_nb_joueurs()

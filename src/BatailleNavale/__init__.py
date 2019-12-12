@@ -445,7 +445,7 @@ class GameBN:
             if pt[-1] == ".":
                 pt = pt[:-1]
             Nprec = (int(pt) * (int(donnees[0])+int(donnees[1])) + self.precision(0)) / (int(donnees[0])+int(donnees[1])+1)
-            self.data.classements[3].ajouterScore((joueur,donnees[0]+"/"+str(int(donnees[1])+1),str(Nprec)+"%"))
+            self.data.classements[3].ajouterScore((joueur,donnees[0]+"/"+str(int(donnees[1])+1),str(Nprec)[:5]+"%"))
         data.classements[3].sort(self.compareFunc)
         data.classements[3].save("Classements_Bataille_Navale.yolo")
 

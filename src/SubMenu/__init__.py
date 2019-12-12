@@ -8,6 +8,7 @@ import Data as da
 import configparser as cp
 import Poker.Jeu as pk
 import time
+import Poker.poker as poker
 
 class Menu_G(ABC):
     "Classe générale représentant un menu"
@@ -131,7 +132,8 @@ class Main_Menu(Menu_G):
             self.data.partie.draw(frame, da.Data.menus[self.data.etat])
         elif self.boutons[3].isCursorInRange(): # Si le bouton "Poker" est pressé
             # Lancement du Poker
-            self.data.partie = pk.Jeu()
+            #self.data.partie = pk.Jeu()
+            poker.start()
             self.data.partie.lancerPartie(2)
         elif self.boutons[4].isCursorInRange(): # Si le bouton "Options" est pressé
             # Lancement des options

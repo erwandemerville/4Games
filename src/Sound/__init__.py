@@ -26,7 +26,7 @@ class SoundManager():
                            "Hihi" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "hihi.wav")),
                            "Jeton" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Jeton.wav")),
                            "Nul" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "T Nul.wav")),
-                           "UI" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "ui.wav")),
+                           "UI" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "UI.wav")),
                            "Win" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Win msg.wav")),
                            "Lose" : Sound(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../assets", "Perdu msg.wav"))
                            }

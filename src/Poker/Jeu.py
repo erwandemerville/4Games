@@ -3,7 +3,7 @@
 
 import random
 import time
-from definir_gagnant import PokerHelper
+from Poker.definir_gagnant import PokerHelper
 
 nb_joueurs = 0
 

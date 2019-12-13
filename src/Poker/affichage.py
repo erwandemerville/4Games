@@ -1,6 +1,15 @@
 # !/usr/bin/python3.7
 # -*-coding:Utf-8 -*
 
+"""
+! CE CODE EST BASÉ SUR UN PROGRAMME EXISTANT !
+Voici le github d'où est issu le code initial : https://github.com/actruce/Pygame/tree/master/TexasHoldemMultiPlay
+Dossier "TexasHoldemMultiPlay".
+
+Voir le fichier Jeu.py pour toutes les explications.
+
+"""
+
 import pygame
 from math import *
 

@@ -133,8 +133,8 @@ class Main_Menu(Menu_G):
         elif self.boutons[3].isCursorInRange(): # Si le bouton "Poker" est pressé
             # Lancement du Poker
             #self.data.partie = pk.Jeu()
-            poker.start()
-            self.data.partie.lancerPartie(2)
+            poker.start(frame)
+            self.draw(frame)
         elif self.boutons[4].isCursorInRange(): # Si le bouton "Options" est pressé
             # Lancement des options
             da.Data.menus[1].readCfg()

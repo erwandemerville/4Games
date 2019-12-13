@@ -13,6 +13,8 @@ from Poker.affichage import *
 import Sudoku
 import Profil.Handler as pf
 
+global fini
+fini = False
 width = 756
 height = 475
 
@@ -897,7 +899,10 @@ def main(texte_saisi):
                                 if btn.inside_pos(pos):
                                     if btn.is_equal("Quitter"):
                                         run = False
-                                        pygame.quit()
+                                        global fini
+                                        fini = True
+                                        done = True
+                                        return
                                     elif btn.is_equal("Check"):  # SI joueur clique sur "Check"
                                         type_mise = "Check"
                                     elif btn.is_equal("Couche"):  # SI joueur clique sur "Couche"
@@ -961,18 +966,17 @@ def main(texte_saisi):
                                     btn.set_ismousedown(False)
 
                 else:
-                    pass
+                    print("l964 : Ending")
 
                 drawFenetre()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-                    pygame.quit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE or event.unicode == 'q':
                         run = False
-                        pygame.quit()
+
 
         except Exception as e:
             run = False
@@ -1006,64 +1010,75 @@ def choix_nb_joueurs():
 
     while not done:
         clock.tick(30)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-                pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-
-                if continuer_btn.inside_pos(pos):
-                    print(nombre_joueurs)
-                    nb_joueurs = int(nombre_joueurs)
-                    if nb_joueurs < 3 or nb_joueurs > 5:
-                        activer_erreur = 0
-                        activer_erreur1 = 1
-                    else:
-                        activer_erreur1 = 0
-                        if nb_joueurs > len(pseudos_j):
-                            activer_erreur = 1
-                        else:
-                            activer_erreur = 0
-                            saisir_noms_joueurs()
-
-                if quitter_btn.inside_pos(pos):
-                    pygame.quit()
-
-                # If the user clicked on the input_box rect.
-                if input_box.collidepoint(event.pos):
-                    # Toggle the active variable.
-                    active = not active
-                else:
-                    active = False
-                # Change the current color of the input box.
-                color = color_active if active else color_inactive
-
-            elif event.type == pygame.MOUSEMOTION:
-                pos = pygame.mouse.get_pos()
-
-                if continuer_btn.inside_pos(pos):
-                    continuer_btn.set_ismousedown(True)
-                else:
-                    continuer_btn.set_ismousedown(False)
-
-                if quitter_btn.inside_pos(pos):
-                    quitter_btn.set_ismousedown(True)
-                else:
-                    quitter_btn.set_ismousedown(False)
-
-            if event.type == pygame.KEYDOWN:
-                if active:
-                    if event.key == pygame.K_RETURN:
+        try:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    done = True
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+                    if continuer_btn.inside_pos(pos):
                         print(nombre_joueurs)
-                        nombre_joueurs = ''
-                    elif event.key == pygame.K_BACKSPACE:
-                        nombre_joueurs = nombre_joueurs[:-1]
-                    else:
-                        nombre_joueurs += event.unicode
+                        nb_joueurs = int(nombre_joueurs)
+                        if nb_joueurs < 3 or nb_joueurs > 5:
+                            activer_erreur = 0
+                            activer_erreur1 = 1
+                        else:
+                            activer_erreur1 = 0
+                            if nb_joueurs > len(pseudos_j):
+                                activer_erreur = 1
+                            else:
+                                activer_erreur = 0
+                                saisir_noms_joueurs()
+                    elif quitter_btn.inside_pos(pos):
+                        done = True
+                        global fini
+                        fini = True
+                        data.fin = True
+                        pygame.display.set_mode((640, 480))
+                        pygame.display.update()
 
-        win.fill((50, 50, 50)) # Couleur de fond
+
+                    # If the user clicked on the input_box rect.
+                    if input_box.collidepoint(event.pos):
+                        # Toggle the active variable.
+                        active = not active
+                    else:
+                        active = False
+                    # Change the current color of the input box.
+                    color = color_active if active else color_inactive
+
+                elif event.type == pygame.MOUSEMOTION:
+                    pos = pygame.mouse.get_pos()
+
+                    if continuer_btn.inside_pos(pos):
+                        continuer_btn.set_ismousedown(True)
+                    else:
+                        continuer_btn.set_ismousedown(False)
+
+                    if quitter_btn.inside_pos(pos):
+                        quitter_btn.set_ismousedown(True)
+                    else:
+                        quitter_btn.set_ismousedown(False)
+
+                if event.type == pygame.KEYDOWN:
+                    if active:
+                        if event.key == pygame.K_RETURN:
+                            print(nombre_joueurs)
+                            nombre_joueurs = ''
+                        elif event.key == pygame.K_BACKSPACE:
+                            nombre_joueurs = nombre_joueurs[:-1]
+                        else:
+                            nombre_joueurs += event.unicode
+        except:
+            done = True
+            fini = True
+            print("Exception relevée")
+
+
+        try:
+            win.fill((50, 50, 50))
+        except:
+            break;break
 
         font = pygame.font.Font(None, 28)
         txt_nbj = font.render("Combien y a-t-il de joueurs ? (3 à 5)", True, (255, 255, 255))
@@ -1136,7 +1151,12 @@ def saisir_noms_joueurs():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     done = True
-                    pygame.quit()
+                    global fini
+                    fini = True
+                    data.fin = True
+                    pygame.display.set_mode((640, 480))
+                    pygame.display.update()
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
 
@@ -1162,9 +1182,10 @@ def saisir_noms_joueurs():
                             else:
                                 print("Erreur !")
                                 activer_erreur2 = 1
-
-                    if quitter_btn.inside_pos(pos):
-                        pygame.quit()
+                    elif quitter_btn.inside_pos(pos):
+                        done = True
+                        fini = True
+                        data.fin = True
 
                     # If the user clicked on the input_box rect.
                     if input_box.collidepoint(event.pos):
@@ -1197,8 +1218,10 @@ def saisir_noms_joueurs():
                             texte_saisi[i] = texte_saisi[i][:-1]
                         else:
                             texte_saisi[i] += event.unicode
-
-            win.fill((50, 50, 50))
+            try:
+                win.fill((50, 50, 50))
+            except:
+                break;break
 
             # Ajout d'un logo
             logo = pygame.image.load('Poker/images/logo.png')
@@ -1270,11 +1293,23 @@ def charger_joueurs_enregistres():
         mdp_j.append(hd.profils[k]._getMDP())
         jetons_j.append(hd.profils[k]._getCredits())
 
+def reset(frame):
+    global fini
+    fini = False
+    frame = pygame.display.set_mode((640, 480))
 
-pygame.init()
 win = pygame.display.set_mode((width, height))
 pygame.display.update()
 
-while True:
+while not fini:
     charger_joueurs_enregistres()
     choix_nb_joueurs()
+print("end game")
+
+"""win = pygame.display.set_mode((width, height))
+pygame.display.update()
+
+while not fini:
+    charger_joueurs_enregistres()
+    choix_nb_joueurs()
+print("end game")"""

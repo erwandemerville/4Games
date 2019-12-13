@@ -121,9 +121,9 @@ class pot(object):
             # font = pygame.font.SysFont('consolas', 16)
             font = pygame.font.SysFont('comic sans MS', 20)
 
-            pot_text = font.render('Pot commun', True, (0, 0, 0))
+            pot_text = font.render('Pot', True, (0, 0, 0))
             pygame.draw.rect(win, (216, 8, 8), (self.x + 1, self.y + 1, self.width - 3, 26), 0)
-            win.blit(pot_text, (self.x + 5, self.y + 5))
+            win.blit(pot_text, (self.x + (self.width - font.size("Pot")[0])/2, self.y))
 
             pygame.draw.rect(win, (30, 30, 30), (self.x, self.y + 27, self.width, 2), 0)
 
@@ -132,7 +132,7 @@ class pot(object):
             money = font.render(str(self.money), True, (255, 255, 255))
             rect = money.get_rect()
             pygame.draw.rect(win, (130, 124, 102), (self.x + 1, self.y + 28, self.width - 3, 20), 0)
-            win.blit(money, (self.x + self.width // 2 - rect[2] // 2, self.y + 29))
+            win.blit(money, (self.x + self.width // 2 - rect[2] // 2, self.y + 25))
 
 
 class carte(object):

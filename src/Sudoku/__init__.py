@@ -218,7 +218,7 @@ class PartieG:
     def partieFinie(self):
         for i in range(len(self.grille_jeu.case)):
             case = self.grille_jeu.getCase(i)
-            if case.getNumber() == 0 or GrillesDeJeu.verifierNombre(i, case.getNumber()) == 0:
+            if case.getNumber() == 0 or PartieG.verifierNombre(self.grille_jeu, (i % self.grille_jeu.largeur, int(math.floor(i/self.grille_jeu.largeur)))) == 0:
                 return False
         return True
 

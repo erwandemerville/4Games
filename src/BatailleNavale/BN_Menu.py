@@ -43,7 +43,8 @@ class BN_Place_Boats(SubMenu.Menu_G):
             self.data.partie.draw(frame, self.data.getCurrentMenu())
 
     def draw(self, frame):
-        super().draw(frame)
+        for i in self.boutons:
+            i.draw(frame)
         for i in self.titles:
             i.draw(frame)
 

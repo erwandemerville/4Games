@@ -1,5 +1,11 @@
-#------------------------------------------------------
-# Common Classes for Playig Game
+"""
+! CE CODE EST BASÉ SUR UN PROGRAMME EXISTANT !
+Voici le github d'où est issu le code initial : https://github.com/actruce/Pygame/tree/master/TexasHoldemMultiPlay
+Dossier "TexasHoldemMultiPlay".
+
+Voir le fichier Jeu.py pour toutes les explications.
+
+"""
 
 
 class Result:

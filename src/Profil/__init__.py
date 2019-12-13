@@ -91,7 +91,7 @@ class Menu_ProfilIns(SubMenu.Menu_G):
                                     "Inscription", (170, 170, 170), pygame.font.SysFont("Impact", 27),
                                     (255, 255, 255))])
         self.textBoxes = [ui.TextBox(50, 100, 540, 60, 2, placeholder="Pseudo"),
-                          ui.TextBox(50, 200, 540, 60, 2, placeholder="MDP")]
+                          ui.TextBox(50, 200, 540, 60, 2, placeholder="MDP", hideChar='*')]
         self.police27 = pygame.font.SysFont("Impact", 27)
         self.titres = [Title(20, 20, frame.get_width() - 40, 50, 2, "S'inscrire", (12, 12, 251), self.police27,
                            (255, 255, 255))]
@@ -115,7 +115,7 @@ class Menu_ProfilIns(SubMenu.Menu_G):
             # Reset des Textbox
             del self.textBoxes
             self.textBoxes = [ui.TextBox(50, 100, 540, 60, 2, placeholder="Pseudo"),
-                              ui.TextBox(50, 200, 540, 60, 2, placeholder="MDP")]
+                              ui.TextBox(50, 200, 540, 60, 2, placeholder="MDP", hideChar='*')]
         elif self.boutons[1].isCursorInRange(): # Si le bouton "Inscription" est pressé
             texts = (self.textBoxes[0].getText(), self.textBoxes[1].getText()) # Récupération du pseudo et Mot de passe
             if texts[0] == "" or texts[0] == None or not texts[0]: # Si le Pseudo est vide
@@ -184,7 +184,7 @@ class Menu_ProfilCo(SubMenu.Menu_G):
                                     (255, 255, 255))
                           ])
         self.textBoxes = [ui.TextBox(50, 100, 540, 60, 2, placeholder="Pseudo"),
-                          ui.TextBox(50, 200, 540, 60, 2, placeholder="MDP")]
+                          ui.TextBox(50, 200, 540, 60, 2, placeholder="MDP", hideChar='*')]
         self.police27 = pygame.font.SysFont("Impact", 27)
         self.titres = [Title(20, 20, frame.get_width() - 40, 50, 2, "Se connecter", (12, 12, 251), self.police27,
                            (255, 255, 255))]
@@ -200,7 +200,7 @@ class Menu_ProfilCo(SubMenu.Menu_G):
             # Reset des Textbox
             del self.textBoxes
             self.textBoxes = [ui.TextBox(50, 100, 540, 60, 2, placeholder="Pseudo"),
-                              ui.TextBox(50, 200, 540, 60, 2, placeholder="MDP")]
+                              ui.TextBox(50, 200, 540, 60, 2, placeholder="MDP", hideChar='*')]
         elif self.boutons[1].isCursorInRange(): # Si le bouton "Se connecter" est pressé
             texts = (self.textBoxes[0].getText(), self.textBoxes[1].getText()) # Récupération du pseudo et Mot de passe
             if texts[0] == "" or texts[0] == None or not texts[0]: # Si le Pseudo est vide

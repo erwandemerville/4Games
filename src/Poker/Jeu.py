@@ -1,9 +1,54 @@
 # !/usr/bin/python3.7
 # -*-coding:Utf-8 -*
 
+"""
+! CE CODE EST BASÉ SUR UN PROGRAMME EXISTANT !
+Voici le github d'où est issu le code initial : https://github.com/actruce/Pygame/tree/master/TexasHoldemMultiPlay
+Dossier "TexasHoldemMultiPlay".
+
+Il s'agit initialement d'un jeu de poker écrit pour fonctionner en réseau.
+- Le programme a été modifié pour fonctionner sur une seule fenêtre (et non en réseau), pour rester logique par rapport
+aux autres jeux réalisés.
+- La classe Profil a été intégrée et est gérée par ce module Poker, notamment pour récupérer le pseudo, les crédits
+possédés et le score de chaque joueur.
+- Le menu principal du jeu a été modifié afin de pouvoir choisir le nombre de joueurs, et d'établir le lien avec
+les joueurs créés dans le menu principal.
+- Des bugs et problèmes notamment concernant les tours de mises et les mises elles-mêmes ont été réglés.
+- Divers autres éléments ont été changé, tels que les couleurs, images, positions des boutons, etc.
+Des boutons, logos, textes ont été ajoutés, par exemple un bouton pour quitter le jeu à tout moment.
+
+Les fichiers ayant principalement été modifiés sont :
+    => Jeu.py (anciennement Game.py) : Les noms de variables, classes et fonctions ont été modifiés et le code a été simplifié et
+    commenté afin d'être plus aisément compréhensible. Des éléments ont été rajoutés, des fonctions modifiées.
+    Le module Profil a été intégré. Etc.
+    => fenetre_jeu.py (anciennement client.py) : Ce fichier permettait de lancer le client de jeu, et était liés à un
+     fichier server.py et netfork.py.
+     Sa structure a été modifiée et il fonctionne maintenant de manière indépendante et affiche la fenêtre de jeu
+     générale (pour tous les joueurs).
+     De nombreux éléments y ont également été modifiés, le menu a été changé, des fonctions, boutons, textes ajoutés,
+     etc.
+     
+Les fichier suivants n'ont été que très peu modifiés :
+    => affichage.py (anciennement view.py) qui définit les fonctions de base permettant de dessiner les boutons, textes,
+    etc. Ce fonction fait appel aux fonctionnalités de Pygame
+    => definir_gagnant.py (anciennement CardCommon.py) qui définit les fonctions attribuant un score aux mains des
+    joueurs et définissant le gagnant.
+
+Les fichier ont été supprimés :
+    => Btn_animation.ipynb, Card_animation.ipynb et Chip_Animation.ipynb qui n'étaient pas utilisés par le jeu.
+    => server.py et network.py qui ne sont plus utilisés à présent que la structure du jeu a été modifiée pour
+    fonctionner sur une fenêtre unique.
+
+
+Le fichier suivant a été ajouté :
+    => poker.py, qui contient simplement une fonction start() utilisé par le programme principal pour lancer le jeu.
+
+"""
+
 import random
 import time
 from Poker.definir_gagnant import PokerHelper
+import Profil.Handler as pf
 
 nb_joueurs = 0
 
@@ -103,21 +148,47 @@ class Joueur:
         # Obtenir un résultat contenant le score de la main du joueur en comparaison avec les cartes communes.
         liste_cartes = self.liste_cartes + cartes_communes
         resultat = PokerHelper.GetBestChoise(liste_cartes)
-        # resultat = valueHand(cartes_communes, self.liste_cartes)
         self.resultat_manche = resultat
 
     def retirer_argent(self, quantite):
         # Retire une quantité d'argent donnée à ce que possède le joueur.
         # S'il ne reste plus rien au joueur, on considère qu'il a "All_In".
+        arg = 0
+
         if self.argent >= quantite:
             self.argent -= quantite
+            arg = self.argent
 
             if self.argent == quantite:
                 self.aAll_In = True
+                arg = 0
+
+        hd = pf.Handler(None)
+        hd.load("profilsData.data")
+        ida = 0
+        idx = 0
+        for profil in hd.profils:
+            if profil._getPseudo() == self.nom:
+                ida = idx  # Récupération de l'ID du joueur dans le tableau profils
+            idx += 1
+        hd.profils[ida]._setCredits(arg)
+        hd.save("profilsData.data")
 
     def ajouter_argent(self, quantite):
         # Ajouter de l'argent au joueur
         self.argent += quantite
+
+        hd = pf.Handler(None)
+        hd.load("profilsData.data")
+        ida = 0
+        idx = 0
+        for profil in hd.profils:
+            if profil._getPseudo() == self.nom:
+                ida = idx  # Récupération de l'ID du joueur dans le tableau profils
+            idx += 1
+        hd.profils[ida]._setCredits(self.argent)
+        hd.save("profilsData.data")
+
 
     def definir_derniere_mise(self, derniere_action_mise, argent_mise):
         # Change la valeur de la dernière mise, à savoir l'action effectuée et la valeur de la mise
@@ -550,6 +621,22 @@ class Jeu:
             # Afficher la main de chaque joueur et calculer leur score
             for joueur in self.liste_joueurs:
                 joueur.obtenir_resultat_main(self.cartes_communes)  # Obtenir le score de chaque main
+
+                # ENREGISTRER SCORE DANS FICHIER profilsData.data
+                hd = pf.Handler(None)
+                hd.load("profilsData.data")
+                ida = 0
+                idx = 0
+                for profil in hd.profils:
+                    if profil._getPseudo() == joueur.nom:
+                        ida = idx  # Récupération de l'ID du joueur dans le tableau profils
+                    idx += 1
+                ancien_score = hd.profils[ida]._getScorePoker()
+                hd.profils[ida]._setScorePoker(ancien_score + joueur.resultat_manche.score)
+                hd.save("profilsData.data")
+                # ------------------------------------------------
+
+
                 PokerHelper.PrintCards(joueur.resultat_manche.hands)
                 # self.AfficherCartes(joueur.resultat_manche.mains)  # Afficher chaque main
 

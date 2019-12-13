@@ -6,8 +6,13 @@ import os
 class Handler:
     "Classe servant de pseudo base de donnée qui sert à contenir les profils"
 
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, data=None):
+        if data is not None:
+            self.data = data
+        self.profils = []
+        self.currentProfil = -1
+
+    def test(self):
         self.profils = []
         self.currentProfil = -1
 
@@ -27,14 +32,15 @@ class Handler:
             else:
                 for i in range(0, len(grille_recup)-1):
                     self.profils.append(joueur.Joueur(grille_recup[i][0], grille_recup[i][2]))
-                    self.profils[-1]._setId(grille_recup[i][0])
+                    self.profils[-1]._setId(grille_recup[i][1])
                     self.profils[-1]._setCredits(grille_recup[i][3])
+                    self.profils[-1]._setScorePoker(grille_recup[i][4])
                 self.currentProfil = grille_recup[-1]
 
     def save(self, filename):
         listeData = []
         for i in self.profils:
-            listeData.append([i._getPseudo(), i._getId(), i._getMDP(), i._getCredits()])
+            listeData.append([i._getPseudo(), i._getId(), i._getMDP(), i._getCredits(), i._getScorePoker()])
         listeData.append(self.currentProfil)
         try:
             with open(filename, 'wb') as fichier:

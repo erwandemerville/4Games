@@ -87,7 +87,7 @@ class Title():
 
 class TextBox:
     "Classe permettant de gérer une boite ou écrire du texte"
-    def __init__(self,x,y,width,height,border = 0,placeholder = "",rgb=(15,15,15), rgb_selected=(40,40,40),police = None,rgb_text = (255,255,255), rgb_placeholder = (128,128,128), rgb_border = (140,140,140), rgb_border_selected = (220,220,220)):
+    def __init__(self,x,y,width,height,border = 0,placeholder = "",rgb=(15,15,15), rgb_selected=(40,40,40),police = None,rgb_text = (255,255,255), rgb_placeholder = (128,128,128), rgb_border = (140,140,140), rgb_border_selected = (220,220,220), hideChar = None):
         #Constructeur
         self.selected = False
         self.btn = pygame.Surface((width,height))
@@ -101,6 +101,7 @@ class TextBox:
         self.placeholder = placeholder
         self.rgb_placeholder = rgb_placeholder
         self.text = ""
+        self.hideChar = hideChar
         self.rgb = rgb
         self.rgb_selected = rgb_selected
         self.rgb_text = rgb_text
@@ -206,7 +207,13 @@ class TextBox:
             else:
                 pygame.draw.rect(self.btn,self.rgb_border,[0,0,self.width,self.height],self.border)
         if self.text != "":
-            text_on = self.police.render(self.text,True,self.rgb_text)
+            if self.hideChar == None:
+                text_on = self.police.render(self.text,True,self.rgb_text)
+            else:
+                hiddenText = ""
+                for i in self.text:
+                    hiddenText = hiddenText + self.hideChar
+                text_on = self.police.render(hiddenText,True,self.rgb_text)
         else:
             text_on = self.police.render(self.placeholder,True,self.rgb_placeholder)
         self.btn.blit(text_on,(8,self.height/2 - text_on.get_height()/2))

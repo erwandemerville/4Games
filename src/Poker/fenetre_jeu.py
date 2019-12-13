@@ -1,8 +1,17 @@
-import pygame as pygame
+"""
+! CE CODE EST BASÉ SUR UN PROGRAMME EXISTANT !
+Voici le github d'où est issu le code initial : https://github.com/actruce/Pygame/tree/master/TexasHoldemMultiPlay
+Dossier "TexasHoldemMultiPlay".
+
+Voir le fichier Jeu.py pour toutes les explications.
+
+"""
+
 from pygame import *
 from Poker.Jeu import Jeu
 from Poker.affichage import *
-import os
+import Sudoku
+import Profil.Handler as pf
 
 width = 756
 height = 475
@@ -24,10 +33,10 @@ DARK_GRAY = (96, 96, 96)
 LIGHT_BLACK = (32, 32, 32)
 CYAN = (0, 255, 255)
 
-table_de_jeu = pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)),'images/table_poker.jpg')
+table_de_jeu = pygame.image.load('Poker/images/table_poker.jpg')
 table_de_jeu = pygame.transform.scale(table_de_jeu, (width, height))
-LISTE_IMAGES_CARTES = [];
-carte_vide = pygame.image.load(os.path.join(os.path.dirname(os.path.abspath(__file__)),'images/images-cartes/b2fv.png')
+LISTE_IMAGES_CARTES = []
+carte_vide = pygame.image.load('Poker/images/images-cartes/b2fv.png')
 carte_vide = pygame.transform.scale(carte_vide, (54, 72))
 
 donnees_position_joueurs = {3: [(160, 40), (500, 40), (355, 360), ],
@@ -36,9 +45,15 @@ donnees_position_joueurs = {3: [(160, 40), (500, 40), (355, 360), ],
 
 nb_joueurs = 0  # Initialiser nombre de joueurs à 0
 
+# Listes contenant les pseudos, mots de passe et jetons des joueurs récupérés dans un fichier
+pseudos_j = []
+mdp_j = []
+jetons_j = []
+nbj = 0
+
 
 def Recuperer_Images_Cartes():
-    chemin = 'images/images-cartes/'
+    chemin = 'Poker/images/images-cartes/'
     j = 0
 
     for symbole in range(4):
@@ -184,6 +199,8 @@ def cacher_main(joueur_cartes, liste_ID, id_joueur_doitJouer):
 
 
 def dessiner_resultat_gagnant(gagnant):
+    # Affiche le nom du gagnant, le type de main et la main responsable de sa victoire.
+
     nom_gagnant = gagnant.nom
     id_joueur_gagnant = gagnant.id
     resultat_gagnant = gagnant.resultat_manche
@@ -408,11 +425,14 @@ dessiner_resultat_gagnantforf = resultat_gagnant_forfait(width // 2 - 260, heigh
 dy = 160
 dx = -300
 btn_pos_x, btn_pos_y = 300, 280
+
+btn_quitter = btn('Quitter', btn_pos_x + 40 + dx, btn_pos_y + dy, 30, BLACK, WHITE, LIGHT_YELLOW, DARK_RED)
+
 btn_check = btn('Check', btn_pos_x + 140 + dx, btn_pos_y + dy, 30, LIGHT_BLACK, WHITE, LIGHT_YELLOW, BLACK)
 btn_se_coucher = btn('Couche', btn_pos_x + 220 + dx, btn_pos_y + dy, 30, RED, WHITE, LIGHT_YELLOW, BLACK)
 mise_btn = btn('Miser', btn_pos_x + 300 + dx, btn_pos_y + dy, 30, CYAN, WHITE, LIGHT_YELLOW, BLACK)
 
-btns = [btn_check, btn_se_coucher, mise_btn]
+btns = [btn_quitter, btn_check, btn_se_coucher, mise_btn]
 
 btn_Suivre = btn('Suivre', btn_pos_x + 400 + dx, btn_pos_y + dy, 30, BLUE, LIGHT_BLUE, LIGHT_GRAY, BLACK)
 btn_Relance = btn('Relance', btn_pos_x + 400 + 70 + dx, btn_pos_y + dy, 30, RED, PINK, LIGHT_GRAY, BLACK)
@@ -424,7 +444,13 @@ allbtns = btns + mise_btns
 
 arrow1 = arrow(btn_pos_x + 340, btn_pos_y - 10, 20, 0, BLACK)
 
+
 def main(texte_saisi):
+    global pseudos_j
+    global mdp_j
+    global jetons_j
+    global nbj
+
     run = True
 
     global nb_joueurs
@@ -439,11 +465,14 @@ def main(texte_saisi):
     liste_ID = creer_liste_ID(0)
     jeu.ordre_des_joueurs = liste_ID
 
-    # ------- DEFINIR NOMS DES JOUEURS : ---------
+    # ------------ DEFINIR JOUEURS : -------------
     joueurs_nom = texte_saisi
     id_nt = 0
     for id_joueur in jeu.ordre_des_joueurs:
+        ida = pseudos_j.index(joueurs_nom[id_nt])
+        argent = jetons_j[ida]
         jeu.connexion_joueur(id_joueur, joueurs_nom[id_nt])
+        jeu.liste_joueurs[id_nt].argent = argent
         id_nt += 1
     # --------------------------------------------
 
@@ -866,7 +895,10 @@ def main(texte_saisi):
 
                             for btn in btns:
                                 if btn.inside_pos(pos):
-                                    if btn.is_equal("Check"):  # SI joueur clique sur "Check"
+                                    if btn.is_equal("Quitter"):
+                                        run = False
+                                        pygame.quit()
+                                    elif btn.is_equal("Check"):  # SI joueur clique sur "Check"
                                         type_mise = "Check"
                                     elif btn.is_equal("Couche"):  # SI joueur clique sur "Couche"
                                         type_mise = "Couche"
@@ -946,24 +978,31 @@ def main(texte_saisi):
             run = False
             print(str(e))
 
+
 def choix_nb_joueurs():
     global nb_joueurs
 
-    pos_init_x, pos_init_y = 130, 100
+    pos_init_x, pos_init_y = 220, 210
 
     input_box = pygame.Rect(pos_init_x, pos_init_y + 50, 140, 32)
     color_inactive = pygame.Color('LIGHTSKYBLUE')
     color_active = pygame.Color('DODGERBLUE')
     color = color_inactive
-    continuer_btn = btn2('Valider', 'saisie', pos_init_x + 120, pos_init_y + 60, 33, pygame.Color('DARKBLUE'),
-                     pygame.Color('WHITE'), pygame.Color('THISTLE'), pygame.Color('FIREBRICK'))
+    continuer_btn = btn2('Valider', 'saisie', pos_init_x + 120, pos_init_y + 60, 33, pygame.Color('BLUE'),
+                         pygame.Color('WHITE'), pygame.Color('THISTLE'), pygame.Color('FIREBRICK'))
     continuer_btn.set_visible(True)
+
+    quitter_btn = btn2('Quitter', 'Jeu', pos_init_x + 200, pos_init_y + 60, 33, pygame.Color('RED'),
+                       pygame.Color('WHITE'), pygame.Color('THISTLE'), pygame.Color('FIREBRICK'))
+    quitter_btn.set_visible(True)
 
     active = False
     nombre_joueurs = ''
     done = False
 
     clock = pygame.time.Clock()
+    activer_erreur = 0  # Erreur indiquant que le nombre de joueurs choisi > nombre de joueurs enregistrés
+    activer_erreur1 = 0  # Erreur indiquant que le nb n'est pas compris entre 3 et 5
 
     while not done:
         clock.tick(30)
@@ -978,7 +1017,19 @@ def choix_nb_joueurs():
                 if continuer_btn.inside_pos(pos):
                     print(nombre_joueurs)
                     nb_joueurs = int(nombre_joueurs)
-                    saisir_noms_joueurs()
+                    if nb_joueurs < 3 or nb_joueurs > 5:
+                        activer_erreur = 0
+                        activer_erreur1 = 1
+                    else:
+                        activer_erreur1 = 0
+                        if nb_joueurs > len(pseudos_j):
+                            activer_erreur = 1
+                        else:
+                            activer_erreur = 0
+                            saisir_noms_joueurs()
+
+                if quitter_btn.inside_pos(pos):
+                    pygame.quit()
 
                 # If the user clicked on the input_box rect.
                 if input_box.collidepoint(event.pos):
@@ -997,6 +1048,11 @@ def choix_nb_joueurs():
                 else:
                     continuer_btn.set_ismousedown(False)
 
+                if quitter_btn.inside_pos(pos):
+                    quitter_btn.set_ismousedown(True)
+                else:
+                    quitter_btn.set_ismousedown(False)
+
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
@@ -1007,11 +1063,25 @@ def choix_nb_joueurs():
                     else:
                         nombre_joueurs += event.unicode
 
-        win.fill((30, 30, 30))
+        win.fill((50, 50, 50)) # Couleur de fond
 
         font = pygame.font.Font(None, 28)
         txt_nbj = font.render("Combien y a-t-il de joueurs ? (3 à 5)", True, (255, 255, 255))
         win.blit(txt_nbj, (pos_init_x, pos_init_y))
+
+        # Ajout d'un logo
+        logo = pygame.image.load('Poker/images/logo.png')
+        logo = pygame.transform.scale(logo, (270, 160))
+        win.blit(logo, (250, 20))
+
+        if activer_erreur:
+            txt = font.render("Erreur ! Il n'y a pas assez de joueurs enregistrés.", True, (255, 255, 255))
+            win.blit(txt, (pos_init_x, pos_init_y + 110))
+            txt = font.render("Enregistrez de nouveaux joueurs dans le menu principal.", True, (255, 255, 255))
+            win.blit(txt, (pos_init_x, pos_init_y + 135))
+        if activer_erreur1:
+            txt = font.render("Le nombre saisi doit être compris entre 3 et 5.", True, (255, 255, 255))
+            win.blit(txt, (pos_init_x, pos_init_y + 110))
 
         # Render the current text.
         txt_surface = font.render(nombre_joueurs, True, color)
@@ -1024,30 +1094,41 @@ def choix_nb_joueurs():
         pygame.draw.rect(win, color, input_box, 2)
         # Blit the Btn
         continuer_btn.draw(win)
+        quitter_btn.draw(win)
 
         pygame.display.update()
 
+
 def saisir_noms_joueurs():
+    global pseudos_j
+    global mdp_j
+    global nbj
 
     global nb_joueurs
     texte_saisi = [0 for i in range(nb_joueurs)]
     for i in range(nb_joueurs):
-        print("Bonjour")
-        pos_init_x, pos_init_y = 130, 100
+        pos_init_x, pos_init_y = 220, 260
 
         input_box = pygame.Rect(pos_init_x, pos_init_y + 50, 140, 32)
         color_inactive = pygame.Color('LIGHTSKYBLUE')
         color_active = pygame.Color('DODGERBLUE')
         color = color_inactive
+
         enter_btn = btn2('Valider', 'Nom', pos_init_x + 300, pos_init_y + 60, 33, pygame.Color('DARKBLUE'),
-                        pygame.Color('WHITE'), pygame.Color('THISTLE'), pygame.Color('FIREBRICK'))
+                         pygame.Color('WHITE'), pygame.Color('THISTLE'), pygame.Color('FIREBRICK'))
         enter_btn.set_visible(True)
+
+        quitter_btn = btn2('Quitter', 'Jeu', pos_init_x + 380, pos_init_y + 60, 33, pygame.Color('RED'),
+                           pygame.Color('WHITE'), pygame.Color('THISTLE'), pygame.Color('FIREBRICK'))
+        quitter_btn.set_visible(True)
 
         active = False
         texte_saisi[i] = ''
         done = False
 
         clock = pygame.time.Clock()
+        activer_erreur = 0  # Activer ou non message d'erreur (nom déjà existant)
+        activer_erreur2 = 0  # Activer ou non message d'erreur (nom déjà utilisé)
 
         while not done:
             clock.tick(30)
@@ -1061,10 +1142,29 @@ def saisir_noms_joueurs():
 
                     if enter_btn.inside_pos(pos):
                         print(texte_saisi[i])
-                        if i == nb_joueurs - 1:
-                            main(texte_saisi)
+                        try:
+                            pseudos_j.index(texte_saisi[i])
+
+                        except ValueError:
+                            print("Erreur !")
+                            activer_erreur = 1
+                            activer_erreur2 = 0
                         else:
-                            done = 1
+                            activer_erreur = 0
+                            try:
+                                texte_saisi[0:i].index(texte_saisi[i])
+                            except ValueError:
+                                activer_erreur2 = 0
+                                if i == nb_joueurs - 1:
+                                    main(texte_saisi)
+                                else:
+                                    done = 1
+                            else:
+                                print("Erreur !")
+                                activer_erreur2 = 1
+
+                    if quitter_btn.inside_pos(pos):
+                        pygame.quit()
 
                     # If the user clicked on the input_box rect.
                     if input_box.collidepoint(event.pos):
@@ -1083,6 +1183,11 @@ def saisir_noms_joueurs():
                     else:
                         enter_btn.set_ismousedown(False)
 
+                    if quitter_btn.inside_pos(pos):
+                        quitter_btn.set_ismousedown(True)
+                    else:
+                        quitter_btn.set_ismousedown(False)
+
                 if event.type == pygame.KEYDOWN:
                     if active:
                         if event.key == pygame.K_RETURN:
@@ -1093,11 +1198,46 @@ def saisir_noms_joueurs():
                         else:
                             texte_saisi[i] += event.unicode
 
-            win.fill((30, 30, 30))
+            win.fill((50, 50, 50))
+
+            # Ajout d'un logo
+            logo = pygame.image.load('Poker/images/logo.png')
+            logo = pygame.transform.scale(logo, (270, 160))
+            win.blit(logo, (250, 20))
 
             font = pygame.font.Font(None, 28)
-            txt = font.render("Entrez le nom du joueur {}".format(i + 1), True, (255, 255, 255))
+
+            # Afficher la liste des joueurs enregistréss :
+            txt = font.render("Liste des {} joueurs enregistrés : ".format(nbj), True, (200, 200, 255))
+            win.blit(txt, (pos_init_x, pos_init_y - 70))
+
+            if len(pseudos_j) == 1:
+                txt = font.render("{}".format(pseudos_j[0]), True, (255, 255, 255))
+            elif len(pseudos_j) == 2:
+                txt = font.render("{} - {}".format(pseudos_j[0], pseudos_j[1]), True, (255, 255, 255))
+            elif len(pseudos_j) == 3:
+                txt = font.render("{} - {} - {}".format(pseudos_j[0], pseudos_j[1], pseudos_j[2]),
+                                  True, (255, 255, 255))
+            elif len(pseudos_j) == 4:
+                txt = font.render("{} - {} - {} - {}".format(pseudos_j[0], pseudos_j[1], pseudos_j[2], pseudos_j[3]),
+                                  True, (255, 255, 255))
+            elif len(pseudos_j) == 5:
+                txt = font.render("{} - {} - {} - {} - {}".format(pseudos_j[0], pseudos_j[1], pseudos_j[2],
+                                                                  pseudos_j[4], pseudos_j[5]), True, (255, 255, 255))
+            else:
+                txt = font.render("{} - {} - {} - {} - {} - ...".format(pseudos_j[0], pseudos_j[1], pseudos_j[2],
+                                                                  pseudos_j[4], pseudos_j[5]), True, (255, 255, 255))
+            win.blit(txt, (pos_init_x, pos_init_y - 40))
+
+            txt = font.render("Entrez le nom du joueur {} :".format(i + 1), True, (255, 180, 170))
             win.blit(txt, (pos_init_x, pos_init_y))
+
+            if activer_erreur:
+                txt = font.render("Erreur ! Ce pseudo n'existe pas.", True, (255, 255, 255))
+                win.blit(txt, (pos_init_x, pos_init_y + 110))
+            if activer_erreur2:
+                txt = font.render("Erreur ! Ce pseudo est déjà en jeu.", True, (255, 255, 255))
+                win.blit(txt, (pos_init_x, pos_init_y + 110))
 
             # Render the current text.
             txt_surface = font.render(texte_saisi[i], True, color)
@@ -1110,8 +1250,25 @@ def saisir_noms_joueurs():
             pygame.draw.rect(win, color, input_box, 2)
             # Blit the Btn
             enter_btn.draw(win)
+            quitter_btn.draw(win)
 
             pygame.display.update()
+
+
+def charger_joueurs_enregistres():
+    global pseudos_j
+    global mdp_j
+    global jetons_j
+    global nbj
+
+    hd = pf.Handler(None)
+
+    hd.load("profilsData.data")
+    nbj = len(hd.profils)
+    for k in range(nbj):
+        pseudos_j.append(hd.profils[k]._getPseudo())
+        mdp_j.append(hd.profils[k]._getMDP())
+        jetons_j.append(hd.profils[k]._getCredits())
 
 
 pygame.init()
@@ -1119,4 +1276,5 @@ win = pygame.display.set_mode((width, height))
 pygame.display.update()
 
 while True:
+    charger_joueurs_enregistres()
     choix_nb_joueurs()

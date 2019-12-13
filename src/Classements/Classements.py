@@ -120,6 +120,11 @@ class Classement:
         while reTurn:
             reTurn = False
             for i in range(0, len(self.values)-1):
+                # Si le retour de sortingFunc pour les valeur [i, i+1] et [i+1, i] sont True, alors le programme va causer une boucle infinie donc on empêche ça.
+                if sortingFunc([self.values[i][1], self.values[i+1][1], self.values[i][2], self.values[i+1][2]]) and sortingFunc([self.values[i+1][1], self.values[i][1], self.values[i+1][2], self.values[i][2]]):
+                    print("Le tri du classement n'a pas pu être effectué.")
+                    return
+
                 if sortingFunc([self.values[i][1], self.values[i+1][1], self.values[i][2], self.values[i+1][2]]):
                     temp = self.values[i]
                     self.values[i] = self.values[i+1]
